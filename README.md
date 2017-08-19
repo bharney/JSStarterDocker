@@ -1,6 +1,22 @@
 # StarterPack
 Application for allowing user to login, enter their expenses, and revenue to calculate their expected spending money per month.
 
+#UI Elements
+ - Menu
+   - Navigation Slider
+   - Navigation Sidebar
+   - Nav menu should have an Icon and say "Menu"
+   - Menu Items are active for Current Page
+ - Cookies for page navigation
+ - Login
+ - Search
+ - Admin Panel
+- Mobile Responsive
+ 
+#Data Access
+ - Ability to open a DB Connection via Entity Framework
+ - DB Migrations
+
 #Setup Dependencies/ Requirements
  - VS 2017 or .Net Core Service Pack
  - Webpack 2
