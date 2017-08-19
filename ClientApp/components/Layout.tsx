@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { NavMenu } from './NavMenu';
+import { SliderMenu } from './SliderMenu';
+import { Footer } from './Footer';
 
 export class Layout extends React.Component<{}, {}> {
     public render() {
-        return <div className='container-fluid'>
-            <div className='row'>
-                <div className='col-sm-3'>
+        return <div>
                     <NavMenu />
-                </div>
-                <div className='col-sm-9'>
-                    { this.props.children }
-                </div>
-            </div>
-        </div>;
+                    <main className="container pad-top">
+                        <div id="slider" className="row row-offcanvas row-offcanvas-right">
+                            <div className="col-12 col-md-9">
+                                {this.props.children}
+                            </div>
+                            <SliderMenu />
+                        </div>
+                    </main>
+                    <Footer />
+               </div>;
     }
 }

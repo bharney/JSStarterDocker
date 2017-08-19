@@ -24,6 +24,7 @@ module.exports = (env) => {
         },
         entry: {
             vendor: [
+                'jquery',
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.css',
                 'font-awesome/css/font-awesome.css',
@@ -36,8 +37,7 @@ module.exports = (env) => {
                 'react-redux',
                 'redux',
                 'redux-thunk',
-                'react-router-redux',
-                'jquery'
+                'react-router-redux'
             ],
         },
         output: {
@@ -46,7 +46,7 @@ module.exports = (env) => {
             library: '[name]_[hash]',
         },
         plugins: [
-            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", }),
+            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'], }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
