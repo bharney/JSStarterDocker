@@ -21,7 +21,7 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: ['babel-loader?presets[]=es2015', 'awesome-typescript-loader?silent=true'] },
+                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: ['babel-loader?presets[]=es2015', 'awesome-typescript-loader?silent=true'] }
             ]
         },
         plugins: [new CheckerPlugin()]
@@ -40,7 +40,7 @@ module.exports = (env) => {
                 { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
                 { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
                 { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
-                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
+                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" }
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
@@ -54,7 +54,7 @@ module.exports = (env) => {
                         includePaths: [path.resolve('ClientApp', 'scss')]
                     },
                     context: '/',
-                    postcss: () => [autoprefixer],
+                    postcss: () => [autoprefixer]
                 }
             }),
             new webpack.DllReferencePlugin({
@@ -99,7 +99,7 @@ module.exports = (env) => {
             //        minifyURLs: true
             //    }
             //}),
-            new webpack.optimize.UglifyJsPlugin(),
+            new webpack.optimize.UglifyJsPlugin()
             //new CompressionPlugin()
         ])
     });
