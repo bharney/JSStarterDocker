@@ -1378,6 +1378,11 @@
       "from": "decamelize@>=1.1.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/decamelize/-/decamelize-1.2.0.tgz"
     },
+    "decorate-component-with-props": {
+      "version": "1.0.2",
+      "from": "decorate-component-with-props@>=1.0.2 <2.0.0",
+      "resolved": "https://registry.npmjs.org/decorate-component-with-props/-/decorate-component-with-props-1.0.2.tgz"
+    },
     "define-property": {
       "version": "1.0.0",
       "from": "define-property@>=1.0.0 <2.0.0",
@@ -1471,6 +1476,64 @@
       "version": "1.5.1",
       "from": "domutils@1.5.1",
       "resolved": "https://registry.npmjs.org/domutils/-/domutils-1.5.1.tgz"
+    },
+    "draft-js": {
+      "version": "0.10.1",
+      "from": "draft-js@latest",
+      "resolved": "https://registry.npmjs.org/draft-js/-/draft-js-0.10.1.tgz",
+      "dependencies": {
+        "immutable": {
+          "version": "3.7.6",
+          "from": "immutable@>=3.7.4 <3.8.0",
+          "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
+        }
+      }
+    },
+    "draft-js-anchor-plugin": {
+      "version": "2.0.0-rc5",
+      "from": "draft-js-anchor-plugin@beta",
+      "resolved": "https://registry.npmjs.org/draft-js-anchor-plugin/-/draft-js-anchor-plugin-2.0.0-rc5.tgz",
+      "dependencies": {
+        "immutable": {
+          "version": "3.7.6",
+          "from": "immutable@>=3.7.4 <3.8.0",
+          "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
+        }
+      }
+    },
+    "draft-js-buttons": {
+      "version": "2.0.0-rc5",
+      "from": "https://registry.npmjs.org/draft-js-buttons/-/draft-js-buttons-2.0.0-rc5.tgz",
+      "resolved": "https://registry.npmjs.org/draft-js-buttons/-/draft-js-buttons-2.0.0-rc5.tgz"
+    },
+    "draft-js-inline-toolbar-plugin": {
+      "version": "2.0.0-rc5",
+      "from": "draft-js-inline-toolbar-plugin@beta",
+      "resolved": "https://registry.npmjs.org/draft-js-inline-toolbar-plugin/-/draft-js-inline-toolbar-plugin-2.0.0-rc5.tgz",
+      "dependencies": {
+        "immutable": {
+          "version": "3.7.6",
+          "from": "immutable@>=3.7.4 <3.8.0",
+          "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
+        }
+      }
+    },
+    "draft-js-plugins-editor": {
+      "version": "2.0.0-rc5",
+      "from": "draft-js-plugins-editor@2.0.0-rc5",
+      "resolved": "https://registry.npmjs.org/draft-js-plugins-editor/-/draft-js-plugins-editor-2.0.0-rc5.tgz"
+    },
+    "draft-js-side-toolbar-plugin": {
+      "version": "2.0.0-rc5",
+      "from": "draft-js-side-toolbar-plugin@beta",
+      "resolved": "https://registry.npmjs.org/draft-js-side-toolbar-plugin/-/draft-js-side-toolbar-plugin-2.0.0-rc5.tgz",
+      "dependencies": {
+        "immutable": {
+          "version": "3.7.6",
+          "from": "immutable@>=3.7.4 <3.8.0",
+          "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
+        }
+      }
     },
     "ecc-jsbn": {
       "version": "0.1.1",
@@ -1659,6 +1722,11 @@
       "version": "1.1.2",
       "from": "find-up@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/find-up/-/find-up-1.1.2.tgz"
+    },
+    "find-with-regex": {
+      "version": "1.0.2",
+      "from": "find-with-regex@>=1.0.2 <2.0.0",
+      "resolved": "https://registry.npmjs.org/find-with-regex/-/find-with-regex-1.0.2.tgz"
     },
     "flatten": {
       "version": "1.0.2",
@@ -1990,6 +2058,11 @@
       "from": "ieee754@>=1.1.4 <2.0.0",
       "resolved": "https://registry.npmjs.org/ieee754/-/ieee754-1.1.8.tgz"
     },
+    "immutable": {
+      "version": "3.8.1",
+      "from": "https://registry.npmjs.org/immutable/-/immutable-3.8.1.tgz",
+      "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.8.1.tgz"
+    },
     "in-publish": {
       "version": "2.0.0",
       "from": "in-publish@>=2.0.0 <3.0.0",
@@ -2022,7 +2095,7 @@
     },
     "install": {
       "version": "0.10.1",
-      "from": "install@latest",
+      "from": "https://registry.npmjs.org/install/-/install-0.10.1.tgz",
       "resolved": "https://registry.npmjs.org/install/-/install-0.10.1.tgz"
     },
     "interpret": {
@@ -2039,6 +2112,11 @@
       "version": "1.0.0",
       "from": "invert-kv@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/invert-kv/-/invert-kv-1.0.0.tgz"
+    },
+    "ip-regex": {
+      "version": "1.0.3",
+      "from": "ip-regex@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/ip-regex/-/ip-regex-1.0.3.tgz"
     },
     "is-absolute-url": {
       "version": "2.1.0",
@@ -2643,7 +2721,7 @@
     },
     "npm": {
       "version": "5.3.0",
-      "from": "npm@latest",
+      "from": "https://registry.npmjs.org/npm/-/npm-5.3.0.tgz",
       "resolved": "https://registry.npmjs.org/npm/-/npm-5.3.0.tgz",
       "dependencies": {
         "abbrev": {
@@ -6229,6 +6307,11 @@
       "from": "timers-browserify@>=2.0.2 <3.0.0",
       "resolved": "https://registry.npmjs.org/timers-browserify/-/timers-browserify-2.0.2.tgz"
     },
+    "tlds": {
+      "version": "1.192.0",
+      "from": "tlds@>=1.187.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/tlds/-/tlds-1.192.0.tgz"
+    },
     "to-arraybuffer": {
       "version": "1.0.1",
       "from": "to-arraybuffer@>=1.0.0 <2.0.0",
@@ -6342,6 +6425,11 @@
       "resolved": "https://registry.npmjs.org/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz",
       "optional": true
     },
+    "union-class-names": {
+      "version": "1.0.0",
+      "from": "union-class-names@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/union-class-names/-/union-class-names-1.0.0.tgz"
+    },
     "union-value": {
       "version": "0.2.4",
       "from": "union-value@>=0.2.3 <0.3.0",
@@ -6405,6 +6493,11 @@
       "version": "0.5.9",
       "from": "url-loader@0.5.9",
       "resolved": "https://registry.npmjs.org/url-loader/-/url-loader-0.5.9.tgz"
+    },
+    "url-regex": {
+      "version": "4.1.1",
+      "from": "url-regex@4.1.1",
+      "resolved": "https://registry.npmjs.org/url-regex/-/url-regex-4.1.1.tgz"
     },
     "use": {
       "version": "2.0.2",
