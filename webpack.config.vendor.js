@@ -17,7 +17,6 @@ module.exports = (env) => {
                 { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
                 { test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
                 { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
-                { test: /\.(jpe?g|png|gif)$/, loader: 'file-loader?name=[name].[ext]' },
                 { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
                 { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" }
             ]
@@ -28,6 +27,7 @@ module.exports = (env) => {
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.css',
                 'font-awesome/css/font-awesome.css',
+                'draft-js-inline-toolbar-plugin/lib/plugin.css',
                 'domain-task',
                 'event-source-polyfill',
                 'history',

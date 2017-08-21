@@ -48,6 +48,9 @@ export class SliderMenu extends React.Component<{}, {}> {
                         <NavLink className="list-group-item" to={'/fetchdata'} onClick={this.onUpdate} activeClassName='active'>
                                 Fetch Data
                         </NavLink>
+                        <NavLink className="list-group-item" to={'/editor'} onClick={this.onUpdate} activeClassName='active'>
+                                Editor
+                        </NavLink>
                     </div>
                 </div>;
     }

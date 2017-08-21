@@ -11,12 +11,13 @@ body {
 
 /*  ----------------------- HEADER --------------------------- */
 header {
-    
-} // end of header
+}
+// end of header
 
 /*  ----------------------- NAVIGATION --------------------------- */
 nav {
-} // end nav
+}
+// end nav
 
 
 #custom-nav {
@@ -27,7 +28,6 @@ nav {
     z-index: 999;
     box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     -webkit-transition: background .5s ease-in-out, opacity .5s ease;
     -moz-transition: background .5s ease-in-out, opacity .5s ease;
     transition: background .5s ease-in-out, opacity .5s ease;
@@ -48,8 +48,9 @@ nav {
 
 /*  ----------------------- MAIN --------------------------- */
 main {
-    padding-top: 2%;
-} // end main
+    padding-top: 3%;
+}
+// end main
 
 /*
  * Off Canvas
@@ -102,8 +103,23 @@ main {
     }
 }
 
+
+/* ------------------------ EDITOR -----------------------------*/
+.editor {
+    cursor: text;
+    padding: 16px;
+    border-radius: 2px;
+    margin-bottom: 2em;
+}
+
+.editor :global(.public-DraftEditor-content) {
+    min-height: 140px;
+}
+//End Editor */
+
 /*  ----------------------- FOOTER --------------------------- */
 
 footer {
     padding: 30px 0;
-} // end footer*/
+}
+// end footer*/
