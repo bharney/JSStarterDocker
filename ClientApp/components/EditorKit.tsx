@@ -51,23 +51,43 @@ const inlineToolbarPlugin = createInlineToolbarPlugin({
   ]
 });
 const plugins = [
-    inlineToolbarPlugin, 
-    linkPlugin,
     blockDndPlugin,
     focusPlugin,
     alignmentPlugin,
     resizeablePlugin,
-    imagePlugin
+    imagePlugin,
+    inlineToolbarPlugin, 
+    linkPlugin,
 ];
 
 const { InlineToolbar } = inlineToolbarPlugin;
-const initialState = {
+
+
+interface Props {
+    history: any;
+}
+
+interface State {
+    editorState: any;
+    editor: any;
+}
+
+
+export default class EditorKit extends React.Component<RouteComponentProps<{}>, {}> {
+    constructor(props, context) {
+    super(props, context);
+}
+public img: any = require("../images/4876542043_4d94fced5c_o.jpg");
+
+
+state: State = {
+    editorState: EditorState.createWithContent(convertFromRaw({
     "entityMap": {
         "0": {
             "type": "image",
             "mutability": "IMMUTABLE",
             "data": {
-                "src": "./4876542043_4d94fced5c_o.jpg"
+                "src": this.img,
             }
         }
     },
@@ -93,31 +113,14 @@ const initialState = {
         "data": {}
     }, {
         "key": "e23a8",
-        "text": "See advanced examples further down …",
+        "text": "See advanced examples further down",
         "type": "unstyled",
         "depth": 0,
         "inlineStyleRanges": [],
         "entityRanges": [],
         "data": {}
     }]
-};
-
-interface Props {
-    history: any;
-}
-
-interface State {
-    editorState: any;
-    editor: any;
-}
-
-export default class EditorKit extends React.Component<RouteComponentProps<{}>, {}> {
-    constructor(props, context) {
-    super(props, context);
-}
-
-state: State = {
-    editorState: EditorState.createWithContent(convertFromRaw(initialState)),
+})),
     editor: {}
   };
 

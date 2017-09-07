@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const merge = require('webpack-merge');
-const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -27,6 +26,7 @@ module.exports = (env) => {
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.css',
                 'font-awesome/css/font-awesome.css',
+                'draft-js-image-plugin/lib/plugin.css',
                 'draft-js-inline-toolbar-plugin/lib/plugin.css',
                 'domain-task',
                 'event-source-polyfill',
@@ -37,7 +37,7 @@ module.exports = (env) => {
                 'react-redux',
                 'redux',
                 'redux-thunk',
-                'react-router-redux'
+                'react-router-redux',
             ],
         },
         output: {
@@ -68,8 +68,7 @@ module.exports = (env) => {
                 name: '[name]_[hash]'
             })
         ].concat(isDevBuild ? [] : [
-            new webpack.optimize.UglifyJsPlugin(),
-            new webpack.optimize.AggressiveMergingPlugin()
+            new webpack.optimize.UglifyJsPlugin()
         ])
     });
 
