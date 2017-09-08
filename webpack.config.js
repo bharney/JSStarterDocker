@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
@@ -63,7 +64,7 @@ module.exports = (env) => {
             })
         ] : [
             // Plugins that apply in production builds only
-            new webpack.optimize.UglifyJsPlugin()
+            new MinifyPlugin()
         ])
     });
 
