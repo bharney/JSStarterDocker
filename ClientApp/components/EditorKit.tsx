@@ -7,6 +7,9 @@ import createAlignmentPlugin from 'draft-js-alignment-plugin';
 import createFocusPlugin from 'draft-js-focus-plugin';
 import createResizeablePlugin from 'draft-js-resizeable-plugin';
 import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
+import createSideToolbarPlugin from 'draft-js-side-toolbar-plugin';
+const sideToolbarPlugin = createSideToolbarPlugin();
+const { SideToolbar } = sideToolbarPlugin;
 const focusPlugin = createFocusPlugin();
 const resizeablePlugin = createResizeablePlugin();
 const blockDndPlugin = createBlockDndPlugin();
@@ -58,6 +61,7 @@ const plugins = [
     imagePlugin,
     inlineToolbarPlugin, 
     linkPlugin,
+    sideToolbarPlugin,
 ];
 
 const { InlineToolbar } = inlineToolbarPlugin;
@@ -144,6 +148,7 @@ state: State = {
         />
         <InlineToolbar />
         <AlignmentTool />
+        <SideToolbar />
       </div>;
     }
 }
