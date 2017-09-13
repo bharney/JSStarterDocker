@@ -20,7 +20,7 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: [ 'babel-loader?presets[]=es2015', 'awesome-typescript-loader?silent=true' ] },
+                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: [ 'babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-0', 'awesome-typescript-loader?silent=true' ] },
                 { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
                 { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
             ]
