@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const CompressionPlugin = require("compression-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
@@ -21,7 +20,9 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: ['babel-loader?presets[]=es2015', 'awesome-typescript-loader?silent=true'] },
+                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: [ 'babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-0', 'awesome-typescript-loader?silent=true' ] },
+                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
+                { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
             ]
         },
         plugins: [new CheckerPlugin()]
@@ -34,13 +35,6 @@ module.exports = (env) => {
         module: {
             rules: [
                 { test: /(\.css|\.scss|\.sass)$/, use: isDevBuild ? ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'] : ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'postcss-loader', 'sass-loader'] }) },
-                { test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader' },
-                { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
-                { test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
-                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
-                { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
-                { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
-                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
@@ -54,9 +48,10 @@ module.exports = (env) => {
                         includePaths: [path.resolve('ClientApp', 'scss')]
                     },
                     context: '/',
-                    postcss: () => [autoprefixer],
+                    postcss: () => [autoprefixer]
                 }
             }),
+            new ExtractTextPlugin('site.css'),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')
@@ -68,39 +63,8 @@ module.exports = (env) => {
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
             })
         ] : [
-            //Plugins that apply in production builds only
-            new ExtractTextPlugin('site.css'),
-            //new webpack.optimize.AggressiveMergingPlugin(),
-            //new webpack.optimize.UglifyJsPlugin({
-            //      mangle: true,
-            //      compress: {
-            //        warnings: false, // Suppress uglification warnings
-            //        pure_getters: true,
-            //        unsafe: true,
-            //        unsafe_comps: true,
-            //        screw_ie8: true
-            //      },
-            //      output: {
-            //        comments: false,
-            //      },
-            //      exclude: [/\.min\.js$/gi] // skip pre-minified libs
-            //})
-            //new HtmlWebpackPlugin({
-            //    minify: {
-            //        removeComments: true,
-            //        collapseWhitespace: true,
-            //        removeRedundantAttributes: true,
-            //        useShortDoctype: true,
-            //        removeEmptyAttributes: true,
-            //        removeStyleLinkTypeAttributes: true,
-            //        keepClosingSlash: true,
-            //        minifyJS: true,
-            //        minifyCSS: true,
-            //        minifyURLs: true
-            //    }
-            //}),
-            new webpack.optimize.UglifyJsPlugin(),
-            //new CompressionPlugin()
+            // Plugins that apply in production builds only
+            new MinifyPlugin()
         ])
     });
 
@@ -108,6 +72,17 @@ module.exports = (env) => {
     const serverBundleConfig = merge(sharedConfig(), {
         resolve: { mainFields: ['main'] },
         entry: { 'main-server': './ClientApp/boot-server.tsx' },
+        module: {
+            rules: [
+                { test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader' },
+                { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
+                { test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
+                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
+                { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
+                { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
+                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" }
+            ]
+        },
         plugins: [
             new webpack.DllReferencePlugin({
                 context: __dirname,
