@@ -55,11 +55,6 @@ export class NavMenu extends React.Component<{}, {}> {
                              Fetch Data
                             </NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={'/editor'} onClick={this.onUpdate} exact activeClassName='active'>
-                                Editor
-                            </NavLink>
-                        </li>
                     </ul>
                 </div>
             </nav>;

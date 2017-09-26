@@ -103,20 +103,6 @@ main {
     }
 }
 
-
-/* ------------------------ EDITOR -----------------------------*/
-.editor {
-    cursor: text;
-    padding: 16px;
-    border-radius: 2px;
-    margin-bottom: 2em;
-}
-
-.editor :global(.public-DraftEditor-content) {
-    min-height: 140px;
-}
-//End Editor */
-
 /*  ----------------------- FOOTER --------------------------- */
 
 footer {
