@@ -2,33 +2,28 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const merge = require('webpack-merge');
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
     const extractCSS = new ExtractTextPlugin('vendor.css');
 
     const sharedConfig = {
+        mode: isDevBuild ? 'development' : 'production',
         stats: { modules: false },
         resolve: { extensions: [ '.js' ] },
         module: {
             rules: [
-                { test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader' },
-                { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
-                { test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
-                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
-                { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
-                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" }
+                { test: /\.(png|woff|woff2|eot|ttf|svg)(\?.*$|$)/, use: 'url-loader?limit=100000' }
             ]
         },
         entry: {
             vendor: [
                 'jquery',
                 'bootstrap',
-                'bootstrap/dist/css/bootstrap.css',
-                'font-awesome/css/font-awesome.css',
+                'bootstrap/dist/css/bootstrap.min.css',
                 'domain-task',
-                'event-source-polyfill',
                 'history',
                 'react',
                 'react-dom',
@@ -36,16 +31,16 @@ module.exports = (env) => {
                 'react-redux',
                 'redux',
                 'redux-thunk',
-                'react-router-redux',
-            ],
+                'react-router-redux'
+            ]
         },
         output: {
             publicPath: '/dist/',
             filename: '[name].js',
-            library: '[name]_[hash]',
+            library: '[name]_[hash]'
         },
         plugins: [
-            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'], }),
+            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
@@ -57,17 +52,22 @@ module.exports = (env) => {
         output: { path: path.join(__dirname, 'wwwroot', 'dist') },
         module: {
             rules: [
-                { test: /\.css(\?|$)/, use: extractCSS.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) }
+                {
+                    test: /\.css(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader']
+                                                         : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader']
+                }
             ]
         },
         plugins: [
-            extractCSS,
+            new MiniCssExtractPlugin({
+                filename: '[name].css'
+            }),
             new webpack.DllPlugin({
                 path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
                 name: '[name]_[hash]'
             })
         ].concat(isDevBuild ? [] : [
-            new MinifyPlugin()
+            new UglifyJSPlugin()
         ])
     });
 
@@ -76,7 +76,7 @@ module.exports = (env) => {
         resolve: { mainFields: ['main'] },
         output: {
             path: path.join(__dirname, 'ClientApp', 'dist'),
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'commonjs2'
         },
         module: {
             rules: [

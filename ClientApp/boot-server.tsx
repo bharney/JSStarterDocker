@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { renderToString } from 'react-dom/server';
+import { renderToString, renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { replace } from 'react-router-redux';
 import { createMemoryHistory } from 'history';
@@ -23,7 +23,7 @@ export default createServerRenderer(params => {
                 <StaticRouter context={ routerContext } location={ params.location.path } children={ routes } />
             </Provider>
         );
-        renderToString(app);
+        renderToNodeStream(app);
 
         // If there's a redirection, just send this information back to the host application
         if (routerContext.url) {

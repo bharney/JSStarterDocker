@@ -1,21 +1,31 @@
 import * as React from 'react';
-import { NavMenu } from './NavMenu';
 import { SliderMenu } from './SliderMenu';
-import { Footer } from './Footer';
+import { NavContext } from './AppRoute';
+interface NavProps {
+    on: boolean;
+    handleOverlayToggle: (e) => void;
+}
 
 export class Layout extends React.Component<{}, {}> {
     public render() {
-        return <div>
-                    <NavMenu />
-                    <main className="container pad-top">
-                        <div id="slider" className="row row-offcanvas row-offcanvas-right">
-                            <div className="col-12 col-md-9">
+        return <NavContext.Consumer>
+            {({ on, handleOverlayToggle }: NavProps) => (
+                <React.Fragment>
+                    <main onClick={(e) => handleOverlayToggle(e)} className={`container ${on ? " overlay" : ""}`}>
+                        <div id="slider" className={`row row-offcanvas row-offcanvas-right content ${on ? " active" : ""}`}>
+                            <div className="col-12 col-md-12 col-lg-9">
                                 {this.props.children}
                             </div>
-                            <SliderMenu />
+                            <div id="sidebar" className="col-8 col-md-0 col-lg-3 sidebar-offcanvas">
+                                <div className="list-group">
+                                    <SliderMenu />
+                                </div>
+                            </div>
                         </div>
                     </main>
-                    <Footer />
-               </div>;
+                </React.Fragment>)}
+        </NavContext.Consumer>
     }
 }
+
+export default Layout;

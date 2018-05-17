@@ -11,6 +11,11 @@ import { ApplicationState }  from './store';
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 
+
+import fontawesome from '@fortawesome/fontawesome';
+import {faSpinner} from '@fortawesome/fontawesome-free-solid';
+fontawesome.library.add(faSpinner);
+
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();
 
@@ -21,7 +26,7 @@ const store = configureStore(history, initialState);
 function renderApp() {
     // This code starts up the React app when it runs in a browser. It sets up the routing configuration
     // and injects the app into a DOM element.
-    ReactDOM.render(
+    ReactDOM.hydrate(
         <AppContainer>
             <Provider store={ store }>
                 <ConnectedRouter history={ history } children={ routes } />

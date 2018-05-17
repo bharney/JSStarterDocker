@@ -1,3 +1,35 @@
 {
-
+  "env": {
+    "server": {
+      "presets": [
+        [
+          "env",
+          {
+            "useBuiltIns": "usage",
+            "targets": {
+              "browser": false
+            },
+            "modules": false
+          }
+        ]
+      ]
+    },
+    "client": {
+      "presets": [
+        [
+          "env",
+          {
+            "useBuiltIns": "usage",
+            "targets": {
+              "node": false
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "plugins": [
+    "syntax-dynamic-import",
+    "lodash"
+  ]
 }

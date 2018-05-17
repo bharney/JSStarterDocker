@@ -1,9 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 const merge = require('webpack-merge');
 const bundleOutputDir = './wwwroot/dist';
 
@@ -12,6 +12,7 @@ module.exports = (env) => {
 
     // Configuration in common to both client-side and server-side bundles
     const sharedConfig = () => ({
+        mode: isDevBuild ? 'development' : 'production',
         stats: { modules: false },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
@@ -20,12 +21,10 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: [ 'babel-loader?presets[]=es2015&presets[]=react&presets[]=stage-0', 'awesome-typescript-loader?silent=true' ] },
-                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
-                { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
+                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: ['babel-loader', 'ts-loader?silent=true'], exclude: /node_modules/ },
+                { test: /\.(jpg|jpeg|png|gif|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
             ]
-        },
-        plugins: [new CheckerPlugin()]
+        }
     });
 
     // Configuration for client-side bundle suitable for running in browsers
@@ -34,7 +33,10 @@ module.exports = (env) => {
         entry: { 'main-client': './ClientApp/boot-client.tsx' },
         module: {
             rules: [
-                { test: /(\.css|\.scss|\.sass)$/, use: isDevBuild ? ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'] : ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'postcss-loader', 'sass-loader'] }) },
+                {
+                    test: /\.scss$/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                        : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
+                }
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
@@ -51,7 +53,9 @@ module.exports = (env) => {
                     postcss: () => [autoprefixer]
                 }
             }),
-            new ExtractTextPlugin('site.css'),
+            new MiniCssExtractPlugin({
+                filename: '[name].css'
+            }),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')
@@ -64,7 +68,7 @@ module.exports = (env) => {
             })
         ] : [
             // Plugins that apply in production builds only
-            new MinifyPlugin()
+                new UglifyJSPlugin()
         ])
     });
 
@@ -74,13 +78,7 @@ module.exports = (env) => {
         entry: { 'main-server': './ClientApp/boot-server.tsx' },
         module: {
             rules: [
-                { test: /\.eot(\?v=\d+.\d+.\d+)?$/, loader: 'file-loader' },
-                { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff' },
-                { test: /\.[ot]tf(\?v=\d+.\d+.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=application/octet-stream' },
-                { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url-loader?limit=10000&mimetype=image/svg+xml' },
-                { test: /\.(jpe?g|png|gif)$/i, loader: 'file-loader?name=[name].[ext]' },
-                { test: /\.(woff|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/, loader: 'url-loader?limit=100000' },
-                { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" }
+                { test: /\.(jpg|png|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
             ]
         },
         plugins: [
