@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Route, RouteComponentProps } from 'react-router';
-import asyncComponent from './AsyncComponent';
 import * as ReactDOM from 'react-dom';
 import NavMenu from './NavMenu';
 import { ApplicationState } from '../store';
-import Footer from './Footer';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import asyncComponent from './asyncComponent';
+const AsyncFooter = asyncComponent({ loader: () => import(/* webpackChunkName: "Footer" */'./Footer') })
 
 type AppRouteProps = any
 
@@ -102,7 +100,7 @@ export class AppRoute extends React.Component<AppRouteProps, {}> {
                     <this.props.layout {...rest} {...props}>
                         <this.props.component {...props} />
                     </this.props.layout>
-                    <Footer />
+                    <AsyncFooter />
                 </ NavContext.Provider>
             </React.Fragment>
 
