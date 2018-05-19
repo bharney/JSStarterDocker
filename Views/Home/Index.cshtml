@@ -1,9 +1,17 @@
+
 @{
     ViewData["Title"] = "Home Page";
 }
+@section styles {
+    
+    <link href="~/dist/bundle.css" rel="stylesheet" asp-append-version="true">
+    
+}
 
-<div id="react-app" asp-prerender-module="ClientApp/dist/main-server">Loading...</div>
+<div id="react-app" asp-prerender-module="ClientApp/dist/serverBundle">Loading...</div>
 
 @section scripts {
-    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+    
+    <script src="~/dist/bundle.js" asp-append-version="true"></script>
+    
 }
