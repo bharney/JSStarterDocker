@@ -1,5 +1,4 @@
 import './styles/styles.scss';
-import 'bootstrap';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
@@ -8,13 +7,9 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState }  from './store';
+
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
-
-
-import fontawesome from '@fortawesome/fontawesome';
-import {faSpinner} from '@fortawesome/fontawesome-free-solid';
-fontawesome.library.add(faSpinner);
 
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();

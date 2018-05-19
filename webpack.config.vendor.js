@@ -25,13 +25,6 @@ module.exports = (env) => {
                 'bootstrap/dist/css/bootstrap.min.css',
                 'domain-task',
                 'history',
-                'react',
-                'react-dom',
-                'react-router-dom',
-                'react-redux',
-                'redux',
-                'redux-thunk',
-                'react-router-redux'
             ]
         },
         output: {

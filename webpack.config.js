@@ -6,6 +6,10 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const merge = require('webpack-merge');
 const bundleOutputDir = './wwwroot/dist';
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -54,21 +58,34 @@ module.exports = (env) => {
                 }
             }),
             new MiniCssExtractPlugin({
-                filename: '[name].css'
+                filename: '[name].css',
+                chunkFilename: "[id].css"
             }),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')
-            })
+            }),
+            new LodashModuleReplacementPlugin({
+                collections: true,
+                coercions: true
+            }),
+            new WebpackBundleAnalyzer()
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map', // Remove this line if you prefer inline source maps
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
             })
+
         ] : [
             // Plugins that apply in production builds only
-                new UglifyJSPlugin()
+                new ImageminPlugin({
+                                    pngquant: {
+                                        quality: '80-85'
+                                    }
+                }),
+                new UglifyJSPlugin(),
+                new OptimizeCSSAssetsPlugin({})
         ])
     });
 

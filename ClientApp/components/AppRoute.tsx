@@ -5,6 +5,8 @@ import * as ReactDOM from 'react-dom';
 import NavMenu from './NavMenu';
 import { ApplicationState } from '../store';
 import Footer from './Footer';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 type AppRouteProps = any
 
