@@ -10,7 +10,9 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState }  from './store';
-
+import Loadable from '@7rulnik/react-loadable';
+//import { config } from '@fortawesome/fontawesome-svg-core';
+//config.autoAddCss = false;
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 
@@ -24,14 +26,16 @@ const store = configureStore(history, initialState);
 function renderApp() {
     // This code starts up the React app when it runs in a browser. It sets up the routing configuration
     // and injects the app into a DOM element.
-    ReactDOM.hydrate(
-        <AppContainer>
-            <Provider store={ store }>
-                <ConnectedRouter history={ history } children={ routes } />
-            </Provider>
-        </AppContainer>,
-        document.getElementById('react-app')
-    );
+Loadable.preloadReady().then(() => {
+        ReactDOM.hydrate(
+            <AppContainer>
+                <Provider store={ store }>
+                    <ConnectedRouter history={ history } children={ routes } />
+                </Provider>
+            </AppContainer>,
+            document.getElementById('react-app')
+        );
+    });
 }
 
 renderApp();

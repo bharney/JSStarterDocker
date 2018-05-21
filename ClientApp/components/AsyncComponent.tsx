@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, RouteProps } from 'react-router';
-import Loadable from 'react-loadable';
+import Loadable from '@7rulnik/react-loadable';
 
 const loading = () => {
     return <div></div>

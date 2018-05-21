@@ -11,6 +11,7 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactLoadablePlugin = require('@7rulnik/react-loadable/webpack').ReactLoadablePlugin;
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -101,16 +102,17 @@ module.exports = (env) => {
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
             }),
+            new LodashModuleReplacementPlugin({
+                collections: true,
+                coercions: true
+            }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map', // Remove this line if you prefer inline source maps
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
             }),
-            new LodashModuleReplacementPlugin({
-                collections: true,
-                coercions: true
-            }),
+            
         ] : [
                 // Plugins that apply in production builds only
                 new ImageminPlugin({
@@ -173,6 +175,9 @@ module.exports = (env) => {
             new LodashModuleReplacementPlugin({
                 collections: true,
                 coercions: true
+            }),
+            new ReactLoadablePlugin({
+                filename:  path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
             }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only

@@ -1,12 +1,15 @@
 import * as React from 'react';
 
+import { faHeart } from '@fortawesome/free-solid-svg-icons/faHeart';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+
 export default class Footer extends React.Component<{}, {}> {
     public render() {
         return <footer className="container text-center">
                     <hr />
                     <div className="row">
                         <div className="col">
-                            <p><strong>Made with <i className="fa fa-heart fa-lg"></i> by Brian Harney</strong></p>
+                            <p><strong>Made with <FontAwesomeIcon icon={faHeart} size="1x" /> by Brian Harney</strong></p>
                         </div>
                     </div>
                 </footer>;
