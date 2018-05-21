@@ -7,9 +7,13 @@ import { createMemoryHistory } from 'history';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import { routes } from './routes';
 import configureStore from './configureStore';
+import { getBundles } from '@7rulnik/react-loadable/webpack'
+import Loadable from '@7rulnik/react-loadable';
+const stats = require('./dist/react-loadable.json');
 
 export default createServerRenderer(params => {
     return new Promise<RenderResult>((resolve, reject) => {
+        let modules = [];
         // Prepare Redux store with in-memory history, and dispatch a navigation event
         // corresponding to the incoming URL
         const store = configureStore(createMemoryHistory());
@@ -19,12 +23,14 @@ export default createServerRenderer(params => {
         // cause any async tasks (e.g., data access) to begin
         const routerContext: any = {};
         const app = (
-            <Provider store={ store }>
-                <StaticRouter context={ routerContext } location={ params.location.path } children={ routes } />
-            </Provider>
+            <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+                <Provider store={ store }>
+                    <StaticRouter context={ routerContext } location={ params.location.path } children={ routes } />
+                </Provider>
+            </Loadable.Capture>
         );
         renderToNodeStream(app);
-
+        let bundles = getBundles(stats, modules);
         // If there's a redirection, just send this information back to the host application
         if (routerContext.url) {
             resolve({ redirectUrl: routerContext.url });

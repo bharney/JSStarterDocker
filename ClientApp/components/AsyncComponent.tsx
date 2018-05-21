@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, RouteProps } from 'react-router';
-import Loadable from 'react-loadable';
-
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import Loadable from '@7rulnik/react-loadable';
 
 const loading = () => {
-    return <div><FontAwesomeIcon icon="spinner" spin /></div>
+    return <div></div>
 };
 
 const asyncComponent = child => Loadable({
