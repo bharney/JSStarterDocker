@@ -11,6 +11,26 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+<<<<<<< Updated upstream
+=======
+const ReactLoadablePlugin = require('@7rulnik/react-loadable/webpack').ReactLoadablePlugin;
+const CssBlocks = require("@css-blocks/jsx");
+const CssBlocksPlugin = require("@css-blocks/webpack").CssBlocksPlugin;
+const jsxCompilationOptions = {
+    compilationOptions: {},
+    optimization: {
+        rewriteIdents: true,
+        mergeDeclarations: true,
+        removeUnusedStyles: true,
+        conflictResolution: true,
+        enabled: true,
+    },
+    aliases: {}
+};
+
+const CssBlockRewriter = new CssBlocks.Rewriter();
+const CssBlockAnalyzer = new CssBlocks.Analyzer('src/index.js', jsxCompilationOptions);
+>>>>>>> Stashed changes
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -27,37 +47,51 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.ts(x?)$/, include: /ClientApp/, loaders: ['babel-loader', 'ts-loader?silent=true'], exclude: /node_modules/ },
+                {
+                    test: /\.ts(x?)$/,
+                    include: /ClientApp/,
+                    exclude: /node_modules/,
+                    loaders: ['babel-loader', 'ts-loader?silent=true',
+                    {
+                        loader: require.resolve('babel-loader'),
+                        options: {
+                            plugins: [
+                                require("@css-blocks/jsx/dist/src/transformer/babel").makePlugin({ rewriter: CssBlockRewriter }),
+                            ],
+                            cacheDirectory: false,
+                            compact: true
+                        },
+                    },
+                    {
+                        loader: require.resolve("@css-blocks/webpack/dist/src/loader"),
+                        options: {
+                            analyzer: CssBlockAnalyzer,
+                            rewriter: CssBlockRewriter
+                        }
+                    }],
+                },
                 { test: /\.(jpg|jpeg|png|gif|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
             ]
-        }
+}
     });
 
-    // Configuration for client-side bundle suitable for running in browsers
-    const clientBundleOutputDir = './wwwroot/dist';
-    const clientBundleConfig = merge(sharedConfig(), {
-        entry: {
-            bundle: './ClientApp/boot-client.tsx',
-        },
-        optimization: {
-            splitChunks: {
-                cacheGroups: {
-                    commons: {
-                        name: "commons",
-                        chunks: "initial",
-                        minChunks: 2
-                    }
+// Configuration for client-side bundle suitable for running in browsers
+const clientBundleOutputDir = './wwwroot/dist';
+const clientBundleConfig = merge(sharedConfig(), {
+    entry: {
+        bundle: './ClientApp/boot-client.tsx',
+    },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    name: "commons",
+                    chunks: "initial",
+                    minChunks: 2
                 }
-            },
-            minimizer: [
-                new UglifyJSPlugin({
-                    cache: true,
-                    parallel: true,
-                    sourceMap: false // set to true if you want JS source maps
-                }),
-                new OptimizeCSSAssetsPlugin({})
-            ]
+            }
         },
+<<<<<<< Updated upstream
         module: {
             rules: [
                 {
@@ -122,58 +156,105 @@ module.exports = (env) => {
                 new OptimizeCSSAssetsPlugin({}),
             ])
     });
+=======
+        minimizer: [
+            new UglifyJSPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: false // set to true if you want JS source maps
+            }),
+            new OptimizeCSSAssetsPlugin({})
+        ]
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                    : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
+            }
+        ]
+    },
+    output: { path: path.join(__dirname, clientBundleOutputDir) },
+    plugins: [
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false,
+            noInfo: true,
+            options: {
+                sassLoader: {
+                    includePaths: [path.resolve('ClientApp', 'scss')]
+                },
+                context: '/',
+                postcss: () => [autoprefixer]
+            }
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: "[id].css"
+        }),
+        new HtmlWebpackPlugin({
+            template: "Views/Shared/_LayoutTemplate.cshtml",
+            filename: "../../Views/Shared/_Layout.cshtml",
+            inject: false,
+            excludeChunks: ['bundle']
+        }),
+        new HtmlWebpackPlugin({
+            template: "Views/Home/IndexTemplate.cshtml",
+            filename: "../../Views/Home/Index.cshtml",
+            inject: false,
+            excludeChunks: ['commons']
+        }),
+        new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
+        new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
+        }),
+        new LodashModuleReplacementPlugin({
+            collections: true,
+            coercions: true
+        }),
+        new CssBlocksPlugin({
+            name: "css-blocks",
+            outputCssFile: "my-output-file.css",
+            analyzer: CssBlockAnalyzer,
+            compilationOptions: jsxCompilationOptions.compilationOptions,
+            optimization: jsxCompilationOptions.optimization
+        }),
+    ].concat(isDevBuild ? [
+        // Plugins that apply in development builds only
+        new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map', // Remove this line if you prefer inline source maps
+            moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
+        }),
+>>>>>>> Stashed changes
 
-    // Configuration for server-side (prerendering) bundle suitable for running in Node
-    const serverBundleConfig = merge(sharedConfig(), {
-        resolve: { mainFields: ['main'] },
-        entry: {
-            serverbundle: './ClientApp/boot-server.tsx',
-            vendor: [ 'aspnet-prerendering', 'react-dom/server']
-        },
-        optimization: {
-            minimizer: [
-                new UglifyJSPlugin({
-                    cache: true,
-                    parallel: true,
-                    sourceMap: false // set to true if you want JS source maps
-                }),
-                new OptimizeCSSAssetsPlugin({})
-            ]
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
-                        : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
-                }
-            ]
-        },
-        plugins: [
-            new webpack.LoaderOptionsPlugin({
-                minimize: true,
-                debug: false,
-                noInfo: true,
-                options: {
-                    sassLoader: {
-                        includePaths: [path.resolve('ClientApp', 'scss')]
-                    },
-                    context: '/',
-                    postcss: () => [autoprefixer]
+    ] : [
+            // Plugins that apply in production builds only
+            new ImageminPlugin({
+                pngquant: {
+                    quality: '80-85'
                 }
             }),
-            new MiniCssExtractPlugin({
-                filename: '[name].css',
-                chunkFilename: "[id].css"
+            new UglifyJSPlugin(),
+            new OptimizeCSSAssetsPlugin({}),
+        ])
+});
+
+// Configuration for server-side (prerendering) bundle suitable for running in Node
+const serverBundleConfig = merge(sharedConfig(), {
+    resolve: { mainFields: ['main'] },
+    entry: {
+        serverbundle: './ClientApp/boot-server.tsx',
+        vendor: ['aspnet-prerendering', 'react-dom/server']
+    },
+    optimization: {
+        minimizer: [
+            new UglifyJSPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: false // set to true if you want JS source maps
             }),
-            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
-            new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
-            }),
-            new LodashModuleReplacementPlugin({
-                collections: true,
-                coercions: true
-            }),
+<<<<<<< Updated upstream
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
             //new WebpackBundleAnalyzer()
@@ -194,6 +275,68 @@ module.exports = (env) => {
         target: 'node',
         devtool: 'inline-source-map'
     });
+=======
+            new OptimizeCSSAssetsPlugin({})
+        ]
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                    : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
+            }
+        ]
+    },
+    plugins: [
+        new webpack.LoaderOptionsPlugin({
+            minimize: true,
+            debug: false,
+            noInfo: true,
+            options: {
+                sassLoader: {
+                    includePaths: [path.resolve('ClientApp', 'scss')]
+                },
+                context: '/',
+                postcss: () => [autoprefixer]
+            }
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: "[id].css"
+        }),
+        new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
+        new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
+        }),
+        new LodashModuleReplacementPlugin({
+            collections: true,
+            coercions: true
+        }),
+        new ReactLoadablePlugin({
+            filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
+        })
+    ].concat(isDevBuild ? [
+        // Plugins that apply in development builds only
+        //new WebpackBundleAnalyzer()
+    ] : [
+            // Plugins that apply in production builds only
+            new ImageminPlugin({
+                pngquant: {
+                    quality: '80-85'
+                }
+            }),
+            new UglifyJSPlugin(),
+            new OptimizeCSSAssetsPlugin({}),
+        ]),
+    output: {
+        libraryTarget: 'commonjs2',
+        path: path.join(__dirname, 'ClientApp', 'dist')
+    },
+    target: 'node',
+    devtool: 'inline-source-map'
+});
+>>>>>>> Stashed changes
 
-    return [clientBundleConfig, serverBundleConfig];
+return [clientBundleConfig, serverBundleConfig];
 };
