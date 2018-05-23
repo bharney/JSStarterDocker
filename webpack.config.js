@@ -39,6 +39,20 @@ module.exports = (env) => {
     const clientBundleConfig = merge(sharedConfig(), {
         entry: {
             bundle: './ClientApp/boot-client.tsx',
+            vendor: [
+                'jquery',
+                'bootstrap',
+                'bootstrap/dist/css/bootstrap.min.css',
+                'domain-task',
+                'history',
+                'react',
+                'react-dom',
+                'react-router-dom',
+                'react-redux',
+                'redux',
+                'redux-thunk',
+                'react-router-redux'
+            ]
         },
         optimization: {
             splitChunks: {
@@ -95,7 +109,7 @@ module.exports = (env) => {
                 template: "Views/Home/IndexTemplate.cshtml",
                 filename: "../../Views/Home/Index.cshtml",
                 inject: false,
-                excludeChunks: ['commons']
+                excludeChunks: ['vendor']
             }),
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
@@ -112,7 +126,7 @@ module.exports = (env) => {
                 filename: '[file].map', // Remove this line if you prefer inline source maps
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
             }),
-            
+            new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
                 new ImageminPlugin({
@@ -130,7 +144,7 @@ module.exports = (env) => {
         resolve: { mainFields: ['main'] },
         entry: {
             serverbundle: './ClientApp/boot-server.tsx',
-            vendor: [ 'aspnet-prerendering', 'react-dom/server']
+            vendor: ['aspnet-prerendering', 'react-dom/server']
         },
         optimization: {
             minimizer: [
@@ -177,7 +191,7 @@ module.exports = (env) => {
                 coercions: true
             }),
             new ReactLoadablePlugin({
-                filename:  path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
+                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
             }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only

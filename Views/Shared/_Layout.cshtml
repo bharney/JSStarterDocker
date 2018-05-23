@@ -7,12 +7,18 @@
     <title>Starter Pack</title>
     <base href="~/" />
     
+    <link href="~/dist/vendor.css" rel="stylesheet" asp-append-version="true">
+    
 
     @RenderSection("styles", required: false)
 </head>
 <body>
     @RenderBody()
 
+    
+    <script src="~/dist/commons.8095c75fc457960a53b1.js" asp-append-version="true"></script>
+    
+    <script src="~/dist/vendor.js" asp-append-version="true"></script>
     
     @RenderSection("scripts", required: false)
 </body>
