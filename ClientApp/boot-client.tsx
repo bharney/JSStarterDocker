@@ -1,6 +1,3 @@
-import 'jquery';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/styles.scss';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -11,8 +8,6 @@ import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState }  from './store';
 import Loadable from '@7rulnik/react-loadable';
-//import { config } from '@fortawesome/fontawesome-svg-core';
-//config.autoAddCss = false;
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 

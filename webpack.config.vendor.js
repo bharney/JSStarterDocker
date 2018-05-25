@@ -24,7 +24,8 @@ module.exports = (env) => {
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.min.css',
                 'domain-task',
-                'history',
+                'event-source-polyfill',
+                'history'
             ]
         },
         output: {

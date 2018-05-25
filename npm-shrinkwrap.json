@@ -4809,6 +4809,12 @@
       "integrity": "sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=",
       "dev": true
     },
+    "event-source-polyfill": {
+      "version": "0.0.9",
+      "resolved": "https://registry.npmjs.org/event-source-polyfill/-/event-source-polyfill-0.0.9.tgz",
+      "integrity": "sha1-GMYgXRcKsJ24if/OqjPw5JPxSlA=",
+      "dev": true
+    },
     "events": {
       "version": "1.1.1",
       "resolved": "https://registry.npmjs.org/events/-/events-1.1.1.tgz",
@@ -11085,9 +11091,9 @@
       }
     },
     "popper.js": {
-      "version": "1.12.3",
-      "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.12.3.tgz",
-      "integrity": "sha1-5GqZxS504xBBHfUF2CC2G9vn6u4=",
+      "version": "1.14.3",
+      "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.14.3.tgz",
+      "integrity": "sha1-FDj5jQRqz3tNeM1QK/QYrGTU8JU=",
       "dev": true
     },
     "posix-character-classes": {

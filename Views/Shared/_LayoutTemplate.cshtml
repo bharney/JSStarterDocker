@@ -6,15 +6,14 @@
     <meta name="description" content="Starter Pack for React with ASP.NET Core" />
     <title>Starter Pack</title>
     <base href="~/" />
+
     <% for (var css in htmlWebpackPlugin.files.css) { %>
     <link href="~<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet" asp-append-version="true">
     <% } %>
-
     @RenderSection("styles", required: false)
 </head>
 <body>
     @RenderBody()
-
     <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
     <script src="~<%= htmlWebpackPlugin.files.chunks[chunk].entry %>" asp-append-version="true"></script>
     <% } %>

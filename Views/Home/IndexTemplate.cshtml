@@ -8,10 +8,10 @@
     </style>
 }
 
-<div id="react-app" asp-prerender-module="ClientApp/dist/serverBundle">Loading...</div>
+<div id="react-app" asp-prerender-module="ClientApp/dist/serverBundle"><div data-reactroot=""><nav id="custom-nav" class="navbar navbar-expand-md fixed-top navbar-dark bg-dark"><strong><a class="navbar-brand" href="/">Home</a></strong><button class="navbar-toggler navbar-toggler-right" type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarsExampleDefault"><ul class="navbar-nav mr-auto"><li class="nav-item"><a class="nav-link" href="/counter">Counter</a></li><li class="nav-item"><a class="nav-link" href="/fetchdata">Fetch Data</a></li></ul></div></nav><main class="container"></main><footer class="container text-center"><hr><div class="row"><div class="col"><p><strong>Made with <svg aria-hidden="true" data-prefix="fas" data-icon="heart" class="svg-inline--fa fa-heart fa-w-16 fa-1x " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"></path></svg> by Brian Harney</strong></p></div></div></footer></div></div>
 
 @section scripts {
-    <% for (var css in htmlWebpackPlugin.files.css) { %>
+        <% for (var css in htmlWebpackPlugin.files.css) { %>
     <link href="~<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet" asp-append-version="true">
     <% } %>
     <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>

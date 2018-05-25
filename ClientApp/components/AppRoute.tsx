@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import NavMenu from './NavMenu';
 import { ApplicationState } from '../store';
 import asyncComponent from './asyncComponent';
-const AsyncFooter = asyncComponent({ loader: () => import(/* webpackChunkName: "Footer" */'./Footer') })
+import Footer from './Footer';
 
 type AppRouteProps = any
 
@@ -100,7 +100,7 @@ export class AppRoute extends React.Component<AppRouteProps, {}> {
                     <this.props.layout {...rest} {...props}>
                         <this.props.component {...props} />
                     </this.props.layout>
-                    <AsyncFooter />
+                    <Footer />
                 </ NavContext.Provider>
             </React.Fragment>
 
