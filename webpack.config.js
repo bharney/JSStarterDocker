@@ -12,7 +12,7 @@ const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerP
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactLoadablePlugin = require('@7rulnik/react-loadable/webpack').ReactLoadablePlugin;
-
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
 
@@ -53,15 +53,15 @@ module.exports = (env) => {
             ]
         },
         optimization: {
-            splitChunks: {
-                cacheGroups: {
-                    commons: {
-                        name: "commons",
-                        chunks: "initial",
-                        minChunks: 2
-                    }
-                }
-            },
+            //splitChunks: {
+            //    cacheGroups: {
+            //        commons: {
+            //            name: "commons",
+            //            chunks: "initial",
+            //            minChunks: 2
+            //        }
+            //    }
+            //},
             minimizer: [
                 new UglifyJSPlugin({
                     cache: true,
@@ -81,6 +81,10 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
+            //new CleanWebpackPlugin([
+            //    path.join(__dirname, clientBundleOutputDir, '*'),
+            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
+            //]),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
@@ -98,18 +102,11 @@ module.exports = (env) => {
                 chunkFilename: "[id].css"
             }),
             new HtmlWebpackPlugin({
-                template: "Views/Shared/_LayoutTemplate.cshtml",
-                filename: "../../Views/Shared/_Layout.cshtml",
-                inject: false,
-                excludeChunks: ['vendor', 'commons', 'bundle'],
-            }),
-            new HtmlWebpackPlugin({
                 template: "Views/Home/IndexTemplate.cshtml",
                 filename: "../../Views/Home/Index.cshtml",
                 inject: false,
-                excludeChunks: ['critical'],
                 chunksSortMode: 'manual',
-                chunks: ['vendor','commons', 'bundle']
+                chunks: ['critical','vendor', 'bundle']
             }),
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
@@ -119,6 +116,9 @@ module.exports = (env) => {
             new LodashModuleReplacementPlugin({
                 collections: true,
                 coercions: true
+            }),
+            new ReactLoadablePlugin({
+                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
             }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
@@ -135,7 +135,7 @@ module.exports = (env) => {
                     }
                 }),
                 new UglifyJSPlugin(),
-                new OptimizeCSSAssetsPlugin({}),
+                new OptimizeCSSAssetsPlugin({}),               
             ])
     });
 
@@ -189,9 +189,6 @@ module.exports = (env) => {
             new LodashModuleReplacementPlugin({
                 collections: true,
                 coercions: true
-            }),
-            new ReactLoadablePlugin({
-                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
             }),
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only

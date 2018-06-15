@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SliderMenu } from './SliderMenu';
-import { NavContext } from './AppRoute';
+import { NavContext } from '../App';
 interface NavProps {
     on: boolean;
     handleOverlayToggle: (e) => void;
