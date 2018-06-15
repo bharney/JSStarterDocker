@@ -1,19 +1,53 @@
 import * as React from 'react';
-import { Layout } from './components/Layout';
-import { Switch } from 'react-router-dom';
-import AppRoute from './components/AppRoute';
-import asyncRoute from './components/AsyncRoute';
-import asyncComponent from './components/asyncComponent';
-const AsyncAppRoute = asyncComponent({ loader: () => import(/* webpackChunkName: "AppRoute" */'./components/AppRoute') })
-const AsyncHome = asyncRoute({ loader: () => import(/* webpackChunkName: "Home" */'./components/Home') })
-const AsyncLayout = asyncComponent({ loader: () => import(/* webpackChunkName: "Layout" */'./components/Layout')});
-const AsyncCounter = asyncRoute({ loader: () => import(/* webpackChunkName: "Counter" */'./components/Counter') })
-const AsyncFetchData = asyncRoute({ loader: () => import(/* webpackChunkName: "FetchData" */'./components/FetchData') })
+import { actionCreators } from './store/WeatherForecasts';
+import Loadable from '@7rulnik/react-loadable';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-export const routes = <div>
-    <Switch>
-        <AppRoute exact path='/' component={AsyncHome} layout={AsyncLayout} />
-        <AppRoute path='/counter' component={AsyncCounter} layout={AsyncLayout} />
-        <AppRoute path='/fetchdata/:startDateIndex?' component={AsyncFetchData} layout={AsyncLayout} />
-    </Switch>
-</div>;
+const loading = () => {
+    return <div><FontAwesomeIcon icon={faSpinner} spin size="2x" /></div>
+};
+
+const AsyncHome = Loadable({
+    loader: () => import(/* webpackChunkName: "Home" */'./components/Home'),
+    modules: ['./components/Home'],
+    webpack: () => [require.resolveWeak('./components/Home')],
+    loading: loading,
+});
+
+
+const AsyncCounter = Loadable({
+    loader: () => import(/* webpackChunkName: "Counter" */'./components/Counter'),
+    modules: ['./components/Counter'],
+    webpack: () => [require.resolveWeak('./components/Counter')],
+    loading: loading,
+});
+
+
+const AsyncFetchData = Loadable({
+    loader: () => import(/* webpackChunkName: "FetchData" */'./components/FetchData'),
+    modules: ['./components/FetchData'],
+    webpack: () => [require.resolveWeak('./components/FetchData')],
+    loading: loading,
+});
+
+const routes = [
+    {
+        path: '/',
+        exact: true,
+        component: AsyncHome,
+    },
+    {
+        path: '/counter',
+        exact: false,
+        component: AsyncCounter,
+    },
+    {
+        path: '/fetchdata/:startDateIndex?',
+        component: AsyncFetchData,
+        exact: false,
+        fetchInitialData: (path = '') => actionCreators.requestWeatherForecasts(0)
+    }
+]
+
+export default routes

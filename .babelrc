@@ -7,7 +7,7 @@
           {
             "useBuiltIns": "usage",
             "targets": {
-              "browser": false
+              "browsers": [ "last 2 versions", "ie >= 11" ]
             },
             "modules": false
           }
@@ -21,7 +21,7 @@
           {
             "useBuiltIns": "usage",
             "targets": {
-              "node": false
+              "browsers": [ "last 2 versions", "ie >= 11" ]
             }
           }
         ]

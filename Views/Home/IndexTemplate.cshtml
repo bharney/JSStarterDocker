@@ -1,20 +1,36 @@
-
+@using Newtonsoft.Json;
+@using StarterKit.Views.Extensions
 @{
-    ViewData["Title"] = "Home Page";
+    var Styles = new List<string>();
+    var Scripts = new List<string>();
 }
-@section styles {
+
+<% for (var css in htmlWebpackPlugin.files.css) { %>
+@if (!string.IsNullOrEmpty("<%= htmlWebpackPlugin.files.css[css] %>"))
+{
+    var stylesVersion = IRazorPageExtensions.AddFileVersionToPath(this,"<%= htmlWebpackPlugin.files.css[css] %>");
+    Styles.Add(stylesVersion);
+}
+<% } %>
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+@if (!string.IsNullOrEmpty("<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"))
+{
+    var fileversion = IRazorPageExtensions.AddFileVersionToPath(this, "<%= htmlWebpackPlugin.files.chunks[chunk].entry %>");
+    Scripts.Add(fileversion);
+}
+<% } %>
+<html lang="en" asp-prerender-module="ClientApp/dist/serverBundle" asp-prerender-data="@JsonConvert.SerializeObject(new { Styles, Scripts })">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Starter Pack for React with ASP.NET Core" />
+    <title>Starter Pack</title>
     <style>
     html,body{overflow-x:hidden}body{padding-top:70px}#custom-nav{padding-top:1em;padding-bottom:1em;opacity:1;box-shadow:none;z-index:999;box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);-webkit-font-smoothing:antialiased}main{padding-top:3%}@@media screen and (max-width:767px){.row-offcanvas{position:relative}.row-offcanvas-right{right:0}.row-offcanvas-right .sidebar-offcanvas{right:-100%}.sidebar-offcanvas{position:absolute;top:0;width:50%}}
     </style>
-}
+</head>
+<body>
+    <div id="react-app"><div data-reactroot=""><nav id="custom-nav" class="navbar navbar-expand-md fixed-top navbar-dark bg-dark"><strong><a class="navbar-brand" href="/">Home</a></strong><button class="navbar-toggler navbar-toggler-right" type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarsExampleDefault"><ul class="navbar-nav mr-auto"><li class="nav-item"><a class="nav-link" href="/counter">Counter</a></li><li class="nav-item"><a class="nav-link" href="/fetchdata">Fetch Data</a></li></ul></div></nav><main class="container"></main><footer class="container text-center"><hr><div class="row"><div class="col"><p><strong>Made with <svg aria-hidden="true" data-prefix="fas" data-icon="heart" class="svg-inline--fa fa-heart fa-w-16 fa-1x " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"></path></svg> by Brian Harney</strong></p></div></div></footer></div></div>
+</body>
+</html>
 
-<div id="react-app" asp-prerender-module="ClientApp/dist/serverBundle"><div data-reactroot=""><nav id="custom-nav" class="navbar navbar-expand-md fixed-top navbar-dark bg-dark"><strong><a class="navbar-brand" href="/">Home</a></strong><button class="navbar-toggler navbar-toggler-right" type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarsExampleDefault"><ul class="navbar-nav mr-auto"><li class="nav-item"><a class="nav-link" href="/counter">Counter</a></li><li class="nav-item"><a class="nav-link" href="/fetchdata">Fetch Data</a></li></ul></div></nav><main class="container"></main><footer class="container text-center"><hr><div class="row"><div class="col"><p><strong>Made with <svg aria-hidden="true" data-prefix="fas" data-icon="heart" class="svg-inline--fa fa-heart fa-w-16 fa-1x " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"></path></svg> by Brian Harney</strong></p></div></div></footer></div></div>
-
-@section scripts {
-        <% for (var css in htmlWebpackPlugin.files.css) { %>
-    <link href="~<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet" asp-append-version="true">
-    <% } %>
-    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-    <script src="~<%= htmlWebpackPlugin.files.chunks[chunk].entry %>" asp-append-version="true"></script>
-    <% } %>
-}

@@ -3,6 +3,8 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as WeatherForecastsState from '../store/WeatherForecasts';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 // At runtime, Redux will merge together...
 type WeatherForecastProps =
@@ -62,7 +64,7 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
         return <p className='clearfix text-center'>
             <Link className='btn btn-default pull-left' to={ `/fetchdata/${ prevStartDateIndex }` }>Previous</Link>
             <Link className='btn btn-default pull-right' to={ `/fetchdata/${ nextStartDateIndex }` }>Next</Link>
-            { this.props.isLoading ? <span>Loading...</span> : [] }
+            {this.props.isLoading ? <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" icon={faSpinner} spin size="2x" /> : [] }
         </p>;
     }
 }

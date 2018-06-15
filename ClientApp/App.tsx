@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { Route, RouteComponentProps } from 'react-router';
+import { Route, RouteComponentProps, Switch } from 'react-router';
 import * as ReactDOM from 'react-dom';
-import NavMenu from './NavMenu';
-import { ApplicationState } from '../store';
-import Footer from './Footer';
+import NavMenu from './components/NavMenu';
+import { ApplicationState } from './store';
+import Footer from './components/Footer';
+import routes from './routes'
+import * as RoutesModule from './routes';
+import { Layout } from './components/Layout';
+import NotFound from './components/NotFound';
+import { hot } from 'react-hot-loader';
 
-type AppRouteProps = any
+type AppProps = any
 
 interface On {
     on: boolean;
@@ -14,7 +19,7 @@ export const NavContext = React.createContext({ on: false, toggle: () => { }, on
 
 type NavMenuProps = ApplicationState
     & RouteComponentProps<{}>;
-export class AppRoute extends React.Component<AppRouteProps, {}> {
+export class App extends React.Component<AppProps, {}> {
     state = { on: false }
 
     componentDidMount() {
@@ -38,7 +43,7 @@ export class AppRoute extends React.Component<AppRouteProps, {}> {
         }
     }
 
-    toggleSlider = () =>
+    toggle = () => {
         this.setState(
             ({ on }: On) => ({ on: !on }),
             () => {
@@ -58,6 +63,7 @@ export class AppRoute extends React.Component<AppRouteProps, {}> {
                 }
             },
         )
+    }
     onUpdate = () => {
         this.setState(
             ({ on }: On) => ({ on: false }),
@@ -86,25 +92,29 @@ export class AppRoute extends React.Component<AppRouteProps, {}> {
         }
     }
     render() {
-        const { component: Component, layout: Layout, ...rest } = this.props;
-        return <Route {...rest} render={props => (
-            <React.Fragment>
-                <NavContext.Provider value={{
-                    on: this.state.on,
-                    toggle: this.toggleSlider,
-                    onUpdate: this.onUpdate,
-                    handleOverlayToggle: this.handleOverlayToggle
-                }}>
-                    <NavMenu {...props as NavMenuProps} />
-                    <this.props.layout {...rest} {...props}>
-                        <this.props.component {...props} />
-                    </this.props.layout>
-                    <Footer />
-                </ NavContext.Provider>
-            </React.Fragment>
-
-        )} />
+        return <React.Fragment>
+            <NavContext.Provider value={{
+                on: this.state.on,
+                toggle: this.toggle,
+                onUpdate: this.onUpdate,
+                handleOverlayToggle: this.handleOverlayToggle
+            }}>
+                <NavMenu {...this.props as NavMenuProps} />
+                <Switch>
+                    {routes.map(({ path, exact, component: Component, ...rest }) => (
+                        <Route key={path} path={path} exact={exact} render={(props) => (
+                            <Layout {...rest} {...props}>
+                                <Component {...props} />
+                            </Layout>
+                        )} />
+                    ))}
+                    <Route render={(props) => <NotFound {...props} />} />
+                </Switch>
+                <Footer />
+            </ NavContext.Provider>
+        </React.Fragment>
     }
 }
-export default AppRoute;
+
+export default App;
 
