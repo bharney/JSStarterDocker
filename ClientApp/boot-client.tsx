@@ -8,8 +8,8 @@ import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState } from './store';
 import Loadable from '@7rulnik/react-loadable';
-import App from './App';
-import routes from './routes';
+import * as RoutesModule from './routes';
+let routes = RoutesModule.routes;
 
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();
@@ -23,15 +23,13 @@ function renderApp() {
     // This code starts up the React app when it runs in a browser. It sets up the routing configuration
     // and injects the app into a DOM element.
     Loadable.preloadReady().then(() => {
-    ReactDOM.hydrate(
-        <AppContainer>
-            <Provider store={store}>
-                <ConnectedRouter history={history}>
-                    <App />
-                </ConnectedRouter>
-            </Provider>
-        </AppContainer>,
-        document.getElementById('react-app')
+        ReactDOM.hydrate(
+            <AppContainer>
+                <Provider store={store}>
+                    <ConnectedRouter history={history} children={routes} />
+                </Provider>
+            </AppContainer>,
+            document.getElementById('react-app')
         );
     });
 }
@@ -41,6 +39,7 @@ renderApp();
 // Allow Hot Module Replacement
 if (module.hot) {
     module.hot.accept('./routes', () => {
+        routes = require<typeof RoutesModule>('./routes').routes;
         renderApp();
     });
 }

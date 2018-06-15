@@ -4,7 +4,6 @@ import * as ReactDOM from 'react-dom';
 import NavMenu from './components/NavMenu';
 import { ApplicationState } from './store';
 import Footer from './components/Footer';
-import routes from './routes'
 import * as RoutesModule from './routes';
 import { Layout } from './components/Layout';
 import NotFound from './components/NotFound';
@@ -92,27 +91,23 @@ export class App extends React.Component<AppProps, {}> {
         }
     }
     render() {
-        return <React.Fragment>
-            <NavContext.Provider value={{
-                on: this.state.on,
-                toggle: this.toggle,
-                onUpdate: this.onUpdate,
-                handleOverlayToggle: this.handleOverlayToggle
-            }}>
-                <NavMenu {...this.props as NavMenuProps} />
-                <Switch>
-                    {routes.map(({ path, exact, component: Component, ...rest }) => (
-                        <Route key={path} path={path} exact={exact} render={(props) => (
-                            <Layout {...rest} {...props}>
-                                <Component {...props} />
-                            </Layout>
-                        )} />
-                    ))}
-                    <Route render={(props) => <NotFound {...props} />} />
-                </Switch>
-                <Footer />
-            </ NavContext.Provider>
-        </React.Fragment>
+        const { component: Component, layout: Layout, ...rest } = this.props;
+        return <Route {...rest} render={props => (
+            <React.Fragment>
+                <NavContext.Provider value={{
+                    on: this.state.on,
+                    toggle: this.toggle,
+                    onUpdate: this.onUpdate,
+                    handleOverlayToggle: this.handleOverlayToggle
+                }}>
+                    <NavMenu />
+                    <this.props.layout {...rest} {...props}>
+                        <this.props.component {...props} />
+                    </this.props.layout>
+                    <Footer />
+                </ NavContext.Provider>
+            </React.Fragment>
+        )} />
     }
 }
 

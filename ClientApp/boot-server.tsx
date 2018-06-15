@@ -9,7 +9,7 @@ import configureStore from './configureStore';
 import { getBundles } from '@7rulnik/react-loadable/webpack'
 import Loadable from '@7rulnik/react-loadable';
 import App from './App';
-
+import { routes } from './routes';
 const stats = require('./dist/react-loadable.json');
 
 export default createServerRenderer(params => {
@@ -52,9 +52,7 @@ export default createServerRenderer(params => {
             const app = renderToString(
                 <Loadable.Capture report={moduleName => { modules.push(moduleName) }}>
                     <Provider store={store}>
-                        <StaticRouter context={routerContext} location={params.location.path} >
-                            <App />
-                        </StaticRouter>
+                        <StaticRouter context={routerContext} location={params.location.path} children={routes} />
                     </Provider>
                 </Loadable.Capture>
             );

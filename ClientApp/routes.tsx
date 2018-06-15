@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { actionCreators } from './store/WeatherForecasts';
 import Loadable from '@7rulnik/react-loadable';
+import { Switch } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import App from './App';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -31,23 +33,25 @@ const AsyncFetchData = Loadable({
     loading: loading,
 });
 
-const routes = [
-    {
-        path: '/',
-        exact: true,
-        component: AsyncHome,
-    },
-    {
-        path: '/counter',
-        exact: false,
-        component: AsyncCounter,
-    },
-    {
-        path: '/fetchdata/:startDateIndex?',
-        component: AsyncFetchData,
-        exact: false,
-        fetchInitialData: (path = '') => actionCreators.requestWeatherForecasts(0)
-    }
-]
+const AsyncLayout = Loadable({
+    loader: () => import(/* webpackChunkName: "Layout" */'./components/Layout'),
+    modules: ['./components/Layout'],
+    webpack: () => [require.resolveWeak('./components/Layout')],
+    loading: loading,
+});
 
-export default routes
+const AsyncNotFound = Loadable({
+    loader: () => import(/* webpackChunkName: "NotFound" */'./components/NotFound'),
+    modules: ['./components/NotFound'],
+    webpack: () => [require.resolveWeak('./components/NotFound')],
+    loading: loading,
+});
+
+export const routes = <div>
+    <Switch>
+        <App exact path='/' component={AsyncHome} layout={AsyncLayout} />
+        <App path='/counter' component={AsyncCounter} layout={AsyncLayout} />
+        <App path='/fetchdata/:startDateIndex?' component={AsyncFetchData} layout={AsyncLayout} />
+        <App component={AsyncNotFound} layout={AsyncLayout} />
+    </Switch>
+</div>;

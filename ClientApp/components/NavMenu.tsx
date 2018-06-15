@@ -8,9 +8,6 @@ import { NavContext } from '../App';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-
-
-
 interface NavProps {
     onUpdate: () => void;
     toggle: () => void;
