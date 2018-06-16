@@ -7,8 +7,15 @@ import { createMemoryHistory } from 'history';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import { routes } from './routes';
 import configureStore from './configureStore';
+<<<<<<< Updated upstream
 import { getBundles } from '@7rulnik/react-loadable/webpack'
 import Loadable from '@7rulnik/react-loadable';
+=======
+import { getBundles } from 'react-loadable/webpack'
+import Loadable from 'react-loadable';
+import App from './App';
+import { routes } from './routes';
+>>>>>>> Stashed changes
 const stats = require('./dist/react-loadable.json');
 
 export default createServerRenderer(params => {

@@ -6,8 +6,13 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
+<<<<<<< Updated upstream
 import { ApplicationState }  from './store';
 import Loadable from '@7rulnik/react-loadable';
+=======
+import { ApplicationState } from './store';
+import Loadable from 'react-loadable';
+>>>>>>> Stashed changes
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 

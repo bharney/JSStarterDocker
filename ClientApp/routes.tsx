@@ -1,4 +1,9 @@
 import * as React from 'react';
+<<<<<<< Updated upstream
+=======
+import Loadable from 'react-loadable';
+import { Switch } from 'react-router-dom';
+>>>>>>> Stashed changes
 import { Layout } from './components/Layout';
 import { Switch } from 'react-router-dom';
 import AppRoute from './components/AppRoute';
