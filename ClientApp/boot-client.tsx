@@ -7,7 +7,7 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState } from './store';
-import Loadable from '@7rulnik/react-loadable';
+import Loadable from 'react-loadable';
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 

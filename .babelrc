@@ -31,6 +31,6 @@
   "plugins": [
     "syntax-dynamic-import",
     "lodash",
-    "@7rulnik/react-loadable/babel"
+    "react-loadable/babel"
   ]
 }

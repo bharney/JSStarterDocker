@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Loadable from '@7rulnik/react-loadable';
+import Loadable from 'react-loadable';
 import { Switch } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import App from './App';

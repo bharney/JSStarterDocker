@@ -6,8 +6,8 @@ import { replace } from 'react-router-redux';
 import { createMemoryHistory } from 'history';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import configureStore from './configureStore';
-import { getBundles } from '@7rulnik/react-loadable/webpack'
-import Loadable from '@7rulnik/react-loadable';
+import { getBundles } from 'react-loadable/webpack'
+import Loadable from 'react-loadable';
 import App from './App';
 import { routes } from './routes';
 const stats = require('./dist/react-loadable.json');
