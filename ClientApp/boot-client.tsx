@@ -6,18 +6,15 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
-<<<<<<< Updated upstream
 import { ApplicationState }  from './store';
 import Loadable from '@7rulnik/react-loadable';
-=======
-import { ApplicationState } from './store';
 import Loadable from 'react-loadable';
->>>>>>> Stashed changes
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
 
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();
+
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = (window as any).initialReduxState as ApplicationState;
@@ -26,11 +23,11 @@ const store = configureStore(history, initialState);
 function renderApp() {
     // This code starts up the React app when it runs in a browser. It sets up the routing configuration
     // and injects the app into a DOM element.
-Loadable.preloadReady().then(() => {
+    Loadable.preloadReady().then(() => {
         ReactDOM.hydrate(
             <AppContainer>
-                <Provider store={ store }>
-                    <ConnectedRouter history={ history } children={ routes } />
+                <Provider store={store}>
+                    <ConnectedRouter history={history} children={routes} />
                 </Provider>
             </AppContainer>,
             document.getElementById('react-app')

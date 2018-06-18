@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-<<<<<<< Updated upstream
-=======
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
->>>>>>> Stashed changes
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +32,6 @@ namespace StarterKit
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-<<<<<<< Updated upstream
             services.AddMvc();
 =======
             services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
@@ -87,7 +83,6 @@ namespace StarterKit
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
             return services.BuildServiceProvider();
->>>>>>> Stashed changes
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +96,7 @@ namespace StarterKit
                     HotModuleReplacement = true,
                     ReactHotModuleReplacement = true
                 });
+                
             }
             else
             {

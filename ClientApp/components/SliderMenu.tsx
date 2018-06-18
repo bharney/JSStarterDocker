@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link, NavLink } from 'react-router-dom';
-import { NavContext } from './AppRoute';
+import { NavContext } from '../App';
 interface NavProps {
     onUpdate: () => void;
 }
@@ -9,7 +9,7 @@ interface NavProps {
 export class SliderMenu extends React.PureComponent<{}, {}>{
 
     public render() {
-        return <NavContext.Consumer {...this.props}>
+        return <NavContext.Consumer>
             {({ onUpdate }: NavProps) => (
                 <React.Fragment>
                         <NavLink className="list-group-item" to={'/counter'} onClick={onUpdate} activeClassName='active'>
