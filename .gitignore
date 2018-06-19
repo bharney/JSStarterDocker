@@ -52,7 +52,7 @@ dlldata.c
 *.ilk
 *.meta
 *.obj
-*.StarterKit
+*.pch
 *.pdb
 *.pgc
 *.pgd
@@ -75,7 +75,7 @@ dlldata.c
 _Chutzpah*
 
 # Visual C++ cache files
-iStarterKit/
+ipch/
 *.aps
 *.ncb
 *.opendb
@@ -239,3 +239,6 @@ _Pvt_Extensions
 # Cache Files
 /.awcache
 .awcache/*
+
+# App Settings
+/appsettings.json

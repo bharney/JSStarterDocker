@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StarterKit.Models
+namespace StarterKit.Models.ViewModels
 {
-    public class Profile
+    public class ProfileViewModel
     {
         public string Username { get; set; }
 

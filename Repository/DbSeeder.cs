@@ -9,6 +9,7 @@ using StarterKit.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 
 namespace StarterKit.Repository
 {
@@ -57,14 +58,15 @@ namespace StarterKit.Repository
                         roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
                     }
                 }
-                if (! await db.Users.AnyAsync())
+                if (!await db.Users.AnyAsync())
                 {
                     foreach (ApplicationUser _user in _users)
                     {
                         // create user
                         await _userManager.CreateAsync(_user, _config["SeedAccount:Password"]);
                         //add user to "Member" role
-                        await _userManager.AddToRoleAsync(_user, _config["SeedAccount:UserName"]);
+                        await _userManager.AddClaimAsync(_user, new Claim(ClaimTypes.Role, "Member"));
+                        await _userManager.AddClaimAsync(_user, new Claim(ClaimTypes.Role, "Admin"));
                     }
                 }
             }

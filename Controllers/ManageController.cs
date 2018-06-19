@@ -18,6 +18,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using StarterKit.Repository;
+using StarterKit.Models.ViewModels;
 
 namespace StarterKit.Controllers
 {
@@ -63,7 +64,7 @@ namespace StarterKit.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            return Ok(new Profile {
+            return Ok(new ProfileViewModel {
                 UserGuid = user.UserGuid,
                 Username = user.UserName,
                 Email = user.Email,
@@ -181,7 +182,7 @@ namespace StarterKit.Controllers
             if (userClaims.Result.Any(x => x.Type == ClaimTypes.Role && x.Value == "Admin"))
             {
                 var users = await _userManager.GetUsersForClaimAsync(new Claim(ClaimTypes.Role, "User"));
-                return Ok(users.Select(x => new Profile
+                return Ok(users.Select(x => new ProfileViewModel
                 {
                     UserGuid = x.UserGuid,
                     Username = x.UserName,
@@ -200,7 +201,7 @@ namespace StarterKit.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendVerificationEmail(Profile model)
+        public async Task<IActionResult> SendVerificationEmail(ProfileViewModel model)
         {
             if (!ModelState.IsValid)
             {

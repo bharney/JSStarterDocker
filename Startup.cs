@@ -33,7 +33,6 @@ namespace StarterKit
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-=======
             services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
 
             services.AddCors();
@@ -117,10 +116,10 @@ namespace StarterKit
                     defaults: new { controller = "Home", action = "Index" });
             });
 
-            dbSeeder.SeedAsync(serviceProvider,
-                serviceProvider.GetService<UserManager<ApplicationUser>>(),
-                serviceProvider.GetService<RoleManager<IdentityRole>>(),
-                CancellationToken.None).GetAwaiter().GetResult();
+            //dbSeeder.SeedAsync(serviceProvider,
+            //    serviceProvider.GetService<UserManager<ApplicationUser>>(),
+            //    serviceProvider.GetService<RoleManager<IdentityRole>>(),
+            //    CancellationToken.None).GetAwaiter().GetResult();
         }
     }
 }

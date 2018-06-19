@@ -107,7 +107,7 @@ namespace StarterKit.Controllers
                     if (signInResult.Succeeded)
                     {
                         _logger.LogInformation("User signed into a new account.");
-                        await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "User"));
+                        await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "Member"));
                         return GenerateToken(_currentUser);
                     }
                 }
