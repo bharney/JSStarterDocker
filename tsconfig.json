@@ -1,33 +1,23 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "moduleResolution": "node",
-    "target": "es6",
-    "module": "es2015",
     "jsx": "react",
-    "sourceMap": true,
+    "module": "esnext",
+    "moduleResolution": "node",
     "skipDefaultLibCheck": true,
+    "sourceMap": true,
+    "target": "es2017",
     "types": [
       "webpack-env",
       "aspnet-webpack-react"
     ],
-    "paths": {
-      // Fix "Duplicate identifier" errors caused by multiple dependencies fetching their own copies of type definitions.
-      // We tell TypeScript which type definitions module to treat as the canonical one (instead of combining all of them).
-      "history": [
-        "./node_modules/@types/history/index"
-      ],
-      "react": [
-        "./node_modules/@types/react/index"
-      ]
-    }
+    //"noUnusedParameters": true,
+    //"noUnusedLocals": true,
+    "lib": [ "es6", "dom" ]
   },
   "exclude": [
     "bin",
     "node_modules"
-  ],
-  "awesomeTypescriptLoaderOptions": {
-    "useBabel": true,
-    "useCache": true
-  }
+  ]
 }

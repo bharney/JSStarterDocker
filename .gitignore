@@ -239,3 +239,6 @@ _Pvt_Extensions
 # Cache Files
 /.awcache
 .awcache/*
+
+# App Settings
+/appsettings.json

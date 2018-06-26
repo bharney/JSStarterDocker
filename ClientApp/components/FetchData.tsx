@@ -1,26 +1,30 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as WeatherForecastsState from '../store/WeatherForecasts';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { bindActionCreators } from 'redux';
 
 // At runtime, Redux will merge together...
 type WeatherForecastProps =
     WeatherForecastsState.WeatherForecastsState        // ... state we've requested from the Redux store
-    & typeof WeatherForecastsState.actionCreators      // ... plus action creators we've requested
+    & {
+        weatherForcastActions: typeof WeatherForecastsState.actionCreators
+    }
     & RouteComponentProps<{ startDateIndex: string }>; // ... plus incoming routing parameters
 
 class FetchData extends React.Component<WeatherForecastProps, {}> {
-    componentWillMount() {
+    state = {
+        startDateIndex: 0,
+    }
+    componentDidMount() {
+        debugger;
+        
         // This method runs when the component is first added to the page
         let startDateIndex = parseInt(this.props.match.params.startDateIndex) || 0;
-        this.props.requestWeatherForecasts(startDateIndex);
-    }
-
-    componentWillReceiveProps(nextProps: WeatherForecastProps) {
-        // This method runs when incoming props (e.g., route params) change
-        let startDateIndex = parseInt(nextProps.match.params.startDateIndex) || 0;
-        this.props.requestWeatherForecasts(startDateIndex);
+        this.props.weatherForcastActions.requestWeatherForecasts(startDateIndex);
     }
 
     public render() {
@@ -56,18 +60,23 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
     }
 
     private renderPagination() {
+        debugger;
         let prevStartDateIndex = (this.props.startDateIndex || 0) - 5;
         let nextStartDateIndex = (this.props.startDateIndex || 0) + 5;
 
         return <p className='clearfix text-center'>
-            <Link className='btn btn-default pull-left' to={ `/fetchdata/${ prevStartDateIndex }` }>Previous</Link>
-            <Link className='btn btn-default pull-right' to={ `/fetchdata/${ nextStartDateIndex }` }>Next</Link>
-            { this.props.isLoading ? <span>Loading...</span> : [] }
+            <Link className='btn btn-default pull-left' to={ `/fetchdata/${ prevStartDateIndex }`}>Previous</Link>
+            <Link className='btn btn-default pull-right' to={ `/fetchdata/${ nextStartDateIndex }`}>Next</Link>
+            {this.props.isLoading ? <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" icon={faSpinner} spin size="2x" /> : [] }
         </p>;
     }
 }
 
 export default connect(
     (state: ApplicationState) => state.weatherForecasts, // Selects which state properties are merged into the component's props
-    WeatherForecastsState.actionCreators                 // Selects which action creators are merged into the component's props
+    (dispatch: Dispatch<WeatherForecastsState.WeatherForecastsState>) => {
+        return {
+            weatherForcastActions: bindActionCreators(WeatherForecastsState.actionCreators, dispatch),
+        }
+    }
 )(FetchData) as typeof FetchData;
