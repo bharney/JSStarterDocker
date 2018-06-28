@@ -57,7 +57,7 @@ export const actionCreators = {
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: data });
                 }).catch(ex => {
                     debugger;
-                    console.log(ex);  
+                    console.log(ex);
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: [] });
                 })
 
@@ -76,7 +76,7 @@ export const reducer: Reducer<WeatherForecastsState> = (state: WeatherForecastsS
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_WEATHER_FORECASTS':
-debugger;
+            debugger;
 
             return {
                 startDateIndex: action.startDateIndex,
@@ -84,12 +84,12 @@ debugger;
                 isLoading: true
             };
         case 'RECEIVE_WEATHER_FORECASTS':
-debugger;
+            debugger;
 
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
             // handle out-of-order responses.
-if (action.startDateIndex === state.startDateIndex) {
-    debugger;
+            if (action.startDateIndex === state.startDateIndex) {
+                debugger;
 
                 return {
                     startDateIndex: action.startDateIndex,
@@ -99,7 +99,6 @@ if (action.startDateIndex === state.startDateIndex) {
             }
             break;
         default:
-debugger;
 
             // The following line guarantees that every action in the KnownAction union has been covered by a case above
             const exhaustiveCheck: never = action;

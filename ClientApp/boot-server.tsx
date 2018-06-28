@@ -11,10 +11,26 @@ import Loadable from 'react-loadable';
 import App from './App';
 import { routes } from './routes';
 const stats = require('./dist/react-loadable.json');
+import cookieUtil from 'cookie';
+import cookie from 'react-cookie';
+
+function plugInCookiesFromDotNet(cookieData: { key: string, value: string }[], res) {
+    const formattedData = {};
+    cookieData.forEach(keyValuePair => {
+        formattedData[keyValuePair.key] = keyValuePair.value;
+    });
+    cookie.plugToRequest({ cookies: formattedData }, res);
+}
 
 export default createServerRenderer(params => {
     return Loadable.preloadAll().then(() => {
         return new Promise<RenderResult>((resolve, reject) => {
+            const cookiesModifiedOnServer = {};
+            if (params.data.cookies) {
+                plugInCookiesFromDotNet(params.data.cookies, {
+                    cookie: (name, val) => { cookiesModifiedOnServer[name] = val; }
+                })
+            }
             var serverParams = JSON.parse(params.data);
             let criticalStyles = "";
             let criticalScripts = "";
@@ -100,7 +116,10 @@ export default createServerRenderer(params => {
             params.domainTasks.then(() => {
                 resolve({
                     html: html,
-                    globals: { initialReduxState: store.getState() }
+                    globals: {
+                        initialReduxState: store.getState(),
+                        cookieData: cookiesModifiedOnServer
+                    }
                 });
             }, reject)
         });

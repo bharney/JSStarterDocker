@@ -7,6 +7,7 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
 import { ApplicationState } from './store';
+import cookie from 'react-cookie';
 import Loadable from 'react-loadable';
 import * as RoutesModule from './routes';
 let routes = RoutesModule.routes;
@@ -14,7 +15,12 @@ let routes = RoutesModule.routes;
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();
 
-
+const cookieDataFromServer = window['cookieData'];
+if (cookieDataFromServer) {
+    Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
+        cookie.save(name, cookieDataFromServer[name]);
+    })
+}
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const initialState = (window as any).initialReduxState as ApplicationState;
 const store = configureStore(history, initialState);

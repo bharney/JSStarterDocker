@@ -1,18 +1,31 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link, NavLink, RouteComponentProps } from 'react-router-dom';
-import { ApplicationState } from '../store';
+import { ApplicationState } from '../../store';
 import { bindActionCreators } from 'redux';
 import { Dispatch, connect } from 'react-redux';
-import { NavContext } from '../App';
+import { NavContext } from '../../App';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import * as SessionState from '../../store/Session';
+import UserMenu from '../Nav/UserMenu';
+import * as AccountState from '../../store/Account';
+import * as AlertState from '../../store/Alert';
+import MemberNavMenu from '../Nav/MemberNavMenu';
+
+type NavMenuProps = ApplicationState
+    & {
+        accountActions: typeof AccountState.actionCreators,
+        sessionActions: typeof SessionState.actionCreators,
+        alertActions: typeof AlertState.actionCreators;
+    }
+    & RouteComponentProps<{}>;
 
 interface NavProps {
     onUpdate: () => void;
     toggle: () => void;
 }
-export class NavMenu extends React.Component<{}, {}> {
+export class NavMenu extends React.Component<NavMenuProps, {}> {
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
     }
@@ -52,7 +65,11 @@ export class NavMenu extends React.Component<{}, {}> {
                                     Fetch Data
                             </NavLink>
                             </li>
+                            <MemberNavMenu sessionActions={this.props.sessionActions} {...this.props.session} />
                         </ul>
+                        <div className="d-none d-md-block d-lg-block d-xl-block">
+                            <UserMenu {...this.props} />
+                        </div>
                     </div>
                 </nav>
             }}

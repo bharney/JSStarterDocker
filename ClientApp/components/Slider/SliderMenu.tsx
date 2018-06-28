@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link, NavLink } from 'react-router-dom';
-import { NavContext } from '../App';
+import { NavContext } from '../../App';
 interface NavProps {
     onUpdate: () => void;
 }
