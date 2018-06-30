@@ -7,9 +7,8 @@ Application for allowing user to login, enter their expenses, and revenue to cal
    - Navigation Sidebar
    - Nav menu should have an Icon and say "Menu"
    - Menu Items are active for Current Page
- - Cookies for page navigation
+ - Breadcrumbs for page navigation
  - Login
- - Search
  - Admin Panel
 - Mobile Responsive
  
@@ -19,11 +18,11 @@ Application for allowing user to login, enter their expenses, and revenue to cal
 
 #Setup Dependencies/ Requirements
  - VS 2017 or .Net Core Service Pack
- - Webpack 2
+ - Webpack 4
  - Node-Sass
  
  For Webpack and Node-Sass
- `npm install webpack node-sass -g`
+ `npm install webpack webpack-cli node-sass -g`
  
  #Setup Project
  - Navigate to Project Directory
@@ -35,7 +34,6 @@ Application for allowing user to login, enter their expenses, and revenue to cal
  - `$Env:ASPNETCORE_ENVIRONMENT = "Production"`
  
  #Build Bundle and Vendor Bundle
- - `webpack --config webpack.config.vendor.js `
  - `webpack`
  
  #Run Project
@@ -43,20 +41,19 @@ Application for allowing user to login, enter their expenses, and revenue to cal
  
 #Technology Stack
  - .NET Core/ C#
- - React/ JavaScript
+ - React 16.3/ JavaScript
  - TypeScript
- - Webpack 2
+ - Webpack 4
  - SCSS
  - Bootstrap 4
- - Font-Awesome
- - Google Font
+ - Font-Awesome 5
  - Server-Side Rendering
+ - Lazy Loading
  
- #Build
+ #Optimizations
  - Compression
    - gzip
    - Images
-   - Whitespace
-   - Comments
+   - Uglified/ Removed Whitespace/ Comments
    - Non Render-Blocking JS
    - Non Render-Blocking CSS
