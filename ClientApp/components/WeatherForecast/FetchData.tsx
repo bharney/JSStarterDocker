@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect, Dispatch } from 'react-redux';
-import { ApplicationState }  from '../store';
-import * as WeatherForecastsState from '../store/WeatherForecasts';
+import { ApplicationState } from '../../store';
+import * as WeatherForecastsState from '../../store/WeatherForecasts';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { bindActionCreators } from 'redux';
@@ -20,8 +20,6 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
         startDateIndex: 0,
     }
     componentDidMount() {
-        debugger;
-        
         // This method runs when the component is first added to the page
         let startDateIndex = parseInt(this.props.match.params.startDateIndex) || 0;
         this.props.weatherForcastActions.requestWeatherForecasts(startDateIndex);
@@ -60,7 +58,6 @@ class FetchData extends React.Component<WeatherForecastProps, {}> {
     }
 
     private renderPagination() {
-        debugger;
         let prevStartDateIndex = (this.props.startDateIndex || 0) - 5;
         let nextStartDateIndex = (this.props.startDateIndex || 0) + 5;
 

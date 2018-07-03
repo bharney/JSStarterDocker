@@ -35,6 +35,7 @@ namespace StarterKit.Controllers
         private readonly IConfiguration _config;
         private HttpContext _httpContext;
         ApplicationUser _currentUser;
+        private const string UserGuidCookiesName = "StarterPackUserGuid";
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -71,6 +72,7 @@ namespace StarterKit.Controllers
                     var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                     if (result.Succeeded)
                     {
+                        SetUserGuidCookies(user.UserGuid);
                         return GenerateToken(user);
                     }
                     return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
@@ -108,6 +110,7 @@ namespace StarterKit.Controllers
                     {
                         _logger.LogInformation("User signed into a new account.");
                         await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "Member"));
+                        SetUserGuidCookies(_currentUser.UserGuid);
                         return GenerateToken(_currentUser);
                     }
                 }
@@ -124,8 +127,10 @@ namespace StarterKit.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            RemoveUserGuidCookies();
+            _currentUser = await NewUserGuidCookies();
             _logger.LogInformation("User logged out.");
-            return Ok();
+            return GenerateToken(_currentUser);
         }
 
         [HttpPost]
@@ -182,6 +187,7 @@ namespace StarterKit.Controllers
             if (result.Succeeded)
             {
                 _logger.LogInformation("User changed password successfully.");
+                SetUserGuidCookies(user.UserGuid);
                 return GenerateToken(user);
             }
             AddErrors(result);
@@ -214,6 +220,40 @@ namespace StarterKit.Controllers
             return GenerateToken(user);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetToken()
+        {
+            var currentUser = await GetCurrentUser();
+            if (currentUser != null)
+            {
+                var userClaims = _userManager.GetClaimsAsync(currentUser);
+                var claims = new List<Claim>
+                    {
+                      new Claim(JwtRegisteredClaimNames.Sub, currentUser.Email),
+                      new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                      new Claim(ClaimTypes.Sid, currentUser.Id),
+                      new Claim(ClaimTypes.Name, currentUser.UserName),
+                      new Claim(ClaimTypes.UserData, currentUser.UserGuid.ToString()),
+                    };
+                claims.AddRange(userClaims.Result);
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(_config["Tokens:Issuer"],
+                  _config["Tokens:Issuer"],
+                  claims,
+                  expires: DateTime.Now.AddDays(30),
+                  signingCredentials: creds);
+
+                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+
+            }
+
+            return Ok();
+        }
+
         private IActionResult GenerateToken(ApplicationUser model)
         {
 
@@ -239,6 +279,77 @@ namespace StarterKit.Controllers
               signingCredentials: creds);
 
             return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+        }
+
+        public async Task<ApplicationUser> GetCurrentUser()
+        {
+            var userGuid = GetUserGuidFromCookies();
+            if (userGuid.HasValue)
+            {
+                _currentUser = _userRepository.Users.FirstOrDefault(x => x.UserGuid == userGuid);
+            }
+
+            if (_currentUser != null)
+            {
+                return _currentUser;
+            }
+
+            _currentUser = await NewUserGuidCookies();
+            SetUserGuidCookies(_currentUser.UserGuid);
+            return _currentUser;
+        }
+
+        public async Task<ApplicationUser> NewUserGuidCookies()
+        {
+            var userGuid = Guid.NewGuid();
+            var dummyEmail = string.Format("{0}@guest.starterpack.com", userGuid);
+            _currentUser = new ApplicationUser
+            {
+                FirstName = "Guest",
+                LastName = "Guest",
+                UserGuid = userGuid,
+                Email = dummyEmail,
+                UserName = dummyEmail
+            };
+            await _userManager.CreateAsync(_currentUser, _config["SeedAccount:Guest"]);
+            await _userManager.AddToRoleAsync(_currentUser, "guest");
+
+            return _currentUser;
+        }
+
+        public void RemoveUserGuidCookies()
+        {
+            _httpContext.Response.Cookies.Delete(UserGuidCookiesName);
+        }
+
+        public void SetUserGuidCookies(Guid userGuid)
+        {
+            _httpContext.Response.Cookies.Append(UserGuidCookiesName, userGuid.ToString(), new CookieOptions
+            {
+                Expires = DateTime.UtcNow.AddYears(5),
+                HttpOnly = true
+            });
+        }
+
+        public async Task<ApplicationUser> GetLoggedInUser()
+        {
+            var userGuid = GetUserGuidFromCookies();
+            if (userGuid.HasValue)
+            {
+                return await _userRepository.GetUserByIdAsync(userGuid.Value);
+            }
+
+            return null;
+        }
+
+        public Guid? GetUserGuidFromCookies()
+        {
+            if (_httpContext.Request.Cookies.ContainsKey(UserGuidCookiesName))
+            {
+                return Guid.Parse(_httpContext.Request.Cookies[UserGuidCookiesName]);
+            }
+
+            return null;
         }
 
 
