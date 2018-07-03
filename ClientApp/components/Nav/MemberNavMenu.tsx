@@ -15,26 +15,28 @@ type MemberNavMenuProps = SessionState.SessionState
 
 export class MemberNavMenu extends React.Component<MemberNavMenuProps, {}> {
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
 
         if (token == undefined)
             return null
         if (Object.keys(token).length === 0)
             return null
 
-        return <NavContext.Consumer {...this.props}>
-            {({ onUpdate }: NavProps) => (
-                <React.Fragment>
-                    <li className="nav-item">
-                        <NavLink key="nav-orders" className="nav-link" to={'/orders'} onClick={onUpdate} exact activeClassName='active'>Orders</NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink key="nav-account" className="nav-link" to={'/profile'} onClick={onUpdate} exact activeClassName='active'>Account</NavLink>
-                    </li>
-                    <AdminNavMenu {...this.props} />
-                </React.Fragment>
-            )}
-        </NavContext.Consumer>
+        if (username == undefined)
+            return null
+
+        if (username.indexOf("@guest.starterpack.com") === -1) {
+            return <React.Fragment>
+            <NavContext.Consumer {...this.props}>
+                {({ onUpdate }: NavProps) => (<li className="nav-item">
+                    <NavLink key="nav-account" className="nav-link" to={'/profile'} onClick={onUpdate} exact activeClassName='active'>Account</NavLink>
+                </li>)}
+            </NavContext.Consumer>
+            <AdminNavMenu {...this.props} />
+        </React.Fragment>
+        }
+
+        return null;
     }
 }
 

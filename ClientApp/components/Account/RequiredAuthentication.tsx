@@ -30,7 +30,8 @@ export function requireAuthentication(Component:React.ComponentClass) {
         checkAuth(props: SessionProps) {
             if (props.isRequiredRefreshOnClient === true) return;
 
-            if (props.token === undefined){
+            const { username } = this.props;
+            if (username.indexOf("@guest.starterpack.com") > -1) {
                 this.props.alertActions.sendAlert('You must sign-in before you can access this area.', AlertType.danger, true);
                 this.props.sessionActions.cancelRequiredToken();
                 this.props.sessionActions.requiredToken();
@@ -39,9 +40,14 @@ export function requireAuthentication(Component:React.ComponentClass) {
         }
 
         render() {
-            return (
-                <Component {...this.props}/>
-            )
+            const { token } = this.props;
+
+            if (token == undefined)
+                return null
+            if (Object.keys(token).length === 0)
+                return null
+
+            return <Component {...this.props}/>
         }
     }
     return connect(

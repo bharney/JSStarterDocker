@@ -27,8 +27,6 @@ export class AdminSliderMenu extends React.Component<AdminSliderMenuProps, {}> {
                 return <NavContext.Consumer {...this.props}>
                     {({ onUpdate }: NavProps) => (
                         <ExpandableListGroup displayTitle="Admin" id={1} key="adminSliderMenu">
-                            <NavLink key="adminItems" to={'/admin/items'} href="" className="list-group-item root" onClick={onUpdate} activeClassName='active'>Items</NavLink>
-                            <NavLink key="adminOrders" to={'/admin/orders'} href="" className="list-group-item root" onClick={onUpdate} activeClassName='active'>Orders</NavLink>
                             <NavLink key="adminUsers" to={'/admin/users'} href="" className="list-group-item root" onClick={onUpdate} activeClassName='active'>Users</NavLink>
                         </ExpandableListGroup>
                     )}

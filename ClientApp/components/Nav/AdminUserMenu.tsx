@@ -19,18 +19,6 @@ type AdminUserMenuProps = SessionState.SessionState
     };
 
 export class AdminUserMenu extends React.Component<AdminUserMenuProps, {}> {
-    componentDidUpdate() {
-        if (this.props.isRequiredToken) {
-            this.props.sessionActions.loadToken();
-        }
-    }
-
-    componentDidMount() {
-        if (this.props.isRequiredRefreshOnClient) {
-            this.props.sessionActions.loadToken();
-        }
-    }
-
     public render() {
         const { token } = this.props;
 

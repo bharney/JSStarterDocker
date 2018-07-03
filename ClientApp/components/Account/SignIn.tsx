@@ -42,15 +42,12 @@ class SignIn extends React.Component<UserMenuProps, FormProps> {
                     <h2 className="text-center display-4">Sign-In.</h2>
                     <SigninForm form='signinForm'
                         onSubmit={async (values: LoginViewModel) => {
-                            debugger;
                             if (values.email && values.password) {
-                                debugger;
                                 this.props.accountActions.login(values,
                                     () => {
-                                        debugger;
                                         this.props.history.push('/');
                                         this.props.alertActions.sendAlert('Signed in successfully!', AlertType.success, true);
-                                        this.props.sessionActions.requiredToken();
+                                        this.props.sessionActions.loadToken();
                                     },
                                     (error) => {
                                         this.props.alertActions.sendAlert(error.error_description, AlertType.danger, true);

@@ -40,7 +40,7 @@ export class Register extends React.Component<UserMenuProps, any> {
                                         this.props.history.push('/');
                                         this.props.alertActions.sendAlert('Your account is created.', AlertType.success, true);
                                         dispatch(reset('registerForm'))
-                                        this.props.sessionActions.requiredToken();
+                                        this.props.sessionActions.loadToken();
                                     },
                                     (error) => {
                                         this.props.alertActions.sendAlert(error.error_description, AlertType.danger, true);

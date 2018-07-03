@@ -97,7 +97,14 @@ export class App extends React.Component<AppProps, {}> {
         }
     }
     render() {
-        const { component: Component, layout: Layout, ...rest } = this.props;
+        const { component: Component,
+            layout: Layout,
+            session,
+            sessionActions,
+            alertActions,
+            accountActions,
+            ...rest } = this.props;
+
         return <Route {...rest} render={props => (
             <React.Fragment>
                 <NavContext.Provider value={{
@@ -106,7 +113,10 @@ export class App extends React.Component<AppProps, {}> {
                     onUpdate: this.onUpdate,
                     handleOverlayToggle: this.handleOverlayToggle
                 }}>
-                    <NavMenu {...props as NavMenuProps} />
+                    <NavMenu accountActions={accountActions}
+                    alertActions={alertActions}
+                    sessionActions={sessionActions}
+                    {...session} />
                     <this.props.layout {...rest} {...props}>
                         <this.props.component {...props} />
                     </this.props.layout>

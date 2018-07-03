@@ -31,9 +31,6 @@ export class ResetPassword extends React.Component<UserMenuProps, any> {
 
     componentDidMount() {
         document.getElementsByTagName("input")[0].focus();
-        if (this.props.isRequiredRefreshOnClient) {
-            this.props.sessionActions.loadToken();
-        }
     }
 
     render() {

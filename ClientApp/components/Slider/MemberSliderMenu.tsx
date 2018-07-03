@@ -15,21 +15,26 @@ type MemberSliderMenuProps = SessionState.SessionState;
 export class MemberSliderMenu extends React.Component<MemberSliderMenuProps, {}> {
 
     public render() {
-        const { token } = this.props;
+        const { token, username } = this.props;
 
         if (token == undefined)
             return null
         if (Object.keys(token).length === 0)
             return null
 
-        return <NavContext.Consumer {...this.props}>
+        if (username == undefined)
+            return null
+
+        if (username.indexOf("@guest.starterpack.com") === -1) {
+            return <NavContext.Consumer {...this.props}>
             {({ onUpdate }: NavProps) => (
                 <React.Fragment>
-                    <NavLink key="sliderMyorders" className="list-group-item" to={'/orders'} onClick={onUpdate} activeClassName='active'>Orders</NavLink>
                     <NavLink key="sliderMyProfile" className="list-group-item" to={'/profile'} onClick={onUpdate} activeClassName='active'>Account</NavLink>
                 </React.Fragment>
             )}
         </NavContext.Consumer>
+        }
+        return null;
     }
 }
 

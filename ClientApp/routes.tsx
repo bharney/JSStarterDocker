@@ -7,7 +7,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const loading = () => {
-    return <div><FontAwesomeIcon icon={faSpinner} spin size="2x" /></div>
+    return <div></div>
 };
 
 const AsyncHome = Loadable({
@@ -34,6 +34,12 @@ const AsyncLayout = Loadable({
     webpack: () => [require.resolveWeak('./components/Layout/Layout')],
     loading: loading,
 });
+const AsyncHomeLayout = Loadable({
+    loader: () => import(/* webpackChunkName: "HomeLayout" */'./components/Layout/HomeLayout'),
+    modules: ['./components/Layout/HomeLayout'],
+    webpack: () => [require.resolveWeak('./components/Layout/HomeLayout')],
+    loading: loading,
+})
 const AsyncNotFound = Loadable({
     loader: () => import(/* webpackChunkName: "NotFound" */'./components/NotFound/NotFound'),
     modules: ['./components/NotFound/NotFound'],
@@ -94,14 +100,14 @@ export const routes = <div>
         <App exact path='/' component={AsyncHome} layout={AsyncLayout} />
         <App path='/counter' component={AsyncCounter} layout={AsyncLayout} />
         <App path='/fetchdata/:startDateIndex?' component={AsyncFetchData} layout={AsyncLayout} />
-        <App path='/Signin' component={AsyncSignIn} layout={AsyncLayout} />
-        <App path='/Register' component={AsyncRegister} layout={AsyncLayout} />
-        <App path='/ForgotPassword' component={AsyncForgotPassword} layout={AsyncLayout} />
-        <App path='/ForgotPasswordConfirmation' component={AsyncForgotPasswordConfirmation} layout={AsyncLayout} />
-        <App path='/Account/ResetPassword/:userId?/:code?' component={AsyncResetPassword} layout={AsyncLayout} />
-        <App path='/ResetPasswordConfirmation' component={AsyncResetPasswordConfirmation} layout={AsyncLayout} />
-        <App path='/SignedOut' component={AsyncSignedOut} layout={AsyncLayout} />
-        <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncProfile)} layout={AsyncLayout} />
-        <App component={AsyncNotFound} layout={AsyncLayout} />
+        <App path='/Signin' component={AsyncSignIn} layout={AsyncHomeLayout} />
+        <App path='/Register' component={AsyncRegister} layout={AsyncHomeLayout} />
+        <App path='/ForgotPassword' component={AsyncForgotPassword} layout={AsyncHomeLayout} />
+        <App path='/ForgotPasswordConfirmation' component={AsyncForgotPasswordConfirmation} layout={AsyncHomeLayout} />
+        <App path='/Account/ResetPassword/:userId?/:code?' component={AsyncResetPassword} layout={AsyncHomeLayout} />
+        <App path='/ResetPasswordConfirmation' component={AsyncResetPasswordConfirmation} layout={AsyncHomeLayout} />
+        <App path='/SignedOut' component={AsyncSignedOut} layout={AsyncHomeLayout} />
+        <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncProfile)} layout={AsyncHomeLayout} />
+        <App component={AsyncNotFound} layout={AsyncHomeLayout} />
     </Switch>
 </div>;

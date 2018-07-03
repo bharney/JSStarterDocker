@@ -44,19 +44,15 @@ type KnownAction = RequestWeatherForecastsAction | ReceiveWeatherForecastsAction
 export const actionCreators = {
     requestWeatherForecasts: (startDateIndex: number): AppThunkAction<KnownAction> => (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
-        debugger;
 
         if (startDateIndex !== getState().weatherForecasts.startDateIndex) {
-            debugger;
 
             let fetchTask = fetch(`api/SampleData/WeatherForecasts?startDateIndex=${startDateIndex}`)
                 .then(response => response.json() as Promise<WeatherForecast[]>)
                 .then(data => {
-                    debugger;
 
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: data });
                 }).catch(ex => {
-                    debugger;
                     console.log(ex);
                     dispatch({ type: 'RECEIVE_WEATHER_FORECASTS', startDateIndex: startDateIndex, forecasts: [] });
                 })
@@ -76,7 +72,6 @@ export const reducer: Reducer<WeatherForecastsState> = (state: WeatherForecastsS
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'REQUEST_WEATHER_FORECASTS':
-            debugger;
 
             return {
                 startDateIndex: action.startDateIndex,
@@ -84,12 +79,10 @@ export const reducer: Reducer<WeatherForecastsState> = (state: WeatherForecastsS
                 isLoading: true
             };
         case 'RECEIVE_WEATHER_FORECASTS':
-            debugger;
 
             // Only accept the incoming data if it matches the most recent request. This ensures we correctly
             // handle out-of-order responses.
             if (action.startDateIndex === state.startDateIndex) {
-                debugger;
 
                 return {
                     startDateIndex: action.startDateIndex,

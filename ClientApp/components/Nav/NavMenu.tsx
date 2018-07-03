@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Link, NavLink, RouteComponentProps } from 'react-router-dom';
+import { Link, NavLink, RouteComponentProps, match } from 'react-router-dom';
 import { ApplicationState } from '../../store';
 import { bindActionCreators } from 'redux';
 import { Dispatch, connect } from 'react-redux';
@@ -13,13 +13,19 @@ import * as AccountState from '../../store/Account';
 import * as AlertState from '../../store/Alert';
 import MemberNavMenu from '../Nav/MemberNavMenu';
 
-type NavMenuProps = ApplicationState
+type NavMenuProps = SessionState.SessionState
     & {
         accountActions: typeof AccountState.actionCreators,
         sessionActions: typeof SessionState.actionCreators,
         alertActions: typeof AlertState.actionCreators;
     }
     & RouteComponentProps<{}>;
+type UserMenuProps = SessionState.SessionState
+    & {
+        accountActions: typeof AccountState.actionCreators,
+        sessionActions: typeof SessionState.actionCreators,
+        alertActions: typeof AlertState.actionCreators;
+    }
 
 interface NavProps {
     onUpdate: () => void;
@@ -46,29 +52,49 @@ export class NavMenu extends React.Component<NavMenuProps, {}> {
     }
 
     public render() {
+        const { sessionActions, alertActions, accountActions, token, isLoading } = this.props;
         return <NavContext.Consumer>
             {({ onUpdate, toggle }: NavProps) => {
-                return <nav id="custom-nav" className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-                    <strong><Link className='navbar-brand' onClick={onUpdate} to={'/'}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" icon={faHome} size="1x" /> Home</Link></strong>
-                    <button className="navbar-toggler navbar-toggler-right" onClick={toggle} type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarsExampleDefault">
-                        <ul className="navbar-nav mr-auto">
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to={'/counter'} onClick={onUpdate} exact activeClassName='active'>
-                                    Counter
-                            </NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to={'/fetchdata'} onClick={onUpdate} exact activeClassName='active'>
-                                    Fetch Data
-                            </NavLink>
-                            </li>
-                            <MemberNavMenu sessionActions={this.props.sessionActions} {...this.props.session} />
-                        </ul>
-                        <div className="d-none d-md-block d-lg-block d-xl-block">
-                            <UserMenu {...this.props} />
+                return !isLoading && <nav id="custom-nav" className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+                    <div className="container nav-links">
+                        <strong><Link className='navbar-brand' onClick={onUpdate} to={'/'}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" icon={faHome} size="1x" /> Home</Link></strong>
+                        <div className="collapse navbar-collapse" id="navbarsExampleDefault">
+                            <ul className="navbar-nav mr-auto">
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={'/counter'} onClick={onUpdate} exact activeClassName='active'>
+                                        Counter
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={'/fetchdata'} onClick={onUpdate} exact activeClassName='active'>
+                                        Fetch Data
+                                    </NavLink>
+                                </li>
+                                <MemberNavMenu sessionActions={sessionActions} {...this.props} />
+                            </ul>
+                            <div className="d-none d-md-block d-lg-block d-xl-block">
+                                <ul className="navbar-nav">
+                                    <UserMenu accountActions={accountActions}
+                                        alertActions={alertActions}
+                                        sessionActions={sessionActions}
+                                        {...this.props} 
+                                    />
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="d-inline-flex">
+                            <div className="d-md-none d-lg-none d-xl-none">
+                                <ul className="navbar-nav">
+                                <UserMenu accountActions={accountActions}
+                                    alertActions={alertActions}
+                                    sessionActions={sessionActions}
+                                        {...this.props}
+                                    />
+                                </ul>
+                            </div>
+                            <button className="navbar-toggler navbar-toggler-right" onClick={toggle} type="button" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
                         </div>
                     </div>
                 </nav>
@@ -77,4 +103,13 @@ export class NavMenu extends React.Component<NavMenuProps, {}> {
     }
 }
 
-export default NavMenu;
+export default connect(
+    (state: SessionState.SessionState) => { return state}, // Selects which state properties are merged into the component's props
+    (dispatch: Dispatch<SessionState.SessionState> | Dispatch<AlertState.AlertState> | Dispatch<AccountState.AccountState>) => { // Selects which action creators are merged into the component's props
+        return {
+            sessionActions: bindActionCreators(SessionState.actionCreators, dispatch),
+            alertActions: bindActionCreators(AlertState.actionCreators, dispatch),
+            accountActions: bindActionCreators(AccountState.actionCreators, dispatch),
+        };
+    },
+)(NavMenu) as typeof NavMenu

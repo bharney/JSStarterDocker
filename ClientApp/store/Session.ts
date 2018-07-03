@@ -125,7 +125,19 @@ export const actionCreators = {
                 }
             })
             .catch(err => {
-                dispatch({ type: 'RECEIVE_TOKEN', token: undefined });
+                let bearerFromStore: Bearer = {};
+                let username: string = '';
+                if (typeof window !== 'undefined') {
+                    if (window.sessionStorage) {
+                        username = window.sessionStorage.username;
+                        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+                    } else if (window.localStorage) {
+                        username = window.localStorage.username;
+                        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+                    }
+                }
+                const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                dispatch({ type: 'RECEIVE_TOKEN', token: token });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: 'REQUEST_TOKEN' });
