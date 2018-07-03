@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router';
 import * as ReactDOM from 'react-dom';
-import NavMenu from './components/NavMenu';
+import NavMenu from './components/Nav/NavMenu';
 import { ApplicationState } from './store';
-import Footer from './components/Footer';
+import Footer from './components/Footer/Footer';
 import * as RoutesModule from './routes';
-import { Layout } from './components/Layout';
-import NotFound from './components/NotFound';
-import { hot } from 'react-hot-loader';
-
+import { Layout } from './components/Layout/Layout';
+import NotFound from './components/NotFound/NotFound';
+import * as SessionState from './store/Session';
+import * as AccountState from './store/Account';
+import * as AlertState from './store/Alert';
 type AppProps = any
 
 interface On {
@@ -17,6 +18,11 @@ interface On {
 export const NavContext = React.createContext({ on: false, toggle: () => { }, onUpdate: () => { }, handleOverlayToggle: (e) => { } })
 
 type NavMenuProps = ApplicationState
+    & {
+        accountActions: typeof AccountState.actionCreators,
+        sessionActions: typeof SessionState.actionCreators,
+        alertActions: typeof AlertState.actionCreators;
+    }
     & RouteComponentProps<{}>;
 export class App extends React.Component<AppProps, {}> {
     state = { on: false }
@@ -91,7 +97,14 @@ export class App extends React.Component<AppProps, {}> {
         }
     }
     render() {
-        const { component: Component, layout: Layout, ...rest } = this.props;
+        const { component: Component,
+            layout: Layout,
+            session,
+            sessionActions,
+            alertActions,
+            accountActions,
+            ...rest } = this.props;
+
         return <Route {...rest} render={props => (
             <React.Fragment>
                 <NavContext.Provider value={{
@@ -100,7 +113,10 @@ export class App extends React.Component<AppProps, {}> {
                     onUpdate: this.onUpdate,
                     handleOverlayToggle: this.handleOverlayToggle
                 }}>
-                    <NavMenu />
+                    <NavMenu accountActions={accountActions}
+                    alertActions={alertActions}
+                    sessionActions={sessionActions}
+                    {...session} />
                     <this.props.layout {...rest} {...props}>
                         <this.props.component {...props} />
                     </this.props.layout>
