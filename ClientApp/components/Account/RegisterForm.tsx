@@ -4,7 +4,7 @@ import { Field, reduxForm } from 'redux-form';
 const registerForm = ({ pristine, submitting, handleSubmit }) => 
     <form id="registerForm" className='form-wrapper' onSubmit={handleSubmit}>
         <div className="form-label-group">
-            <Field name="email" id="registerEmail" placeholder="Email" required component="input" className="form-control" type="email" />
+            <Field name="email" id="registerEmail" placeholder="Email" required component="input" autoFocus className="form-control" type="email" />
             <label htmlFor="registerEmail">Email</label>
         </div>
         <div className="form-label-group">

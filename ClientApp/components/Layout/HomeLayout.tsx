@@ -23,6 +23,7 @@ type LayoutProps = ApplicationState
         alertActions: typeof AlertState.actionCreators;
     }
     & RouteComponentProps<{}>;
+
 export class HomeLayout extends React.Component<LayoutProps, {}> {
 
     public render() {
@@ -49,6 +50,5 @@ export class HomeLayout extends React.Component<LayoutProps, {}> {
         </NavContext.Consumer>
     }
 }
-
 
 export default HomeLayout;

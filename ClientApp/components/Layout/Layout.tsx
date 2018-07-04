@@ -24,6 +24,7 @@ type LayoutProps = ApplicationState
     & RouteComponentProps<{}>;
 
 export class Layout extends React.Component<LayoutProps, {}> {
+
     public render() {
         return <NavContext.Consumer>
             {({ on, handleOverlayToggle }: NavProps) => (
@@ -43,7 +44,8 @@ export class Layout extends React.Component<LayoutProps, {}> {
                             </div>
                         </div>
                     </main>
-                </React.Fragment>)}
+                </React.Fragment>
+            )}
         </NavContext.Consumer>
     }
 }

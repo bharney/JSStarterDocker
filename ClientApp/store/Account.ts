@@ -1,8 +1,9 @@
 import { fetch, addTask } from 'domain-task';
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
-import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel } from '../models';
+import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel, AlertType } from '../models';
 import * as cookie from 'react-cookie';
+import * as AlertState from './Alert';
 
 const cookieKey = 'PCHUserGuid';
 // -----------------
@@ -164,77 +165,83 @@ export const actionCreators = {
         dispatch({ type: 'LOGOUT' });
     },
     register: (value: RegisterViewModel, callback?: () => void, error?: (error: ErrorMessage) => void): AppThunkAction<KnownAction> => (dispatch) => {
-        let fetchTask = fetch("/Account/Register", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/plain, */*"
-            },
-            credentials: "include",
-            body: JSON.stringify(value)
-        })
-            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
-            .then(data => {
-                if ((data as ErrorMessage).error) {
-                    if (error) { error(data as ErrorMessage) }
-                }
-                else {
-                    let token = data["token"];
-                    let base64Url = token.split('.')[1];
-                    let base64 = base64Url.replace('-', '+').replace('_', '/');
-                    let decoded = JSON.parse(window.atob(base64));
-                    let BearerToken: Bearer = {
-                        access_token: token,
-                        audience: decoded.aud,
-                        expires: decoded.exp,
-                        claims: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                        issuer: decoded.iss,
-                        id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"],
-                        name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-                        userData: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/userData"],
-                        jti: decoded.jti,
-                        sub: decoded.sub
+        if (value.password !== value.confirmPassword) {
+            let errorMessage: ErrorMessage = {
+                error_description: "Password and Confirmation Password do not match."
+            }
+            error(errorMessage);
+        } else {
+            let fetchTask = fetch("/Account/Register", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/plain, */*"
+                },
+                credentials: "include",
+                body: JSON.stringify(value)
+            })
+                .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                .then(data => {
+                    if ((data as ErrorMessage).error) {
+                        if (error) { error(data as ErrorMessage) }
                     }
+                    else {
+                        let token = data["token"];
+                        let base64Url = token.split('.')[1];
+                        let base64 = base64Url.replace('-', '+').replace('_', '/');
+                        let decoded = JSON.parse(window.atob(base64));
+                        let BearerToken: Bearer = {
+                            access_token: token,
+                            audience: decoded.aud,
+                            expires: decoded.exp,
+                            claims: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+                            issuer: decoded.iss,
+                            id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"],
+                            name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+                            userData: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/userData"],
+                            jti: decoded.jti,
+                            sub: decoded.sub
+                        }
 
-                    dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
-                    const cookieDataFromServer = window['cookieData'];
-                    if (cookieDataFromServer) {
-                        Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
-                            cookie.save(name, cookieDataFromServer[name]);
-                        })
+                        dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
+                        const cookieDataFromServer = window['cookieData'];
+                        if (cookieDataFromServer) {
+                            Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
+                                cookie.save(name, cookieDataFromServer[name]);
+                            })
+                        }
+
+                        ///Todo Update SessionStorage
+                        if (typeof window !== 'undefined') {
+                            if (window.sessionStorage) {
+                                window.sessionStorage.setItem('username', value.email);
+                                window.sessionStorage.setItem('jwt', JSON.stringify(BearerToken));
+                            } else if (window.localStorage) {
+                                window.localStorage.setItem('username', value.email);
+                                window.localStorage.setItem('jwt', JSON.stringify(BearerToken));
+                            }
+                        }
+                        if (callback) { callback(); }
                     }
-
-
-                    ///Todo Update SessionStorage
+                })
+                .catch(() => {
+                    let bearerFromStore: Bearer = {};
+                    let username: string = '';
                     if (typeof window !== 'undefined') {
                         if (window.sessionStorage) {
-                            window.sessionStorage.setItem('username', value.email);
-                            window.sessionStorage.setItem('jwt', JSON.stringify(BearerToken));
+                            username = window.sessionStorage.username;
+                            bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
                         } else if (window.localStorage) {
-                            window.localStorage.setItem('username', value.email);
-                            window.localStorage.setItem('jwt', JSON.stringify(BearerToken));
+                            username = window.localStorage.username;
+                            bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
                         }
                     }
-                    if (callback) { callback(); }
-                }
-            })
-            .catch(() => {
-                let bearerFromStore: Bearer = {};
-                let username: string = '';
-                if (typeof window !== 'undefined') {
-                    if (window.sessionStorage) {
-                        username = window.sessionStorage.username;
-                        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
-                    } else if (window.localStorage) {
-                        username = window.localStorage.username;
-                        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
-                    }
-                }
-                const token = bearerFromStore.access_token ? bearerFromStore : undefined
-                dispatch({ type: 'RECEIVE_TOKEN', token: token });
-            });
-        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-        dispatch({ type: 'REQUEST_TOKEN', username: value.email });
+                    const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                    dispatch({ type: 'RECEIVE_TOKEN', token: token });
+                });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'REQUEST_TOKEN', username: value.email });
+        }
     },
     forgotPassword: (username: string): AppThunkAction<KnownAction> => (dispatch) => {
         const model = {
