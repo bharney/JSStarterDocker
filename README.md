@@ -19,7 +19,7 @@ Starter template using React/Redux and .Net Core. The site takes advantage of Se
  - Local Database
  
  Install Webpack
- `npm install webpack webpack-cli -g`
+ - `npm install webpack webpack-cli -g`
  
  Setup Project
  - Navigate to Project Directory
@@ -65,4 +65,5 @@ Starter template using React/Redux and .Net Core. The site takes advantage of Se
  - `$Env:ASPNETCORE_ENVIRONMENT = "Production"` 
 
 # TODO
-- [] Setup Dockerfile to allow users to simply run docker to setup a database and all dependencies.
+- [ ] Setup Dockerfile to allow users to simply run docker to setup a database and all dependencies.
+- [ ] Setup in memory database to allow users to get setup and running without any complexity from a database.
