@@ -1,43 +1,55 @@
 # StarterPack
-Application for allowing user to login, enter their expenses, and revenue to calculate their expected spending money per month.
-
-#UI Elements
- - Menu
-   - Navigation Slider
-   - Navigation Sidebar
-   - Nav menu should have an Icon and say "Menu"
-   - Menu Items are active for Current Page
- - Breadcrumbs for page navigation
- - Login
- - Admin Panel
-- Mobile Responsive
- 
-#Data Access
- - Ability to open a DB Connection via Entity Framework
- - DB Migrations
+Starter template using React/Redux and .Net Core. The site takes advantage of Server-Side Rendering and Lazy Loading based on Routes. Authentication is built into the App with JWT and Authorize attributes on controllers. I will be working to split this template into two repos. One that contains Authentication, and another that looks more like the JavaScriptServices React+Redux template.
 
 #Setup Dependencies/ Requirements
  - VS 2017 or .Net Core Service Pack
  - Webpack 4
- - Node-Sass
  
- For Webpack and Node-Sass
- `npm install webpack webpack-cli node-sass -g`
+ Install Webpack
+ `npm install webpack webpack-cli -g`
  
  #Setup Project
  - Navigate to Project Directory
  - `dotnet restore`
  - `npm install`
  
- #Set Environment in PowerShell
- - `$Env:ASPNETCORE_ENVIRONMENT = "Development"`
- - `$Env:ASPNETCORE_ENVIRONMENT = "Production"`
+ #Add `appsettings.json` to Root Directory
+ ```
+ {
+  "Logging": {
+    "IncludeScopes": false,
+    "Debug": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    }
+  },
+  "ConnectionStrings": {
+    "SqlServerConnectionString": [YOUR_CONNECTION_STRING]
+  },
+  "Tokens": {
+    "Key": [JWT_KEY],
+    "Issuer": [JWT_ISSUER]
+  },
+}
+ ```
+ #Run Initial Database Migration
+ - `Update-Database`
  
- #Build Bundle and Vendor Bundle
+ #Build Bundle
  - `webpack`
  
  #Run Project
  - `dotnet run`
+ 
+ #Set Environment in PowerShell
+ - `$Env:ASPNETCORE_ENVIRONMENT = "Development"`
+ - `$Env:ASPNETCORE_ENVIRONMENT = "Production"` 
  
 #Technology Stack
  - .NET Core/ C#
