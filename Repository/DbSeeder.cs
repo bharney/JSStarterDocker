@@ -40,10 +40,10 @@ namespace StarterKit.Repository
                 {
                     new ApplicationUser()
                     {
-                        UserName=_config["SeedAccount:UserName"],
+                        UserName=_config["SeedAccountUserName"],
                         FirstName = "Brian",
                         LastName = "Harney",
-                        Email = _config["SeedAccount:UserName"],
+                        Email = _config["SeedAccountUserName"],
                         SecurityStamp=Guid.NewGuid().ToString()
                     }
                 };
@@ -63,7 +63,7 @@ namespace StarterKit.Repository
                     foreach (ApplicationUser _user in _users)
                     {
                         // create user
-                        await _userManager.CreateAsync(_user, _config["SeedAccount:Password"]);
+                        await _userManager.CreateAsync(_user, _config["SeedAccountPassword"]);
                         //add user to "Member" role
                         await _userManager.AddClaimAsync(_user, new Claim(ClaimTypes.Role, "Member"));
                         await _userManager.AddClaimAsync(_user, new Claim(ClaimTypes.Role, "Admin"));

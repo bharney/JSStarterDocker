@@ -22,7 +22,7 @@ namespace StarterKit.Services
 
         public async Task SendEmailAsync(string email, string subject, string message, string name = "")
         {
-            var apiKey = _config["MailService:ApiKey"];
+            var apiKey = _config["MailServiceKey"];
             //var client = new SendGridClient(apiKey);
             
             //var msg = new SendGridMessage()

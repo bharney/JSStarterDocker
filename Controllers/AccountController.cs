@@ -123,7 +123,6 @@ namespace StarterKit.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -238,7 +237,7 @@ namespace StarterKit.Controllers
                     };
                 claims.AddRange(userClaims.Result);
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(_config["Tokens:Issuer"],
@@ -269,7 +268,7 @@ namespace StarterKit.Controllers
             var userClaims = _userManager.GetClaimsAsync(model);
             claims.AddRange(userClaims.Result);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(_config["Tokens:Issuer"],
@@ -311,7 +310,7 @@ namespace StarterKit.Controllers
                 Email = dummyEmail,
                 UserName = dummyEmail
             };
-            await _userManager.CreateAsync(_currentUser, _config["SeedAccount:Guest"]);
+            await _userManager.CreateAsync(_currentUser, _config["SeedAccountGuest"]);
             await _userManager.AddToRoleAsync(_currentUser, "guest");
 
             return _currentUser;

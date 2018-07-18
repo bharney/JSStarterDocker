@@ -19,9 +19,9 @@ namespace StarterKit.Repository
         {
             var filenameonly = Path.GetFileName(filename);
 
-            var url = string.Concat(_config["BlobService:StorageUrl:Images"], filenameonly);
+            var url = string.Concat(_config["BlobService:StorageUrl"], "images/", filenameonly);
 
-            var creds = new StorageCredentials(_config["BlobService:Account"], _config["BlobService:Key"]);
+            var creds = new StorageCredentials(_config["BlobServiceAccount"], _config["BlobServiceKey"]);
             var blob = new CloudBlockBlob(new Uri(url), creds);
 
             bool shouldUpload = true;
@@ -46,9 +46,9 @@ namespace StarterKit.Repository
         {
             var filenameonly = Path.GetFileName(filename);
 
-            var url = string.Concat(_config["BlobService:StorageUrl:Profile"], filenameonly);
+            var url = string.Concat(_config["BlobService:StorageUrl"], "profile/", filenameonly);
 
-            var creds = new StorageCredentials(_config["BlobService:Account"], _config["BlobService:Key"]);
+            var creds = new StorageCredentials(_config["BlobServiceAccount"], _config["BlobServiceKey"]);
             var blob = new CloudBlockBlob(new Uri(url), creds);
 
             bool shouldUpload = true;

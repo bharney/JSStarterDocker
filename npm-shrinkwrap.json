@@ -14032,7 +14032,7 @@
     "react-loadable": {
       "version": "5.4.0",
       "resolved": "https://registry.npmjs.org/react-loadable/-/react-loadable-5.4.0.tgz",
-      "integrity": "sha512-HAFWL3aLB9dQA6OfGr7ACDNn/mv8jPUmBvXqrhJZfZgRhZysyNW8RupvGUbeGkTO+9frH1LTdJmKWphZENhlJg==",
+      "integrity": "sha1-O2t9URIaeGj9FVvoSKNuAghHQsk=",
       "dev": true,
       "requires": {
         "prop-types": "15.6.1"
