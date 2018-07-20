@@ -7,6 +7,7 @@
     <IsPackable>false</IsPackable>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UserSecretsId>f986c0ad-1451-4764-ab20-4f8fb8512e45</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
