@@ -81,10 +81,13 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, clientBundleOutputDir, '*'),
-            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
-            //]),
+            new CleanWebpackPlugin([
+                path.join(__dirname, clientBundleOutputDir, '*'),
+                path.join(__dirname, 'ClientApp', 'dist', '*.js')
+            ]),
+            new ReactLoadablePlugin({
+                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
+            }),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
@@ -116,10 +119,7 @@ module.exports = (env) => {
             new LodashModuleReplacementPlugin({
                 collections: true,
                 coercions: true
-            }),
-            new ReactLoadablePlugin({
-                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json'),
-            }),
+            })
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
             new webpack.SourceMapDevToolPlugin({
