@@ -45,7 +45,7 @@ module.exports = (env) => {
             ],
             vendor: [
                 'jquery',
-                'bootstrap',
+                'bootstrap'
             ],
             critical: [
                 'bootstrap/dist/css/bootstrap.min.css',
