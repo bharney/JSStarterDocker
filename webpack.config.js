@@ -81,13 +81,13 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
+            new ReactLoadablePlugin({
+                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
+            }),
             new CleanWebpackPlugin([
                 path.join(__dirname, clientBundleOutputDir, '*'),
                 path.join(__dirname, 'ClientApp', 'dist', '*.js')
             ]),
-            new ReactLoadablePlugin({
-                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
-            }),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
