@@ -54,6 +54,6 @@ namespace StarterKit
             })
             .UseStartup<Startup>()
             .Build();
-        private static string GetKeyVaultEndpoint() => Environment.GetEnvironmentVariable("MSI_ENDPOINT");
+        private static string GetKeyVaultEndpoint() => "https://starterpackvault.vault.azure.net/";
     }
 }
