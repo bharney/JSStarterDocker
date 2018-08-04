@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "JSStarterPackApp": {
+      "value": "jsstarterpack"
+    },
+    "StarterPackVault": {
+      "value": "StarterPackVault"
+    },
+    "JSStarterPackAppInsights": {
+      "value": "jsstarterpack"
+    },
+    "jsstarterpackStorage": {
+      "value": "jsstarterpack"
+    },
+    "ServicePlan698eb4ae_9e2b": {
+      "value": "ServicePlan698eb4ae-9e2b"
+    },
+    "jsstarterpackSqlServer": {
+      "value": "javascriptservicesstarterpack"
+    },
+    "administratorLogin": {
+      "value": "starterpack"
+    },
+    "appLogin": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "appLogin"
+      }
+    },
+    "administratorLoginPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "administratorLoginPassword"
+      }
+    },
+    "Token": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "Token"
+      }
+    },
+    "MailServiceKey": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "MailServiceKey"
+      }
+    },
+    "BlobServiceKey": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "BlobServiceKey"
+      }
+    },
+    "MailServiceUser": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "MailServiceUser"
+      }
+    },
+    "SeedAccountGuest": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "SeedAccountGuest"
+      }
+    },
+    "ConnectionString": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "ConnectionString"
+      }
+    },
+    "BlobServiceAccount": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "BlobServiceAccount"
+      }
+    },
+    "SeedAccountUserName": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "SeedAccountUserName"
+      }
+    },
+    "SeedAccountPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "SeedAccountPassword"
+      }
+    },
+    "ConnectionStrings--DefaultConnection": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+        },
+        "secretName": "ConnectionStrings--DefaultConnection"
+      }
+    },
+    "javascriptservicesstarterpackSql": {
+      "value": "javascriptservicesstarterpack"
+    }
+  }
+}
