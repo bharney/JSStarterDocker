@@ -9,6 +9,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UserSecretsId>f986c0ad-1451-4764-ab20-4f8fb8512e45</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\components\Admin\" />
     <Folder Include="ClientApp\types\" />
+    <Folder Include="Connected Services\" />
     <Folder Include="wwwroot\dist\" />
   </ItemGroup>
 
@@ -66,5 +68,12 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-
+  <Target Name="RunWebpack" BeforeTargets="PrepareForPublish">
+    <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
+    <ItemGroup>
+      <_WebpackFiles Include="wwwroot\dist\**" />
+      <ContentWithTargetPath Include="@(_WebpackFiles->'%(FullPath)')" RelativePath="%(_WebpackFiles.Identity)" TargetPath="%(_WebpackFiles.Identity)" CopyToPublishDirectory="Always" />
+    </ItemGroup>
+  </Target>
 </Project>

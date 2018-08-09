@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  starterkit:
+    image: ${DOCKER_REGISTRY}starterkit
+    build:
+      context: .
+      dockerfile: StarterPack/Dockerfile

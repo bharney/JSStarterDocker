@@ -117,11 +117,11 @@ export const actionCreators = {
                 let username: string = '';
                 if (typeof window !== 'undefined') {
                     if (window.sessionStorage) {
-                        username = window.sessionStorage.username;
-                        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+                        username = (<any>window).sessionStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
                     } else if (window.localStorage) {
-                        username = window.localStorage.username;
-                        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+                        username = (<any>window).localStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
                     }
                 }
                 const token = bearerFromStore.access_token ? bearerFromStore : undefined
@@ -229,11 +229,11 @@ export const actionCreators = {
                     let username: string = '';
                     if (typeof window !== 'undefined') {
                         if (window.sessionStorage) {
-                            username = window.sessionStorage.username;
-                            bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+                            username = (<any>window).sessionStorage.username;
+                            bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
                         } else if (window.localStorage) {
-                            username = window.localStorage.username;
-                            bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+                            username = (<any>window).localStorage.username;
+                            bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
                         }
                     }
                     const token = bearerFromStore.access_token ? bearerFromStore : undefined
@@ -310,11 +310,11 @@ export const actionCreators = {
                 let username: string = '';
                 if (typeof window !== 'undefined') {
                     if (window.sessionStorage) {
-                        username = window.sessionStorage.username;
-                        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+                        username = (<any>window).sessionStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
                     } else if (window.localStorage) {
-                        username = window.localStorage.username;
-                        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+                        username = (<any>window).localStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
                     }
                 }
                 const token = bearerFromStore.access_token ? bearerFromStore : undefined
@@ -333,11 +333,11 @@ let bearerFromStore: Bearer = {};
 let username: string = '';
 if (typeof window !== 'undefined') {
     if (window.sessionStorage) {
-        username = window.sessionStorage.username;
-        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+        username = (<any>window).sessionStorage.username;
+        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
     } else if (window.localStorage) {
-        username = window.localStorage.username;
-        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+        username = (<any>window).localStorage.username;
+        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
     }
 }
 

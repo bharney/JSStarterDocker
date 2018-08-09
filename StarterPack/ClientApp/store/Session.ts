@@ -54,11 +54,11 @@ export const actionCreators = {
 
         if (typeof window !== 'undefined') {
             if (window.sessionStorage) {
-                username = window.sessionStorage.username;
-                bearerFromStore = window.sessionStorage.jwt !== undefined ? JSON.parse(window.sessionStorage.jwt) : undefined;
+                username = (<any>window).sessionStorage.username;
+                bearerFromStore = (<any>window).sessionStorage.jwt !== undefined ? JSON.parse((<any>window).sessionStorage.jwt) : undefined;
             } else if (window.localStorage) {
-                username = window.localStorage.username;
-                bearerFromStore = window.localStorage.jwt !== undefined ? JSON.parse(window.localStorage.jwt) : undefined;
+                username = (<any>window).localStorage.username;
+                bearerFromStore = (<any>window).localStorage.jwt !== undefined ? JSON.parse((<any>window).localStorage.jwt) : undefined;
             }
         }
         if (bearerFromStore !== getState().session.token) {
@@ -129,11 +129,11 @@ export const actionCreators = {
                 let username: string = '';
                 if (typeof window !== 'undefined') {
                     if (window.sessionStorage) {
-                        username = window.sessionStorage.username;
-                        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+                        username = (<any>window).sessionStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
                     } else if (window.localStorage) {
-                        username = window.localStorage.username;
-                        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+                        username = (<any>window).localStorage.username;
+                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
                     }
                 }
                 const token = bearerFromStore.access_token ? bearerFromStore : undefined
@@ -152,11 +152,11 @@ let bearerFromStore: Bearer = {};
 let username: string = '';
 if (typeof window !== 'undefined') {
     if (window.sessionStorage) {
-        username = window.sessionStorage.username;
-        bearerFromStore = JSON.parse(window.sessionStorage.jwt || "{}");
+        username = (<any>window).sessionStorage.username;
+        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
     } else if (window.localStorage) {
-        username = window.localStorage.username;
-        bearerFromStore = JSON.parse(window.localStorage.jwt || "{}");
+        username = (<any>window).localStorage.username;
+        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
     }
 }
 

@@ -17,9 +17,9 @@ const loading = () => {
 };
 
 const AsyncSigninForm = Loadable({
-    loader: () => import(/* webpackChunkName: "SigninForm" */ './SigninForm'),
-    modules: ['./SigninForm'],
-    webpack: () => [require.resolveWeak('./SigninForm')],
+    loader: () => import(/* webpackChunkName: "SignInForm" */ './SignInForm'),
+    modules: ['./SignInForm'],
+    webpack: () => [require.resolveWeak('./SignInForm')],
     loading: loading,
 })
 
