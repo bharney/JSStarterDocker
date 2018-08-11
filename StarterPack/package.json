@@ -41,7 +41,7 @@
     "lodash-webpack-plugin": "^0.11.5",
     "mini-css-extract-plugin": "^0.4.0",
     "node-noop": "1.0.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^4.9.3",
     "optimize-css-assets-webpack-plugin": "^4.0.0",
     "popper.js": "^1.14.3",
     "postcss-cssnext": "^3.1.0",

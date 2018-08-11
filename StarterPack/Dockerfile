@@ -8,20 +8,17 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+RUN npm install node-sass@latest webpack
 
 COPY StarterPack/StarterKit.csproj .
 RUN dotnet restore StarterKit.csproj
 
 COPY . .
-RUN npm install node-sass webpack
-RUN dotnet publish StarterKit.csproj -c Release -o /publish
+RUN dotnet publish StarterKit.csproj -c Release -o /app/publish
 
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS publish
-WORKDIR /publish
-EXPOSE 80
-EXPOSE 443
-
-COPY --from=build /publish .
+WORKDIR /app/publish
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "StarterKit.dll"]
 
 #COPY --from=build /publish .

@@ -4,12 +4,9 @@ services:
   starterkit:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_HTTPS_PORT=44392
-      - USER_SECRETS_ID=f986c0ad-1451-4764-ab20-4f8fb8512e45
     ports:
       - "55334:80"
-      - "44392:443"
     volumes:
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ${APPDATA}/Microsoft/UserSecrets/${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
+      - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
+      - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
