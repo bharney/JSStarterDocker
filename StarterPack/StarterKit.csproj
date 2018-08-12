@@ -56,9 +56,10 @@
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec Command="npm install node-sass webpack" />
     <Exec Command="npm install" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js --env.prod" />
 
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
@@ -67,14 +68,6 @@
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
-    </ItemGroup>
-  </Target>
-  <Target Name="RunWebpack" BeforeTargets="PrepareForPublish">
-    <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
-    <ItemGroup>
-      <_WebpackFiles Include="wwwroot\dist\**" />
-      <ContentWithTargetPath Include="@(_WebpackFiles->'%(FullPath)')" RelativePath="%(_WebpackFiles.Identity)" TargetPath="%(_WebpackFiles.Identity)" CopyToPublishDirectory="Always" />
     </ItemGroup>
   </Target>
 </Project>

@@ -81,10 +81,10 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            new CleanWebpackPlugin([
-                path.join(__dirname, clientBundleOutputDir, '*'),
-                path.join(__dirname, 'ClientApp', 'dist', '*.js')
-            ]),
+            //new CleanWebpackPlugin([
+            //    path.join(__dirname, clientBundleOutputDir, '*'),
+            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
+            //]),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
