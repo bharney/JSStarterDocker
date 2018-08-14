@@ -1,8 +1,8 @@
 FROM microsoft/dotnet:2.1-sdk as build
 WORKDIR /app
 
-ENV NODE_VERSION 10.8.0
-ENV NODE_DOWNLOAD_SHA D83EA37E53F534996B4477E9A616BFE367F90A62FC50714DCF495F8802090F7B
+ENV NODE_VERSION 8.9.4
+ENV NODE_DOWNLOAD_SHA 21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc
 RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
@@ -32,8 +32,8 @@ RUN dotnet publish -c Release -o publish/.
 
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS publish
 WORKDIR /app
-ENV NODE_VERSION 10.8.0
-ENV NODE_DOWNLOAD_SHA D83EA37E53F534996B4477E9A616BFE367F90A62FC50714DCF495F8802090F7B
+ENV NODE_VERSION 8.9.4
+ENV NODE_DOWNLOAD_SHA 21fb4690e349f82d708ae766def01d7fec1b085ce1f5ab30d9bda8ee126ca8fc
 RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" --output nodejs.tar.gz \
     && echo "$NODE_DOWNLOAD_SHA nodejs.tar.gz" | sha256sum -c - \
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
