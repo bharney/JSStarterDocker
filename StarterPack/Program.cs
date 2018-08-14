@@ -29,32 +29,33 @@ namespace StarterKit
                     {
                         config.AddUserSecrets(appAssembly, optional: true);
                     }
-                    var builtConfig = config.Build();
-
-                    var keyVaultConfigBuilder = new ConfigurationBuilder();
-
-                    keyVaultConfigBuilder.AddAzureKeyVault(
-                        builtConfig["MSI_ENDPOINT"],
-                        builtConfig["MSI_CLIENT"],
-                        builtConfig["MSI_SECRET"]);
-                    var keyVaultConfig = keyVaultConfigBuilder.Build();
-                    config.AddConfiguration(keyVaultConfig);
                 }
-                else
-                {
-                    var builtConfig = config.Build();
+                var builtConfig = config.Build();
 
-                    var keyVaultEndpoint = GetKeyVaultEndpoint();
-                    if (!string.IsNullOrEmpty(keyVaultEndpoint))
-                    {
-                        var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                        var keyVaultClient = new KeyVaultClient(
-                            new KeyVaultClient.AuthenticationCallback(
-                                azureServiceTokenProvider.KeyVaultTokenCallback));
-                        config.AddAzureKeyVault(
-                            keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
-                    }
-                }
+                var keyVaultConfigBuilder = new ConfigurationBuilder();
+
+                keyVaultConfigBuilder.AddAzureKeyVault(
+                    builtConfig["MSI_ENDPOINT"],
+                    builtConfig["MSI_CLIENT"],
+                    builtConfig["MSI_SECRET"]);
+                var keyVaultConfig = keyVaultConfigBuilder.Build();
+                config.AddConfiguration(keyVaultConfig);
+                
+                //else
+                //{
+                //    var builtConfig = config.Build();
+
+                //    var keyVaultEndpoint = GetKeyVaultEndpoint();
+                //    if (!string.IsNullOrEmpty(keyVaultEndpoint))
+                //    {
+                //        var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                //        var keyVaultClient = new KeyVaultClient(
+                //            new KeyVaultClient.AuthenticationCallback(
+                //                azureServiceTokenProvider.KeyVaultTokenCallback));
+                //        config.AddAzureKeyVault(
+                //            keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager());
+                //    }
+                //}
             })
             .UseStartup<Startup>()
             .Build();

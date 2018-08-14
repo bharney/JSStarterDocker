@@ -126,7 +126,7 @@ module.exports = (env) => {
                 filename: '[file].map', // Remove this line if you prefer inline source maps
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
             }),
-            new WebpackBundleAnalyzer()
+            //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
                 new ImageminPlugin({
