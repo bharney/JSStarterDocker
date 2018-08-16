@@ -8,10 +8,23 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
     && tar -xzf "nodejs.tar.gz" -C /usr/local --strip-components=1 \
     && rm nodejs.tar.gz \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-COPY StarterKit.csproj ./
+COPY StarterPack/StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
-COPY . .
+COPY StarterPack/. ./
+#COPY StarterPack/ClientApp \
+	#StarterPack/.babelrc \
+	#StarterPack/Controllers \
+	#StarterPack/Extensions \
+	#StarterPack/Migrations \
+	#StarterPack/Models \
+	#StarterPack/Repository \
+	#StarterPack/Services \
+	#StarterPack/Views \
+	#StarterPack/wwwroot \
+	#StarterPack/*.js \
+	#StarterPack/*.cs \
+	#StarterPack/*.json ./
 RUN touch ClientApp/dist react-loadable.json
 RUN dotnet publish -c Release -o publish/. 
 
