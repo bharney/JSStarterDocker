@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY}starterkit
     build:
       context: .
-      dockerfile: StarterPack/Dockerfile
+      dockerfile: StarterPack\Dockerfile

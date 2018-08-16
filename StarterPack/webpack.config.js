@@ -6,7 +6,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const merge = require('webpack-merge');
 const bundleOutputDir = './wwwroot/dist';
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
@@ -129,11 +128,6 @@ module.exports = (env) => {
             //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
-                new ImageminPlugin({
-                    pngquant: {
-                        quality: '80-85'
-                    }
-                }),
                 new UglifyJSPlugin(),
                 new OptimizeCSSAssetsPlugin({}),               
             ])

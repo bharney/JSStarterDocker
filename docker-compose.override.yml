@@ -4,9 +4,14 @@ services:
   starterkit:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTPS_PORT=44392
+      - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
       - "55334:80"
+      - "44375:443"
     volumes:
-      - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
-      - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
+      - ${APPDATA}/ASP.NET/Https:C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https:ro
+      - ${APPDATA}/Microsoft/UserSecrets/${USER_SECRETS_ID}:C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets\${USER_SECRETS_ID}:ro
+networks:
+  default:
+    external:
+      name: nat
