@@ -14,7 +14,7 @@ RUN dotnet restore StarterKit.csproj
 COPY StarterPack/. ./
 #RUN rm wwwroot/dist/*
 #RUN rm ClientApp/dist/*
-RUN touch ClientApp/dist react-loadable.json
+RUN mkdir -p ClientApp/dist && touch ClientApp/dist react-loadable.json
 RUN dotnet publish -c Release -o publish/. 
 
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS publish
