@@ -12,8 +12,8 @@ COPY StarterPack/StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
 COPY StarterPack/. ./
-RUN rm wwwroot/dist/*
-RUN rm ClientApp/dist/*
+#RUN rm wwwroot/dist/*
+#RUN rm ClientApp/dist/*
 RUN touch ClientApp/dist react-loadable.json
 RUN dotnet publish -c Release -o publish/. 
 
