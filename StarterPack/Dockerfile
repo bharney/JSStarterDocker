@@ -12,8 +12,6 @@ COPY StarterPack/StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
 COPY StarterPack/. ./
-RUN rm wwwroot/dist/*
-RUN rm ClientApp/dist/*
 #COPY StarterPack/ClientApp \
 	#StarterPack/.babelrc \
 	#StarterPack/Controllers \
