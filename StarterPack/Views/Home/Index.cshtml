@@ -6,6 +6,18 @@
 }
 
 
+@if (!string.IsNullOrEmpty("/dist/critical.css"))
+{
+    var stylesVersion = IRazorPageExtensions.AddFileVersionToPath(this,"/dist/critical.css");
+    Styles.Add(stylesVersion);
+}
+
+@if (!string.IsNullOrEmpty("/dist/bundle.css"))
+{
+    var stylesVersion = IRazorPageExtensions.AddFileVersionToPath(this,"/dist/bundle.css");
+    Styles.Add(stylesVersion);
+}
+
 
 @if (!string.IsNullOrEmpty("/dist/critical.js"))
 {

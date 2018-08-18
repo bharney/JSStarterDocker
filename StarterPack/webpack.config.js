@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const merge = require('webpack-merge');
 const bundleOutputDir = './wwwroot/dist';
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
+//const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
@@ -81,10 +81,9 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, clientBundleOutputDir, '*'),
-            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
-            //]),
+            new CleanWebpackPlugin([
+                path.join(__dirname, clientBundleOutputDir, '*'),
+            ]),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
@@ -129,15 +128,91 @@ module.exports = (env) => {
             //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
-                new ImageminPlugin({
-                    pngquant: {
-                        quality: '80-85'
-                    }
-                }),
+                //new ImageminPlugin({
+                //    pngquant: {
+                //        quality: '80-85'
+                //    }
+                //}),
                 new UglifyJSPlugin(),
                 new OptimizeCSSAssetsPlugin({}),               
             ])
     });
 
-    return [clientBundleConfig];
+
+    // Configuration for server-side (prerendering) bundle suitable for running in Node
+    const serverBundleConfig = merge(sharedConfig(), {
+        resolve: { mainFields: ['main'] },
+        entry: {
+            serverbundle: './ClientApp/boot-server.tsx',
+            vendor: ['aspnet-prerendering', 'react-dom/server']
+        },
+        optimization: {
+            minimizer: [
+                new UglifyJSPlugin({
+                    cache: true,
+                    parallel: true,
+                    sourceMap: false // set to true if you want JS source maps
+                }),
+                new OptimizeCSSAssetsPlugin({})
+            ]
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                        : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
+                }
+            ]
+        },
+        plugins: [
+            new CleanWebpackPlugin([
+                path.join(__dirname, 'ClientApp', 'dist', '*.js')
+            ]),
+            new webpack.LoaderOptionsPlugin({
+                minimize: true,
+                debug: false,
+                noInfo: true,
+                options: {
+                    sassLoader: {
+                        includePaths: [path.resolve('ClientApp', 'scss')]
+                    },
+                    context: '/',
+                    postcss: () => [autoprefixer]
+                }
+            }),
+            new MiniCssExtractPlugin({
+                filename: '[name].css',
+                chunkFilename: "[id].css"
+            }),
+            new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
+            new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
+            }),
+            new LodashModuleReplacementPlugin({
+                collections: true,
+                coercions: true
+            }),
+        ].concat(isDevBuild ? [
+            // Plugins that apply in development builds only
+            //new WebpackBundleAnalyzer()
+        ] : [
+                // Plugins that apply in production builds only
+                //new ImageminPlugin({
+                //    pngquant: {
+                //        quality: '80-85'
+                //    }
+                //}),
+                new UglifyJSPlugin(),
+                new OptimizeCSSAssetsPlugin({}),
+            ]),
+        output: {
+            libraryTarget: 'commonjs2',
+            path: path.join(__dirname, 'ClientApp', 'dist')
+        },
+        target: 'node',
+        devtool: 'inline-source-map'
+    });
+
+    return [clientBundleConfig, serverBundleConfig];
 };

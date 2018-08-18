@@ -9,7 +9,6 @@
     <DockerServiceName>starterkit</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".dockerignore .publish" />
     <None Include=".env" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>

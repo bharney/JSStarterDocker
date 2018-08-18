@@ -2,8 +2,11 @@ version: '3.4'
 
 services:
   starterkit:
+    build:
+      context: .
+      dockerfile: StarterPack/Dockerfile.local
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTPS_PORT=44392
     ports:
       - "55334:80"
