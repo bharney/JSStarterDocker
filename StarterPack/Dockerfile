@@ -12,10 +12,8 @@ COPY StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
 COPY . .
-RUN dotnet build StarterKit.csproj -c Release -o publish/.
-
-FROM build AS publish
 RUN dotnet publish StarterKit.csproj -c Release -o publish/. 
+RUN dotnet build StarterKit.csproj -c Release -o publish/.
 
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS publish
 WORKDIR /app

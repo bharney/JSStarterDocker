@@ -40,7 +40,7 @@ namespace StarterKit
                     builtConfig["MSI_SECRET"]);
                 var keyVaultConfig = keyVaultConfigBuilder.Build();
                 config.AddConfiguration(keyVaultConfig);
-                
+
                 //else
                 //{
                 //    var builtConfig = config.Build();
