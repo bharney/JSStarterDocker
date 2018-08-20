@@ -12,8 +12,10 @@ COPY StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
 COPY . .
-RUN mkdir -p ClientApp/dist &&  echo "{}" > ClientApp/dist/react-loadable.json
-RUN dotnet publish -c Release -o publish/. 
+RUN dotnet build StarterKit.csproj -c Release -o publish/.
+
+FROM build AS publish
+RUN dotnet publish StarterKit.csproj -c Release -o publish/. 
 
 FROM microsoft/dotnet:2.1-aspnetcore-runtime AS publish
 WORKDIR /app
@@ -26,3 +28,4 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 COPY --from=build /app/publish/. ./
 ENTRYPOINT ["dotnet", "StarterKit.dll"]
+CMD ["dotnet", "run", "--server.urls", "http://*:80"]

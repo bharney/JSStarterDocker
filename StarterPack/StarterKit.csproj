@@ -22,20 +22,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.1.1" />
-    <PackageReference Include="MSBuildTasks" Version="1.5.0.235" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
+    <Content Remove="wwwroot\dist\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\components\Admin\" />
     <Folder Include="ClientApp\types\" />
-    <Folder Include="wwwroot\dist\" />
   </ItemGroup>
-
+  
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
@@ -51,13 +50,14 @@
     <Exec Command="node node_modules/webpack/bin/webpack.js" />
   </Target>
 
-  <Target Name="WaitForWebpack" BeforeTargets="Build" DependsOnTargets="DebugRunWebpack">
-    <Sleep Milliseconds="5000" />
-  </Target>
-
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Message Importance="high" Text="Performing npm install..." />
     <Exec Command="npm install" />
+    <Message Importance="high" Text="Creating ClientApp/dist directory..." />
+    <MakeDir Directories="ClientApp\dist\" />
+    <Message Importance="high" Text="Creating react-loadable.json file..." />
+    <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
 
     <!-- Include the newly-built files in the publish output -->
@@ -69,5 +69,5 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-
+  
 </Project>

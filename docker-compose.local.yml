@@ -1,0 +1,6 @@
+version: '3.4'
+
+services:
+  starterkit:
+    volumes:
+      - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro

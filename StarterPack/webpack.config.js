@@ -59,8 +59,8 @@ module.exports = (env) => {
             //            name: "commons",
             //            chunks: "initial",
             //            minChunks: 2
-            //        }
-            //    }
+            //        } 
+            //    } 
             //},
             minimizer: [
                 new UglifyJSPlugin({
@@ -214,5 +214,60 @@ module.exports = (env) => {
         devtool: 'inline-source-map'
     });
 
-    return [clientBundleConfig, serverBundleConfig];
+    const loadableConfig = merge(sharedConfig(), {
+        entry: {
+            bundle: [
+                'domain-task',
+                'event-source-polyfill',
+                './ClientApp/boot-client.tsx'
+            ],
+            vendor: [
+                'jquery',
+                'bootstrap'
+            ],
+            critical: [
+                'bootstrap/dist/css/bootstrap.min.css',
+                '@fortawesome/fontawesome-svg-core/styles.css'
+            ]
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                        : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
+                }
+            ]
+        },
+        output: { path: path.join(__dirname, clientBundleOutputDir) },
+        plugins: [
+            new webpack.LoaderOptionsPlugin({
+                minimize: true,
+                debug: false,
+                noInfo: true,
+                options: {
+                    sassLoader: {
+                        includePaths: [path.resolve('ClientApp', 'scss')]
+                    },
+                    context: '/',
+                    postcss: () => [autoprefixer]
+                }
+            }),
+            new MiniCssExtractPlugin({
+                filename: '[name].css',
+                chunkFilename: "[id].css"
+            }),
+            new HtmlWebpackPlugin({
+                template: "Views/Home/IndexTemplate.cshtml",
+                filename: "../../Views/Home/Index.cshtml",
+                inject: false,
+                chunksSortMode: 'manual',
+                chunks: ['critical', 'vendor', 'bundle']
+            }),
+            new ReactLoadablePlugin({
+                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
+            })
+        ]
+    });
+
+    return [clientBundleConfig, serverBundleConfig, loadableConfig];
 };
