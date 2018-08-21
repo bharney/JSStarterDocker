@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const merge = require('webpack-merge');
 const bundleOutputDir = './wwwroot/dist';
-//const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackBundleAnalyzer = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
@@ -128,11 +128,11 @@ module.exports = (env) => {
             //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
-                //new ImageminPlugin({
-                //    pngquant: {
-                //        quality: '80-85'
-                //    }
-                //}),
+                new ImageminPlugin({
+                    pngquant: {
+                        quality: '80-85'
+                    }
+                }),
                 new UglifyJSPlugin(),
                 new OptimizeCSSAssetsPlugin({}),               
             ])
@@ -198,11 +198,11 @@ module.exports = (env) => {
             //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
-                //new ImageminPlugin({
-                //    pngquant: {
-                //        quality: '80-85'
-                //    }
-                //}),
+                new ImageminPlugin({
+                    pngquant: {
+                        quality: '80-85'
+                    }
+                }),
                 new UglifyJSPlugin(),
                 new OptimizeCSSAssetsPlugin({}),
             ]),
@@ -214,60 +214,5 @@ module.exports = (env) => {
         devtool: 'inline-source-map'
     });
 
-    const loadableConfig = merge(sharedConfig(), {
-        entry: {
-            bundle: [
-                'domain-task',
-                'event-source-polyfill',
-                './ClientApp/boot-client.tsx'
-            ],
-            vendor: [
-                'jquery',
-                'bootstrap'
-            ],
-            critical: [
-                'bootstrap/dist/css/bootstrap.min.css',
-                '@fortawesome/fontawesome-svg-core/styles.css'
-            ]
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.(css|scss)(\?|$)/, use: isDevBuild ? ['style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
-                        : ['style-loader', MiniCssExtractPlugin.loader, 'css-loader?minimize', 'postcss-loader', 'sass-loader']
-                }
-            ]
-        },
-        output: { path: path.join(__dirname, clientBundleOutputDir) },
-        plugins: [
-            new webpack.LoaderOptionsPlugin({
-                minimize: true,
-                debug: false,
-                noInfo: true,
-                options: {
-                    sassLoader: {
-                        includePaths: [path.resolve('ClientApp', 'scss')]
-                    },
-                    context: '/',
-                    postcss: () => [autoprefixer]
-                }
-            }),
-            new MiniCssExtractPlugin({
-                filename: '[name].css',
-                chunkFilename: "[id].css"
-            }),
-            new HtmlWebpackPlugin({
-                template: "Views/Home/IndexTemplate.cshtml",
-                filename: "../../Views/Home/Index.cshtml",
-                inject: false,
-                chunksSortMode: 'manual',
-                chunks: ['critical', 'vendor', 'bundle']
-            }),
-            new ReactLoadablePlugin({
-                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
-            })
-        ]
-    });
-
-    return [clientBundleConfig, serverBundleConfig, loadableConfig];
+    return [clientBundleConfig, serverBundleConfig];
 };

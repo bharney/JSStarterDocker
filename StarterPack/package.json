@@ -35,6 +35,7 @@
     "generate-json-webpack-plugin": "^0.3.1",
     "history": "4.6.3",
     "html-webpack-plugin": "^3.2.0",
+    "imagemin-webpack-plugin": "^2.2.0",
     "jquery": "3.2.1",
     "json-loader": "0.5.4",
     "lodash-webpack-plugin": "^0.11.5",

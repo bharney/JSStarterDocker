@@ -2,7 +2,11 @@ version: '3.4'
 
 services:
   starterkit:
-    image: ${DOCKER_REGISTRY}starterkit
+    image: starterpackregistry.azurecr.io/starterkit
     build:
       context: StarterPack
       dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: https://+:443;http://+:80
+      ASPNETCORE_HTTPS_PORT: 55334
