@@ -54,6 +54,7 @@ namespace StarterKit
                 //}
             })
             .UseStartup<Startup>()
+            //.UseUrls("http://0.0.0.0:5000")
             .Build();
         private static string GetKeyVaultEndpoint() => "https://starterpackvault.vault.azure.net/";
     }

@@ -49,7 +49,7 @@ module.exports = (env) => {
                 new UglifyJSPlugin({
                     cache: true,
                     parallel: true,
-                    sourceMap: false // set to true if you want JS source maps
+                    sourceMap: isDevBuild // set to true if you want JS source maps
                 }),
                 new OptimizeCSSAssetsPlugin({})
             ]
@@ -64,9 +64,9 @@ module.exports = (env) => {
         },
         plugins: [
             new webpack.LoaderOptionsPlugin({
-                minimize: true,
-                debug: false,
-                noInfo: true,
+                minimize: !isDevBuild,
+                debug: isDevBuild,
+                noInfo: !isDevBuild,
                 options: {
                     sassLoader: {
                         includePaths: [path.resolve('ClientApp', 'scss')]

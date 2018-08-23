@@ -59,7 +59,7 @@
     <Message Importance="high" Text="Creating react-loadable.json file..." />
     <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
     <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
-
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js --env.prod" />
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="wwwroot\dist\**; ClientApp\dist\**" />

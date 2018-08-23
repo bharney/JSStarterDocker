@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +15,7 @@ using StarterKit.Models;
 using StarterKit.Repository;
 using StarterKit.Services;
 using System;
+using System.IO.Compression;
 using System.Text;
 using System.Threading;
 
@@ -33,6 +35,12 @@ namespace StarterKit
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
             services.AddMvc();
             services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
 
@@ -94,7 +102,6 @@ namespace StarterKit
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true,
                     HotModuleReplacementServerPort = 5001
                 });
                 
@@ -103,7 +110,7 @@ namespace StarterKit
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseResponseCompression();
             app.UseStaticFiles(new StaticFileOptions
             {
                 OnPrepareResponse = ctx =>

@@ -33,7 +33,7 @@ module.exports = (env) => {
             ]
         }
     });
-      
+
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './wwwroot/dist';
     const clientBundleConfig = merge(sharedConfig(), {
@@ -53,20 +53,11 @@ module.exports = (env) => {
             ]
         },
         optimization: {
-            //splitChunks: {
-            //    cacheGroups: {
-            //        commons: {
-            //            name: "commons",
-            //            chunks: "initial",
-            //            minChunks: 2
-            //        } 
-            //    } 
-            //},
             minimizer: [
                 new UglifyJSPlugin({
                     cache: true,
                     parallel: true,
-                    sourceMap: false // set to true if you want JS source maps
+                    sourceMap: isDevBuild // set to true if you want JS source maps
                 }),
                 new OptimizeCSSAssetsPlugin({})
             ]
@@ -89,9 +80,9 @@ module.exports = (env) => {
                 path.join(__dirname, clientBundleOutputDir, '*'),
             ]),
             new webpack.LoaderOptionsPlugin({
-                minimize: true,
-                debug: false,
-                noInfo: true,
+                minimize: !isDevBuild,
+                debug: isDevBuild,
+                noInfo: !isDevBuild,
                 options: {
                     sassLoader: {
                         includePaths: [path.resolve('ClientApp', 'scss')]
@@ -109,7 +100,7 @@ module.exports = (env) => {
                 filename: "../../Views/Home/Index.cshtml",
                 inject: false,
                 chunksSortMode: 'manual',
-                chunks: ['critical','vendor', 'bundle']
+                chunks: ['critical', 'vendor', 'bundle']
             }),
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
@@ -138,7 +129,7 @@ module.exports = (env) => {
                     }
                 }),
                 new UglifyJSPlugin(),
-                new OptimizeCSSAssetsPlugin({}),               
+                new OptimizeCSSAssetsPlugin({}),
             ])
     });
 
@@ -155,7 +146,7 @@ module.exports = (env) => {
                 new UglifyJSPlugin({
                     cache: true,
                     parallel: true,
-                    sourceMap: false // set to true if you want JS source maps
+                    sourceMap: isDevBuild // set to true if you want JS source maps
                 }),
                 new OptimizeCSSAssetsPlugin({})
             ]
@@ -173,9 +164,9 @@ module.exports = (env) => {
                 path.join(__dirname, 'ClientApp', 'dist', '*.js')
             ]),
             new webpack.LoaderOptionsPlugin({
-                minimize: true,
-                debug: false,
-                noInfo: true,
+                minimize: !isDevBuild,
+                debug: isDevBuild,
+                noInfo: !isDevBuild,
                 options: {
                     sassLoader: {
                         includePaths: [path.resolve('ClientApp', 'scss')]

@@ -6,5 +6,3 @@ services:
     build:
       context: StarterPack
       dockerfile: Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
