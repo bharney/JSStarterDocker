@@ -94,7 +94,8 @@ namespace StarterKit
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
+                    ReactHotModuleReplacement = true,
+                    HotModuleReplacementServerPort = 5001
                 });
                 
             }

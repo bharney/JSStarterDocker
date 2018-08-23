@@ -5,15 +5,15 @@ services:
     image: ${DOCKER_REGISTRY}starterkit
     build:
       context: StarterPack
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: https://+:443;http://+:80
-      ASPNETCORE_HTTPS_PORT: 55334
+      ASPNETCORE_URLS: http://+:5000
     ports:
-      - "55334:80"
-      - "44392:443"
+      - "5000:5000"
+      - "5001:5001"
     volumes:
       - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
       - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
-      - ${PROJECT_PATH}\StarterPack:/app
+      - ${PROJECT_PATH}/StarterPack:/app
+      - /app/node_modules/

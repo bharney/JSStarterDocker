@@ -24,11 +24,7 @@ namespace StarterKit
                 var env = ctx.HostingEnvironment;
                 if (env.IsDevelopment())
                 {
-                    var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-                    if (appAssembly != null)
-                    {
-                        config.AddUserSecrets(appAssembly, optional: true);
-                    }
+                    config.AddUserSecrets<Startup>();
                 }
                 var builtConfig = config.Build();
 
