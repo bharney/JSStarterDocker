@@ -83,12 +83,8 @@ export default createServerRenderer(params => {
 
             
             let bundles = getBundles(stats, modules);
-            let styles = []
-            let scripts = []
-            if (bundles.file) {
-                let styles = bundles.filter(bundle => bundle.file.endsWith('.css')).map(style => `<link href="/dist/${style.file}" rel="stylesheet"/>`).join('\n');
-                let scripts = bundles.filter(bundle => bundle.file.endsWith('.js')).map(script => `<script charset="utf-8" src="/dist/${script.file}"></script>`).join('\n');
-            }
+            let styles = bundles.filter(bundle => bundle.file.endsWith('.css'));
+            let scripts = bundles.filter(bundle => bundle.file.endsWith('.js'));
             const html = `<html lang="en">
                 <head>
                     <meta charset="utf-8" />
@@ -97,14 +93,14 @@ export default createServerRenderer(params => {
                     <title>Starter Pack</title>
                     ${criticalStyles} 
                     ${vendorStyles} 
-                    ${styles}
+                    ${styles.map(style => `<link href="/dist/${style.file}" rel="stylesheet"/>`).join('\n')}
                 </head>
                 <body>
                     <div id="react-app">${app}</div>
                     ${criticalScripts}
                     ${mainStyles} 
                     ${vendorScripts}
-                    ${scripts}
+                    ${scripts.map(script => `<script charset="utf-8" src="/dist/${script.file}"></script>`).join('\n')}
                     ${mainScripts}
                 </body>
             </html>`
