@@ -34,7 +34,7 @@
     <Folder Include="ClientApp\components\Admin\" />
     <Folder Include="ClientApp\types\" />
   </ItemGroup>
-  
+
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
@@ -48,6 +48,7 @@
     <MakeDir Directories="ClientApp\dist\" />
     <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
     <Exec Command="node node_modules/webpack/bin/webpack.js" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
@@ -58,8 +59,8 @@
     <MakeDir Directories="ClientApp\dist\" />
     <Message Importance="high" Text="Creating react-loadable.json file..." />
     <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --env.prod" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js --env.prod" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --env.prod" />
+    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.prod.js --env.prod" />
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="wwwroot\dist\**; ClientApp\dist\**" />

@@ -23,7 +23,7 @@ module.exports = (env) => {
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
             filename: '[name].js',
-            chunkFilename: "[name].[chunkhash].js",
+            chunkFilename: "[name].js",
             publicPath: '/dist/', // Webpack dev middleware, if enabled, handles requests for this URL prefix
         },
         module: {
@@ -49,7 +49,7 @@ module.exports = (env) => {
                 new UglifyJSPlugin({
                     cache: true,
                     parallel: true,
-                    sourceMap: isDevBuild // set to true if you want JS source maps
+                    sourceMap: false // set to true if you want JS source maps
                 }),
                 new OptimizeCSSAssetsPlugin({})
             ]
@@ -64,9 +64,9 @@ module.exports = (env) => {
         },
         plugins: [
             new webpack.LoaderOptionsPlugin({
-                minimize: !isDevBuild,
-                debug: isDevBuild,
-                noInfo: !isDevBuild,
+                minimize: true,
+                debug: false,
+                noInfo: true,
                 options: {
                     sassLoader: {
                         includePaths: [path.resolve('ClientApp', 'scss')]

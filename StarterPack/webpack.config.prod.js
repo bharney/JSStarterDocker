@@ -23,7 +23,7 @@ module.exports = (env) => {
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
             filename: '[name].js',
-            chunkFilename: "[name].js",
+            chunkFilename: "[name].[chunkhash].js",
             publicPath: '/dist/', // Webpack dev middleware, if enabled, handles requests for this URL prefix
         },
         module: {
@@ -71,17 +71,13 @@ module.exports = (env) => {
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
-        watch: isDevBuild,
-        watchOptions: {
-            poll: isDevBuild ? 1000 : false
-        },
         plugins: [
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, clientBundleOutputDir, '*'),
-            //]),
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
-            //]),
+            new CleanWebpackPlugin([
+                path.join(__dirname, clientBundleOutputDir, '*'),
+            ]),
+            new CleanWebpackPlugin([
+                path.join(__dirname, 'ClientApp', 'dist', '*.js')
+            ]),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,

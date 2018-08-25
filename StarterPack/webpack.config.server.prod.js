@@ -23,7 +23,7 @@ module.exports = (env) => {
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
             filename: '[name].js',
-            chunkFilename: "[name].js",
+            chunkFilename: "[name].[chunkhash].js",
             publicPath: '/dist/', // Webpack dev middleware, if enabled, handles requests for this URL prefix
         },
         module: {
@@ -36,21 +36,13 @@ module.exports = (env) => {
 
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './wwwroot/dist';
-    const clientBundleConfig = merge(sharedConfig(), {
+
+    // Configuration for server-side (prerendering) bundle suitable for running in Node
+    const serverBundleConfig = merge(sharedConfig(), {
+        resolve: { mainFields: ['main'] },
         entry: {
-            bundle: [
-                'domain-task',
-                'event-source-polyfill',
-                './ClientApp/boot-client.tsx'
-            ],
-            vendor: [
-                'jquery',
-                'bootstrap'
-            ],
-            critical: [
-                'bootstrap/dist/css/bootstrap.min.css',
-                '@fortawesome/fontawesome-svg-core/styles.css'
-            ]
+            serverbundle: './ClientApp/boot-server.tsx',
+            vendor: ['aspnet-prerendering', 'react-dom/server']
         },
         optimization: {
             minimizer: [
@@ -70,18 +62,7 @@ module.exports = (env) => {
                 }
             ]
         },
-        output: { path: path.join(__dirname, clientBundleOutputDir) },
-        watch: isDevBuild,
-        watchOptions: {
-            poll: isDevBuild ? 1000 : false
-        },
         plugins: [
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, clientBundleOutputDir, '*'),
-            //]),
-            //new CleanWebpackPlugin([
-            //    path.join(__dirname, 'ClientApp', 'dist', '*.js')
-            //]),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false,
@@ -98,13 +79,6 @@ module.exports = (env) => {
                 filename: '[name].css',
                 chunkFilename: "[id].css"
             }),
-            new HtmlWebpackPlugin({
-                template: "Views/Home/IndexTemplate.cshtml",
-                filename: "../../Views/Home/Index.cshtml",
-                inject: false,
-                chunksSortMode: 'manual',
-                chunks: ['critical', 'vendor', 'bundle']
-            }),
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery', JQuery: 'jquery', Tether: "tether", "window.Tether": "tether", Popper: ['popper.js', 'default'] }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
             new webpack.DefinePlugin({
@@ -114,15 +88,8 @@ module.exports = (env) => {
                 collections: true,
                 coercions: true
             }),
-            new ReactLoadablePlugin({
-                filename: path.join(__dirname, 'ClientApp', 'dist', 'react-loadable.json')
-            })
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
-            new webpack.SourceMapDevToolPlugin({
-                filename: '[file].map', // Remove this line if you prefer inline source maps
-                moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
-            }),
             //new WebpackBundleAnalyzer()
         ] : [
                 // Plugins that apply in production builds only
@@ -133,8 +100,14 @@ module.exports = (env) => {
                 }),
                 new UglifyJSPlugin(),
                 new OptimizeCSSAssetsPlugin({}),
-            ])
+            ]),
+        output: {
+            libraryTarget: 'commonjs2',
+            path: path.join(__dirname, 'ClientApp', 'dist')
+        },
+        target: 'node',
+        devtool: 'inline-source-map'
     });
 
-    return clientBundleConfig;
+    return [serverBundleConfig];
 };

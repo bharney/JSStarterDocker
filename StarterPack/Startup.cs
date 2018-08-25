@@ -96,12 +96,24 @@ namespace StarterKit
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbSeeder dbSeeder, IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
         {
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                //dbSeeder.SeedAsync(serviceProvider,
+                //    serviceProvider.GetService<UserManager<ApplicationUser>>(),
+                //    serviceProvider.GetService<RoleManager<IdentityRole>>(),
+                //    CancellationToken.None).GetAwaiter().GetResult();
+
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                context.Database.Migrate();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     HotModuleReplacement = true,
+                    ReactHotModuleReplacement = true,
                     HotModuleReplacementServerPort = 5001
                 });
                 
@@ -133,11 +145,6 @@ namespace StarterKit
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
-
-            //dbSeeder.SeedAsync(serviceProvider,
-            //    serviceProvider.GetService<UserManager<ApplicationUser>>(),
-            //    serviceProvider.GetService<RoleManager<IdentityRole>>(),
-            //    CancellationToken.None).GetAwaiter().GetResult();
         }
     }
 }

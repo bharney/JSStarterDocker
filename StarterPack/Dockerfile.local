@@ -12,7 +12,6 @@ RUN curl -SL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-lin
 COPY StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
-
 COPY . .
 RUN npm install
 
