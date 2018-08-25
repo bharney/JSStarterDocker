@@ -1,12 +1,18 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using StarterKit.Models;
+using StarterKit.Repository;
 using System;
 using System.Reflection;
+using System.Threading;
 
 namespace StarterKit
 {
@@ -14,7 +20,22 @@ namespace StarterKit
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var host = BuildWebHost(args);
+            using (var serviceScope = host.Services.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                context.Database.Migrate();
+
+                var config = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
+                var logger = serviceScope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+                DbSeeder dbSeeder = new DbSeeder(logger, config);
+                dbSeeder.SeedAsync(serviceScope.ServiceProvider,
+                    serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>(),
+                    serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>(),
+                    CancellationToken.None).GetAwaiter().GetResult();
+            }
+
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -54,8 +75,8 @@ namespace StarterKit
                 //}
             })
             .UseStartup<Startup>()
-            //.UseUrls("http://0.0.0.0:5000")
+          //.UseUrls("http://0.0.0.0:5000")
             .Build();
-        private static string GetKeyVaultEndpoint() => "https://starterpackvault.vault.azure.net/";
+        //private static string GetKeyVaultEndpoint() => "https://starterpackvault.vault.azure.net/";
     }
 }

@@ -3,6 +3,8 @@ version: '3.4'
 services:
   starterkit:
     image: ${DOCKER_REGISTRY}starterkit
+    depends_on: 
+      - db
     build:
       context: StarterPack
       dockerfile: Dockerfile.local
@@ -17,3 +19,9 @@ services:
       - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
       - ${PROJECT_PATH}/StarterPack:/app
       - /app/node_modules/
+
+  db:
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      SA_PASSWORD: "Your_password123!"
+      ACCEPT_EULA: "Y"

@@ -18,4 +18,6 @@ RUN npm install
 RUN dotnet build StarterKit.csproj -c Debug
 
 EXPOSE 5000/tcp
-CMD ["dotnet", "run", "--server.urls", "http://*:5000"]
+#CMD ["dotnet", "run", "--server.urls", "http://*:5000"]
+RUN chmod +x ./entrypoint.sh
+CMD /bin/bash ./entrypoint.sh
