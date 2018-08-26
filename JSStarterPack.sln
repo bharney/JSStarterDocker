@@ -9,6 +9,8 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "StarterPackAzureResourceGro
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C9D4A8EC-82E1-406D-85BE-8FFE0AB626BA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarterKit.Test", "StarterKit.Test\StarterKit.Test.csproj", "{EA2AD1E8-024B-414E-89A4-486FD7052C00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{C9D4A8EC-82E1-406D-85BE-8FFE0AB626BA}.Release|x64.Build.0 = Release|Any CPU
 		{C9D4A8EC-82E1-406D-85BE-8FFE0AB626BA}.Release|x86.ActiveCfg = Release|Any CPU
 		{C9D4A8EC-82E1-406D-85BE-8FFE0AB626BA}.Release|x86.Build.0 = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|x64.Build.0 = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Debug|x86.Build.0 = Debug|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|x64.ActiveCfg = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|x64.Build.0 = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA2AD1E8-024B-414E-89A4-486FD7052C00}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -33,6 +33,7 @@ namespace StarterKit.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly IConfiguration _config;
+        private readonly IUserContext _userContext;
         private HttpContext _httpContext;
         ApplicationUser _currentUser;
         private const string UserGuidCookiesName = "StarterPackUserGuid";
@@ -55,6 +56,25 @@ namespace StarterKit.Controllers
             _userRepository = userRepository;
         }
 
+        public AccountController(IUserRepository userRepository,
+            UserManager<ApplicationUser> userManager,
+            IHttpContextAccessor contextAccessor,
+            IConfiguration config,
+            ILoggerFactory loggerFactory)
+        {
+            _userRepository = userRepository;
+            _userManager = userManager;
+            _httpContext = contextAccessor.HttpContext;
+            _config = config;
+            _logger = loggerFactory.CreateLogger("AccountController");
+
+            _userContext = new UserContext(_userRepository, 
+                _userManager, 
+                contextAccessor, 
+                _config, 
+                loggerFactory);
+        }
+
         [TempData]
         public string ErrorMessage { get; set; }
 
@@ -72,8 +92,8 @@ namespace StarterKit.Controllers
                     var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                     if (result.Succeeded)
                     {
-                        SetUserGuidCookies(user.UserGuid);
-                        return GenerateToken(user);
+                        _userContext.SetUserGuidCookies(user.UserGuid);
+                        return Ok(new { token = _userContext.GenerateToken(user) });
                     }
                     return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
                 }
@@ -110,8 +130,8 @@ namespace StarterKit.Controllers
                     {
                         _logger.LogInformation("User signed into a new account.");
                         await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "Member"));
-                        SetUserGuidCookies(_currentUser.UserGuid);
-                        return GenerateToken(_currentUser);
+                        _userContext.SetUserGuidCookies(_currentUser.UserGuid);
+                        return Ok(new { token = _userContext.GenerateToken(_currentUser) });
                     }
                 }
                 AddErrors(result);
@@ -126,10 +146,10 @@ namespace StarterKit.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            RemoveUserGuidCookies();
-            _currentUser = await NewUserGuidCookies();
+            _userContext.RemoveUserGuidCookies();
+            _currentUser = await _userContext.NewUserGuidCookies();
             _logger.LogInformation("User logged out.");
-            return GenerateToken(_currentUser);
+            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
         }
 
         [HttpPost]
@@ -186,8 +206,8 @@ namespace StarterKit.Controllers
             if (result.Succeeded)
             {
                 _logger.LogInformation("User changed password successfully.");
-                SetUserGuidCookies(user.UserGuid);
-                return GenerateToken(user);
+                _userContext.SetUserGuidCookies(user.UserGuid);
+                return Ok(new { token = _userContext.GenerateToken(user) });
             }
             AddErrors(result);
             return Ok();
@@ -216,17 +236,17 @@ namespace StarterKit.Controllers
 
             await _signInManager.SignInAsync(user, isPersistent: false);
             _logger.LogInformation("User changed their password successfully.");
-            return GenerateToken(user);
+            return Ok(new { token = _userContext.GenerateToken(user) });
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetToken()
         {
-            var currentUser = await GetCurrentUser();
+            var currentUser = await _userContext.GetCurrentUser();
             if (currentUser != null)
             {
-                var userClaims = _userManager.GetClaimsAsync(currentUser);
+                var userClaims = await _userManager.GetClaimsAsync(currentUser);
                 var claims = new List<Claim>
                     {
                       new Claim(JwtRegisteredClaimNames.Sub, currentUser.Email),
@@ -235,7 +255,7 @@ namespace StarterKit.Controllers
                       new Claim(ClaimTypes.Name, currentUser.UserName),
                       new Claim(ClaimTypes.UserData, currentUser.UserGuid.ToString()),
                     };
-                claims.AddRange(userClaims.Result);
+                claims.AddRange(userClaims);
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -251,105 +271,6 @@ namespace StarterKit.Controllers
             }
 
             return Ok();
-        }
-
-        private IActionResult GenerateToken(ApplicationUser model)
-        {
-
-            var claims = new List<Claim>
-            {
-              new Claim(JwtRegisteredClaimNames.Sub, model.Email),
-              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-              new Claim(ClaimTypes.Sid, model.Id),
-              new Claim(ClaimTypes.Name, model.UserName),
-              new Claim(ClaimTypes.UserData, model.UserGuid.ToString()),
-            };
-
-            var userClaims = _userManager.GetClaimsAsync(model);
-            claims.AddRange(userClaims.Result);
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_config["Token:Issuer"],
-              _config["Token:Issuer"],
-              claims,
-              expires: DateTime.Now.AddDays(30),
-              signingCredentials: creds);
-
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-        }
-
-        public async Task<ApplicationUser> GetCurrentUser()
-        {
-            var userGuid = GetUserGuidFromCookies();
-            if (userGuid.HasValue)
-            {
-                _currentUser = _userRepository.Users.FirstOrDefault(x => x.UserGuid == userGuid);
-            }
-
-            if (_currentUser != null)
-            {
-                return _currentUser;
-            }
-
-            _currentUser = await NewUserGuidCookies();
-            SetUserGuidCookies(_currentUser.UserGuid);
-            return _currentUser;
-        }
-
-        public async Task<ApplicationUser> NewUserGuidCookies()
-        {
-            var userGuid = Guid.NewGuid();
-            var userPassword = Guid.NewGuid();
-            var dummyEmail = string.Format("{0}@guest.starterpack.com", userGuid);
-            _currentUser = new ApplicationUser
-            {
-                FirstName = "Guest",
-                LastName = "Guest",
-                UserGuid = userGuid,
-                Email = dummyEmail,
-                UserName = dummyEmail
-            };
-            await _userManager.CreateAsync(_currentUser, userPassword.ToString());
-            await _userManager.AddToRoleAsync(_currentUser, "guest");
-
-            return _currentUser;
-        }
-
-        public void RemoveUserGuidCookies()
-        {
-            _httpContext.Response.Cookies.Delete(UserGuidCookiesName);
-        }
-
-        public void SetUserGuidCookies(Guid userGuid)
-        {
-            _httpContext.Response.Cookies.Append(UserGuidCookiesName, userGuid.ToString(), new CookieOptions
-            {
-                Expires = DateTime.UtcNow.AddYears(5),
-                HttpOnly = true
-            });
-        }
-
-        public async Task<ApplicationUser> GetLoggedInUser()
-        {
-            var userGuid = GetUserGuidFromCookies();
-            if (userGuid.HasValue)
-            {
-                return await _userRepository.GetUserByIdAsync(userGuid.Value);
-            }
-
-            return null;
-        }
-
-        public Guid? GetUserGuidFromCookies()
-        {
-            if (_httpContext.Request.Cookies.ContainsKey(UserGuidCookiesName))
-            {
-                return Guid.Parse(_httpContext.Request.Cookies[UserGuidCookiesName]);
-            }
-
-            return null;
         }
 
 
