@@ -237,11 +237,11 @@ namespace StarterKit.Controllers
                     };
                 claims.AddRange(userClaims.Result);
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var token = new JwtSecurityToken(_config["Tokens:Issuer"],
-                  _config["Tokens:Issuer"],
+                var token = new JwtSecurityToken(_config["Token:Issuer"],
+                  _config["Token:Issuer"],
                   claims,
                   expires: DateTime.Now.AddDays(30),
                   signingCredentials: creds);
@@ -268,11 +268,11 @@ namespace StarterKit.Controllers
             var userClaims = _userManager.GetClaimsAsync(model);
             claims.AddRange(userClaims.Result);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_config["Tokens:Issuer"],
-              _config["Tokens:Issuer"],
+            var token = new JwtSecurityToken(_config["Token:Issuer"],
+              _config["Token:Issuer"],
               claims,
               expires: DateTime.Now.AddDays(30),
               signingCredentials: creds);
@@ -301,6 +301,7 @@ namespace StarterKit.Controllers
         public async Task<ApplicationUser> NewUserGuidCookies()
         {
             var userGuid = Guid.NewGuid();
+            var userPassword = Guid.NewGuid();
             var dummyEmail = string.Format("{0}@guest.starterpack.com", userGuid);
             _currentUser = new ApplicationUser
             {
@@ -310,7 +311,7 @@ namespace StarterKit.Controllers
                 Email = dummyEmail,
                 UserName = dummyEmail
             };
-            await _userManager.CreateAsync(_currentUser, _config["SeedAccountGuest"]);
+            await _userManager.CreateAsync(_currentUser, userPassword.ToString());
             await _userManager.AddToRoleAsync(_currentUser, "guest");
 
             return _currentUser;
