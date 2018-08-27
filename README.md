@@ -1,5 +1,5 @@
 # StarterPack
-Starter template using React/Redux and .Net Core. The site takes advantage of Server-Side Rendering and Lazy Loading based on Routes. Authentication is built into the App with JWT and Authorize attributes on controllers. I will be working to split this template into two repos. One that contains Authentication, and another that looks more like the JavaScriptServices React+Redux template.
+This Starter template allows you to spin up a React/Redux and .Net Core application with SQL Server and .Net Core Identity Authentication/Authroization. The site takes advantage of Server-Side Rendering and Lazy Loading based on Routes. Authentication is built into the App with JWT and Authorize attributes on controllers. 
  
 # Technology Stack
  - .NET Core/ C#
@@ -10,23 +10,16 @@ Starter template using React/Redux and .Net Core. The site takes advantage of Se
  - SCSS
  - Bootstrap 4
  - Font-Awesome 5
- - Server-Side Rendering
- - Lazy Loading
+ - Server-Side Rendering(SSR)
+ - Lazy Loading(React-Loadable)
+ - Hot Module Reloading(HMR)
+ - Docker
+ - Docker-Compose
  
 # Setup Dependencies/ Requirements
- - VS 2017 or .Net Core Service Pack
- - Webpack 4
- - Local Database
+ - Docker
  
- Install Webpack
- - `npm install webpack webpack-cli -g`
- 
- Setup Project
- - Navigate to Project Directory
- - `dotnet restore`
- - `npm install`
- 
- Add `appsettings.json` to Root Directory
+Switch out the values in `appsettings.json` with your own seed account.
  ```
  {
   "Logging": {
@@ -35,27 +28,53 @@ Starter template using React/Redux and .Net Core. The site takes advantage of Se
       "LogLevel": {
         "Default": "Warning"
       }
-    },
-    "Console": {
-      "LogLevel": {
-        "Default": "Warning"
-      }
     }
   },
+  "Console": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "BlobService": {
+    "StorageUrl": "https://jsstarter.blob.core.windows.net/"
+  },
   "ConnectionStrings": {
-    "SqlServerConnectionString": [YOUR_CONNECTION_STRING]
+    "LocalConnection": "Server=db;Database=master;User=sa;Password=[PASSWORD];"
   },
-  "Tokens": {
-    "Key": [JWT_KEY],
-    "Issuer": [JWT_ISSUER]
+  "Token": {
+    "Issuer": "https://jsstarter.azurewebsites.net",
+    "Key": "[TOKEN_KEY]"
   },
+  "SeedAccount": {
+    "UserName": "[ADMIN_EMAIL]",
+    "Password": "[PASSWORD]"
+  }
 }
  ```
- Run Initial Database Migration
- - `Update-Database`
+
+# Run Project with Docker
+```
+docker-compose -f ".\docker-compose.yml" -f ".\docker-compose.override.yml" build
+
+```
+This will build two docker containers. One for the web application, and another for the SQL server database. The databae will be seeded with a starting Admin Account to login with. 
+
+# Setup Dependencies/ Requirements without Docker
+ - VS 2017 or .Net Core Service Pack
+ - Webpack 4
+ - Local Database
+  
+ # Run Project without Docker
+ Install Webpack
+ - `npm install webpack webpack-cli -g`
  
- Build Bundle
- - `webpack`
+ Setup Project
+ - Navigate to Project Directory
+ - `dotnet restore`
+ - `dotnet build`
+ 
+ Setup local database
+ - add connection string to appsettings.json
  
 # Run Project
  - `dotnet run`
@@ -64,6 +83,7 @@ Starter template using React/Redux and .Net Core. The site takes advantage of Se
  - `$Env:ASPNETCORE_ENVIRONMENT = "Development"`
  - `$Env:ASPNETCORE_ENVIRONMENT = "Production"` 
 
-# TODO
-- [ ] Setup Dockerfile to allow users to simply run docker to setup a database and all dependencies.
-- [ ] Setup in memory database to allow users to get setup and running without any complexity from a database.
+I will be working to split this template into multiple repos in the future: 
+ - One that contains Authentication
+ - Move to the new JavaScriptServices React+Redux template folder structure.
+ - One that uses Docker
