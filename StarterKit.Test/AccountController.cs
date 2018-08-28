@@ -26,7 +26,7 @@ namespace StarterKit.Test
         private Mock<UserManager<ApplicationUser>> _userManager;
         private Mock<IUserRepository> _userRepository;
         private Mock<SignInManager<ApplicationUser>> _signInManager;
-        private Mock<IEmailSender> _emailSender;
+        private Mock<StarterKit.Services.IEmailSender> _emailSender;
         private Mock<ILoggerFactory> _logger;
         private IConfiguration _config;
         private Mock<IUserContext> _userContext;
@@ -42,7 +42,7 @@ namespace StarterKit.Test
             _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success); ;
             _userManager.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "guest")).ReturnsAsync(IdentityResult.Success);
             _signInManager = new Mock<SignInManager<ApplicationUser>>();
-            _emailSender = new Mock<IEmailSender>();
+            _emailSender = new Mock<StarterKit.Services.IEmailSender>();
             _userRepository = new Mock<IUserRepository>();
             _contextAccessor = new Mock<IHttpContextAccessor>();
             _contextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
@@ -57,7 +57,7 @@ namespace StarterKit.Test
             IList<Claim> guestClaim = new List<Claim>();
             _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(It.IsAny<ApplicationUser>());
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(guestClaim);
-            Controllers.AccountController accountController = new Controllers.AccountController(_userRepository.Object, _userManager.Object, _contextAccessor.Object, _config, _logger.Object);
+            Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object,_logger.Object, _config, _contextAccessor.Object,_userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
@@ -81,7 +81,7 @@ namespace StarterKit.Test
             });
             IList<Claim> memberClaim = new List<Claim>() { new Claim(ClaimTypes.Role, "Member") };
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(memberClaim);
-            Controllers.AccountController accountController = new Controllers.AccountController(_userRepository.Object, _userManager.Object, _contextAccessor.Object, _config, _logger.Object);
+            Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object, _logger.Object, _config, _contextAccessor.Object, _userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
@@ -100,7 +100,7 @@ namespace StarterKit.Test
                 Email = _config["SeedAccount:UserName"]
             });
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(adminClaim);
-            Controllers.AccountController accountController = new Controllers.AccountController(_userRepository.Object, _userManager.Object, _contextAccessor.Object, _config, _logger.Object);
+            Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object, _logger.Object, _config, _contextAccessor.Object, _userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);

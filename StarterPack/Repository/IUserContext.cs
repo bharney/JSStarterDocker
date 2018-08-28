@@ -9,7 +9,7 @@ namespace StarterKit.Repository
     {
         string GenerateToken(ApplicationUser model);
         Task<ApplicationUser> GetCurrentUser();
-        Task<ApplicationUser> NewUserGuidCookies();
+        ApplicationUser NewGuestUser();
         void RemoveUserGuidCookies();
         void SetUserGuidCookies(Guid userGuid);
         Task<ApplicationUser> GetLoggedInUser();

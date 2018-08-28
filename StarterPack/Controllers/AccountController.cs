@@ -42,7 +42,7 @@ namespace StarterKit.Controllers
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            ILogger<AccountController> logger,
+            ILoggerFactory loggerFactory,
             IConfiguration config,
             IHttpContextAccessor contextAccessor,
             IUserRepository userRepository)
@@ -50,28 +50,15 @@ namespace StarterKit.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
-            _logger = logger;
-            _config = config;
-            _httpContext = contextAccessor.HttpContext;
-            _userRepository = userRepository;
-        }
-
-        public AccountController(IUserRepository userRepository,
-            UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor contextAccessor,
-            IConfiguration config,
-            ILoggerFactory loggerFactory)
-        {
-            _userRepository = userRepository;
-            _userManager = userManager;
-            _httpContext = contextAccessor.HttpContext;
-            _config = config;
             _logger = loggerFactory.CreateLogger("AccountController");
+            _config = config;
+            _httpContext = contextAccessor.HttpContext;
+            _userRepository = userRepository;
 
-            _userContext = new UserContext(_userRepository, 
-                _userManager, 
-                contextAccessor, 
-                _config, 
+            _userContext = new UserContext(_userRepository,
+                _userManager,
+                contextAccessor,
+                _config,
                 loggerFactory);
         }
 
@@ -147,7 +134,7 @@ namespace StarterKit.Controllers
         {
             await _signInManager.SignOutAsync();
             _userContext.RemoveUserGuidCookies();
-            _currentUser = await _userContext.NewUserGuidCookies();
+            _currentUser = _userContext.NewGuestUser();
             _logger.LogInformation("User logged out.");
             return Ok(new { token = _userContext.GenerateToken(_currentUser) });
         }
@@ -243,34 +230,8 @@ namespace StarterKit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetToken()
         {
-            var currentUser = await _userContext.GetCurrentUser();
-            if (currentUser != null)
-            {
-                var userClaims = await _userManager.GetClaimsAsync(currentUser);
-                var claims = new List<Claim>
-                    {
-                      new Claim(JwtRegisteredClaimNames.Sub, currentUser.Email),
-                      new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                      new Claim(ClaimTypes.Sid, currentUser.Id),
-                      new Claim(ClaimTypes.Name, currentUser.UserName),
-                      new Claim(ClaimTypes.UserData, currentUser.UserGuid.ToString()),
-                    };
-                claims.AddRange(userClaims);
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var token = new JwtSecurityToken(_config["Token:Issuer"],
-                  _config["Token:Issuer"],
-                  claims,
-                  expires: DateTime.Now.AddDays(30),
-                  signingCredentials: creds);
-
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
-
-            }
-
-            return Ok();
+            _currentUser = await _userContext.GetCurrentUser();
+            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
         }
 
 

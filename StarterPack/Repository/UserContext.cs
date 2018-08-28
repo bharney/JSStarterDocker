@@ -78,12 +78,12 @@ namespace StarterKit.Repository
                 return _currentUser;
             }
 
-            _currentUser = await NewUserGuidCookies();
+            _currentUser = NewGuestUser();
             SetUserGuidCookies(_currentUser.UserGuid);
             return _currentUser;
         }
 
-        public async Task<ApplicationUser> NewUserGuidCookies()
+        public ApplicationUser NewGuestUser()
         {
             var userGuid = Guid.NewGuid();
             var userPassword = Guid.NewGuid();
@@ -96,8 +96,8 @@ namespace StarterKit.Repository
                 Email = dummyEmail,
                 UserName = dummyEmail
             };
-            await _userManager.CreateAsync(_currentUser, userPassword.ToString());
-            await _userManager.AddToRoleAsync(_currentUser, "Guest");
+           // await _userManager.CreateAsync(_currentUser, userPassword.ToString());
+           //  await _userManager.AddToRoleAsync(_currentUser, "Guest");
 
             return _currentUser;
         }
