@@ -23,16 +23,26 @@ namespace StarterKit
             var host = BuildWebHost(args);
             using (var serviceScope = host.Services.CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                context.Database.Migrate();
+                var loggerFactory = serviceScope.ServiceProvider.GetRequiredService<ILoggerFactory>();
 
-                var config = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
-                var logger = serviceScope.ServiceProvider.GetRequiredService<ILoggerFactory>();
-                DbSeeder dbSeeder = new DbSeeder(logger, config);
-                dbSeeder.SeedAsync(serviceScope.ServiceProvider,
-                    serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>(),
-                    serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>(),
-                    CancellationToken.None).GetAwaiter().GetResult();
+                try
+                {
+                    var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                    context.Database.Migrate();
+
+                    var config = serviceScope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+                    DbSeeder dbSeeder = new DbSeeder(loggerFactory, config);
+                    dbSeeder.SeedAsync(serviceScope.ServiceProvider,
+                        serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>(),
+                        serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>(),
+                        CancellationToken.None).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    var logger = loggerFactory.CreateLogger("Program");
+                    logger.LogError(ex, "database migration failed. Please verify your connection string and database are correctly setup.");
+                }
             }
 
             host.Run();

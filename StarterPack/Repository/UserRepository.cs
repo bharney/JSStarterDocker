@@ -10,8 +10,8 @@ namespace StarterKit.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ApplicationDbContext _Context;
-        private readonly ILogger _Logger;
+        private ApplicationDbContext _Context;
+        private ILogger _Logger;
 
         public UserRepository(ApplicationDbContext context, ILoggerFactory loggerFactory)
         {
