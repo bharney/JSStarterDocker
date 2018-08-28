@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
@@ -26,7 +28,7 @@ namespace StarterKit.Test
         private Mock<UserManager<ApplicationUser>> _userManager;
         private Mock<IUserRepository> _userRepository;
         private Mock<SignInManager<ApplicationUser>> _signInManager;
-        private Mock<StarterKit.Services.IEmailSender> _emailSender;
+        private Mock<Services.IEmailSender> _emailSender;
         private Mock<ILoggerFactory> _logger;
         private IConfiguration _config;
         private Mock<IUserContext> _userContext;
@@ -39,12 +41,14 @@ namespace StarterKit.Test
         {
             var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
             _userManager = new Mock<UserManager<ApplicationUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-            _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success); ;
-            _userManager.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), "guest")).ReturnsAsync(IdentityResult.Success);
-            _signInManager = new Mock<SignInManager<ApplicationUser>>();
-            _emailSender = new Mock<StarterKit.Services.IEmailSender>();
-            _userRepository = new Mock<IUserRepository>();
             _contextAccessor = new Mock<IHttpContextAccessor>();
+            _signInManager = new Mock<SignInManager<ApplicationUser>>(_userManager.Object, _contextAccessor.Object, 
+                 new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>().Object,
+                 new Mock<IOptions<IdentityOptions>>().Object,
+                 new Mock<ILogger<SignInManager<ApplicationUser>>>().Object,
+                 new Mock<IAuthenticationSchemeProvider>().Object);
+            _emailSender = new Mock<Services.IEmailSender>();
+            _userRepository = new Mock<IUserRepository>();
             _contextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
             _logger = new Mock<ILoggerFactory>();
             _config = GetConfiguration.GetIConfiguration();
@@ -57,7 +61,13 @@ namespace StarterKit.Test
             IList<Claim> guestClaim = new List<Claim>();
             _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(It.IsAny<ApplicationUser>());
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(guestClaim);
-            Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object,_logger.Object, _config, _contextAccessor.Object,_userRepository.Object);
+            Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, 
+                _signInManager.Object, 
+                _emailSender.Object,
+                _logger.Object,
+                _config, 
+                _contextAccessor.Object,
+                _userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
