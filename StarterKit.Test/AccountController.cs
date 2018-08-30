@@ -53,13 +53,13 @@ namespace StarterKit.Test
             _logger = new Mock<ILoggerFactory>();
             _config = GetConfiguration.GetIConfiguration();
             _userContext = new Mock<IUserContext>();
+            _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(It.IsAny<ApplicationUser>());
         }
 
         [TestMethod]
         public void Account_GetToken_Guest_Success()
         {
             IList<Claim> guestClaim = new List<Claim>();
-            _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(It.IsAny<ApplicationUser>());
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(guestClaim);
             Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, 
                 _signInManager.Object, 
@@ -71,9 +71,7 @@ namespace StarterKit.Test
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
-            var objectStr = objectResult.Value.ToString().TrimEnd('}').Trim();
-            var tokenSubstr = objectStr.Substring(10);
-            var token = new JwtSecurityTokenHandler().ReadToken(tokenSubstr) as JwtSecurityToken;
+            JwtSecurityToken token = DeserializeToken(objectResult);
             var claim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value;
             Assert.IsNotNull(claim);
             Assert.IsFalse(token.Claims.Where(c => c.Type == ClaimTypes.Role).Any());
@@ -83,40 +81,35 @@ namespace StarterKit.Test
         [TestMethod]
         public void Account_GetToken_Member_Success()
         {
-            _userContext.Setup(x => x.GetUserGuidFromCookies()).Returns(It.IsAny<Guid>());
-            _userRepository.Setup(x => x.Users).Returns(It.IsAny<List<ApplicationUser>>());
-            _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(new ApplicationUser()
-            {
-                Email = _config["SeedAccount:UserName"]
-            });
             IList<Claim> memberClaim = new List<Claim>() { new Claim(ClaimTypes.Role, "Member") };
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(memberClaim);
             Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object, _logger.Object, _config, _contextAccessor.Object, _userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
+            JwtSecurityToken token = DeserializeToken(objectResult);
+            var claim = token.Claims.Where(c => c.Type == ClaimTypes.Role);
+            Assert.IsTrue(claim.FirstOrDefault().Value == "Member");
+        }
+
+        private static JwtSecurityToken DeserializeToken(OkObjectResult objectResult)
+        {
             var objectStr = objectResult.Value.ToString().TrimEnd('}').Trim();
             var tokenSubstr = objectStr.Substring(10);
             var token = new JwtSecurityTokenHandler().ReadToken(tokenSubstr) as JwtSecurityToken;
-            var claim = token.Claims.Where(c => c.Type == ClaimTypes.Role);
-            Assert.IsTrue(claim.FirstOrDefault().Value == "Member");
+            return token;
         }
 
         [TestMethod]
         public void Account_GetToken_Admin_Success()
         {
             IList<Claim> adminClaim = new List<Claim>() { new Claim(ClaimTypes.Role, "Admin") };
-            _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(new ApplicationUser() {
-                Email = _config["SeedAccount:UserName"]
-            });
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(adminClaim);
             Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object, _signInManager.Object, _emailSender.Object, _logger.Object, _config, _contextAccessor.Object, _userRepository.Object);
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
-            var objectStr = objectResult.Value.ToString().TrimEnd('}').Trim();
-            var tokenSubstr = objectStr.Substring(10);
-            var token = new JwtSecurityTokenHandler().ReadToken(tokenSubstr) as JwtSecurityToken;
+            JwtSecurityToken token = DeserializeToken(objectResult);
             var claim = token.Claims.Where(c => c.Type == ClaimTypes.Role);
             Assert.IsTrue(claim.FirstOrDefault().Value == "Admin");
         }
