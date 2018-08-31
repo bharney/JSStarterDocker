@@ -1,0 +1,147 @@
+
+//--------------step---------------//
+
+.step-flex {
+    display: flex;
+    flex-wrap: wrap;
+    color: #ffffff;
+    justify-content: center;
+    padding-bottom: .3em;
+    line-height: 2.5
+}
+
+.step-inline {
+    display: inline-block;
+    padding: 0 1em;
+    background-color: #3ECF8E;
+}
+
+.step-block {
+    display: inline-block;
+    margin: .1em;
+    height: 50px;
+    white-space: nowrap;
+}
+
+ol.progtrckr {
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-margin-start: 0;
+    -webkit-padding-start: 0;
+    padding-bottom: 2.8rem;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+}
+
+ol .prog-icon {
+    position: relative;
+    top: 35px;
+    left: 63px;
+    border: 1px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    height: 40px;
+    line-height: 40px;
+    margin-top: 4px;
+    width: 40px;
+    text-align: center;
+}
+
+ol.progtrckr li {
+    text-align: center;
+    line-height: 2.5rem;
+    cursor: pointer;
+    flex: 4;
+}
+
+ol.progtrckr li span {
+    padding: 0 1.5rem 0 10px;
+}
+
+.multi-step {
+    margin-top: -1em;
+}
+
+@media (max-width: 650px) {
+    .multi-step {
+        margin-top: -3em;
+    }
+
+    .progtrckr li span {
+        display: none;
+    }
+
+    ol .prog-icon {
+        left: 0px;
+    }
+}
+
+ol.progtrckr li.progtrckr-todo {
+    color: silver;
+    border-bottom: 4px solid silver;
+
+    .prog-icon {
+        border: 2px solid silver;
+        color: silver;
+        padding: 5px;
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
+    }
+}
+
+ol.progtrckr li.progtrckr-doing {
+    color: #408AF8;
+    border-bottom: 4px solid;
+
+    .prog-icon {
+        border: 2px solid #408AF8;
+        color: #408AF8;
+        padding: 5px;
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
+    }
+}
+
+ol.progtrckr li.progtrckr-done {
+    color: black;
+    border-bottom: 4px solid #3ECF8E;
+
+    .prog-icon {
+        border: 2px solid #3ECF8E;
+        color: #3ECF8E;
+        padding: 5px;
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
+    }
+}
+
+.step-title {
+    position: relative;
+    top: -30px;
+}
+
+ol.progtrckr li.progtrckr-todo:hover:before {
+    color: #3ECF8E;
+}
+
+ol.progtrckr li.progtrckr-doing:hover:before {
+    color: #3ECF8E;
+}
+
+ol.progtrckr li.progtrckr-done:hover:before {
+    color: #3ECF8E;
+}
+//--------------end step----------------*/

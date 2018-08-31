@@ -27,11 +27,9 @@ namespace StarterKit.Models.ManageViewModels
 
         public IFormFile ImageUrl { get; set; }
 
-        public IFormFile ImageThumbnailUrl { get; set; }
+        public string Location { get; set; }
 
-        public IFormFile ReferralUrl { get; set; }
-
-        public IFormFile StateLicenseUrl { get; set; }
+        public string Description { get; set; }
 
         public string StatusMessage { get; set; }
     }

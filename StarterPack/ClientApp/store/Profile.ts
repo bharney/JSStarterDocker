@@ -48,6 +48,11 @@ export const actionCreators = {
     getProfile: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         let token = getState().session.token;
         if (token) {
+            let profileState = getState().profile.profile;
+            if (profileState) {
+                dispatch({ type: 'RECEIVE_PROFILE', profile: profileState as Profile });
+            }
+            debugger;
             let fetchTask = fetch("/Manage/Index", {
                 method: "get",
                 headers: {
@@ -59,13 +64,18 @@ export const actionCreators = {
                 .then(response => response.json() as Promise<Profile | ErrorMessage>)
                 .then(data => {
                     if ((data as ErrorMessage).error) {
+                        debugger;
+
                         dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
                     }
                     else {
+                        debugger;
                         dispatch({ type: 'RECEIVE_PROFILE', profile: data as Profile });
                     }
                 })
                 .catch(err => {
+                    debugger;
+
                     dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
                 });
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
