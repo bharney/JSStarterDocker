@@ -29,8 +29,9 @@
     }
   },
   "plugins": [
-    "syntax-dynamic-import",
+    "@babel/plugin-syntax-dynamic-import",
     "lodash",
-    "react-loadable/babel"
+    "react-loadable/babel",
+    "@babel/plugin-transform-runtime"
   ]
 }

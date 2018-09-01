@@ -135,17 +135,6 @@ namespace StarterKit.Controllers
                 }
             }
 
-            var imageThumbnailUrl = Path.GetFileName(user.ImageThumbnailUrl);
-            if (model.ImageThumbnailUrl.FileName != imageUrl)
-            {
-                user.ImageThumbnailUrl = await Upload(model.ImageThumbnailUrl);
-                var setNameResult = await _userManager.UpdateAsync(user);
-                if (!setNameResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting Image Url for user with ID '{user.Id}'.");
-                }
-            }
-
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
         }
