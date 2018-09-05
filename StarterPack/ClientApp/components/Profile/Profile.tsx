@@ -37,6 +37,8 @@ class Profile extends React.Component<ProfileProps, any> {
                 <div className="row justify-content-center pt-4">
                     <div className="col-12 col-sm-8 col-md-8 col-lg-6 form-wrapper">
                         <h2 className="text-center display-4">Profile.</h2>
+                    </div>
+                    <div className="col-12 col-sm-8 col-md-8 col-lg-4 form-wrapper">
                         <img className="first-slide img-fluid" src={profile.imageUrl} alt="Profile Image" />
                         <div className="form-group">
                             <label htmlFor="email" className="form-control-label">Email</label>

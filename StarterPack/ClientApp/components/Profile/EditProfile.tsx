@@ -131,7 +131,7 @@ class EditProfile extends React.Component<ProfileProps, any> {
         if (evt.currentTarget.value <= this.state.compState || evt.currentTarget.value == 1 || evt.currentTarget.value == 0) {
             if (evt.currentTarget.value === (this.steps.length - 1) &&
                 this.state.compState === (this.steps.length - 1)) {
-                this.setNavState(this.steps.length)
+                this.setNavState(this.steps.length - 1)
                 this.setState({ page: this.steps.length })
             }
             else {
@@ -159,46 +159,50 @@ class EditProfile extends React.Component<ProfileProps, any> {
         const { page, isLoading } = this.state;
         return isLoading ? <div className="container pt-4" style={{ height: "70vh" }}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "7vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin /></div> :
             <div className="container pt-4">
-                <div key="checkoutheader" className="text-center pt-4">
-                    <h2 className="display-4">Profile.</h2>
-                </div>
-                <div key="checkoutSteps" className="row multi-step" onKeyDown={this.handleKeyDown} >
-                    <div className="col-12">
-                        <ol className="progtrckr">
-                            {this.steps.map((s, i) => (
-                                <li className={this.getClassName("progtrckr", i)} onClick={(e) => this.moveToPage(e)} key={i} value={i}>
-                                    <FontAwesomeIcon className="prog-icon svg-inline--fa fa-w-16 fa-lg" size="1x" icon={this.getIcon(this.steps[i].icon, i)} />
-                                    <span className="step-title">{this.steps[i].name}</span>
-                                </li>
-                            ))}
-                        </ol>
+                <div className="row justify-content-center">
+                    <div key="checkoutheader" className="col-12 col-sm-8 col-md-8 col-lg-12 form-wrapper">
+                        <h2 className="text-center display-4">Profile.</h2>
                     </div>
-                </div>
-                <div className="row justify-content-center pt-4">
-                    <div className="col-12 col-sm-8 col-md-8 col-lg-6 form-wrapper">
-                    {isLoading && <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "10vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin />}
-                    {page === 1 && <ProfileNameForm
-                        onSubmit={(values: IndexViewModel) => {
-                            this.props.profileActions.updateProfile(values, () => {
-                                this.props.alertActions.sendAlert('Your profile image was saved successfully.', AlertType.success, true);
-                                this.nextPage
-                            });
-                        }}
-                    />}
-                    {page === 2 &&
-                        <ProfileImageForm
-                            previousPage={this.previousPage}
-                            onSubmit={
-                                (values: IndexViewModel) => {
-                                    window.scrollTo(0, 0)
-                                    this.setState({ isLoading: true });
+                    <div className="col-12 col-sm-12 col-md-9 col-lg-7 form-wrapper pt-4">
+                        <div key="checkoutSteps" className="row multi-step" onKeyDown={this.handleKeyDown} >
+                            <div className="col-12">
+                                <ol className="progtrckr">
+                                    {this.steps.map((s, i) => (
+                                        <li className={this.getClassName("progtrckr", i)} onClick={(e) => this.moveToPage(e)} key={i} value={i}>
+                                            <FontAwesomeIcon className="prog-icon svg-inline--fa fa-w-16 fa-lg" size="1x" icon={this.getIcon(this.steps[i].icon, i)} />
+                                            <span className="step-title">{this.steps[i].name}</span>
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        </div>
+                        <div className="row justify-content-center pt-4">
+                            <div className="col-12 col-sm-10 col-md-8 col-lg-7 form-wrapper">
+                            {isLoading && <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "10vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin />}
+                            {page === 1 && <ProfileNameForm
+                                onSubmit={(values: IndexViewModel) => {
                                     this.props.profileActions.updateProfile(values, () => {
                                         this.props.alertActions.sendAlert('Your profile image was saved successfully.', AlertType.success, true);
                                         this.nextPage
                                     });
                                 }}
-                        />}
-                </div>
+                            />}
+                            {page === 2 &&
+                                <ProfileImageForm
+                                    previousPage={this.previousPage}
+                                    onSubmit={
+                                        (values: IndexViewModel) => {
+                                            window.scrollTo(0, 0)
+                                            this.setState({ isLoading: true });
+                                            this.props.profileActions.updateProfile(values, () => {
+                                                this.props.alertActions.sendAlert('Your profile image was saved successfully.', AlertType.success, true);
+                                                this.nextPage
+                                            });
+                                        }}
+                                />}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>;
     }
