@@ -1,15 +1,15 @@
 import { fetch, addTask } from 'domain-task';
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
-import { Bearer, ErrorMessage, IndexViewModel, Profile } from '../models';
+import { Bearer, ErrorMessage, IndexViewModel, ProfileViewModel } from '../models';
 import toFormData from "../controls/FormDataUtility";
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface ProfileState {
     isLoading: boolean;
-    profile?: Profile | IndexViewModel;
-    profiles?: Profile [];
+    profile?: ProfileViewModel | IndexViewModel;
+    profiles?: ProfileViewModel [];
     token?: Bearer;
     isRequiredToken: boolean;
     isRequiredRefreshOnClient?: boolean;
@@ -24,12 +24,12 @@ interface RequestProfileAction {
 
 interface ReceiveProfileAction {
     type: 'RECEIVE_PROFILE';
-    profile?: Profile;
+    profile?: ProfileViewModel;
 }
 
 interface ReceiveProfilesAction {
     type: 'RECEIVE_PROFILES';
-    profiles?: Profile[];
+    profiles?: ProfileViewModel[];
 }
 
 interface SubmitProfileAction {
@@ -48,38 +48,29 @@ export const actionCreators = {
     getProfile: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         let token = getState().session.token;
         if (token) {
-            let profileState = getState().profile.profile;
-            if (profileState) {
-                dispatch({ type: 'RECEIVE_PROFILE', profile: profileState as Profile });
-            }
-            debugger;
-            let fetchTask = fetch("/Manage/Index", {
-                method: "get",
-                headers: {
-                    "Authorization": `Bearer ${token.access_token}`,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json, text/plain, */*"
-                },
-            })
-                .then(response => response.json() as Promise<Profile | ErrorMessage>)
-                .then(data => {
-                    if ((data as ErrorMessage).error) {
-                        debugger;
-
-                        dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                    }
-                    else {
-                        debugger;
-                        dispatch({ type: 'RECEIVE_PROFILE', profile: data as Profile });
-                    }
+            
+                let fetchTask = fetch("/Manage/Index", {
+                    method: "get",
+                    headers: {
+                        "Authorization": `Bearer ${token.access_token}`,
+                        "Content-Type": "application/json",
+                        "Accept": "application/json, text/plain, */*"
+                    },
                 })
-                .catch(err => {
-                    debugger;
-
-                    dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                });
-            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-            dispatch({ type: 'REQUEST_PROFILE' });
+                    .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
+                    .then(data => {
+                        if ((data as ErrorMessage).error) {
+                            dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+                        }
+                        else {
+                            dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
+                        }
+                    })
+                    .catch(err => {
+                        dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+                    });
+                addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+                dispatch({ type: 'REQUEST_PROFILE' });
         }
     },
     getProfiles: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -93,7 +84,7 @@ export const actionCreators = {
                     "Accept": "application/json, text/plain, */*"
                 },
             })
-                .then(response => response.json() as Promise<Profile[] | ErrorMessage>)
+                .then(response => response.json() as Promise<ProfileViewModel[] | ErrorMessage>)
                 .then(data => {
                     if ((data as ErrorMessage).error) {
 
@@ -101,7 +92,7 @@ export const actionCreators = {
                     }
                     else {
 
-                        dispatch({ type: 'RECEIVE_PROFILES', profiles: data as Profile[] });
+                        dispatch({ type: 'RECEIVE_PROFILES', profiles: data as ProfileViewModel[] });
                     }
                 })
                 .catch(err => {
@@ -112,21 +103,16 @@ export const actionCreators = {
             dispatch({ type: 'REQUEST_PROFILE' });
         }
     },
-    updateProfile: (value: IndexViewModel, callback: () => void): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    updateProfile: (value: IndexViewModel, callback: () => void, error?: (error: ErrorMessage) => void): AppThunkAction<KnownAction> => (dispatch, getState) => {
         let token = getState().session.token;
         if (token) {
             let fetchTask: Promise<any>;
             let data = toFormData(value, null, null);
-            if (value.imageUrl
-                || value.imageThumbnailUrl) {
-                    if (value.imageUrl) {
-                        data.append('type', 'file');
-                        data.append('ImageUrl', value.imageUrl as Blob);
-                    }
-                    if (value.imageThumbnailUrl) {
-                        data.append('type', 'file');
-                        data.append('ImageThumbnailUrl', value.imageThumbnailUrl as Blob);
-                    }
+            if (value.imageUrl) {
+                if (value.imageUrl) {
+                    data.append('type', 'file');
+                    data.append('ImageUrl', value.imageUrl as Blob);
+                }
             }
             fetchTask = fetch("/Manage/Index", {
                 headers: {
@@ -136,21 +122,22 @@ export const actionCreators = {
                 method: 'POST',
                 body: data
             })
-                .then(response => response.json() as Promise<Profile | ErrorMessage>)
-                .then(data => {
-                    if ((data as ErrorMessage).error) {
-                        dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                    }
-                    else {
-                        dispatch({ type: 'RECEIVE_PROFILE', profile: data as Profile });
-                        callback();
-                    }
-                })
-                .catch(err => {
+            .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
                     dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                });
-            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-            dispatch({ type: 'SUBMIT_PROFILE', profile: value });
+                }
+                else {
+                    dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
+                    callback();
+                }
+            })
+            .catch(err => {
+                if (error) { error(err as ErrorMessage) };
+                dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+            });
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+        dispatch({ type: 'SUBMIT_PROFILE', profile: value });
         }
     }
 };
@@ -161,7 +148,7 @@ export const actionCreators = {
 ///Todo Update SessionStorage
 let bearerFromStore: Bearer = {};
 let username: string = '';
-let profile: IndexViewModel | Profile = {};
+let profile: IndexViewModel | ProfileViewModel = {};
 if (typeof window !== 'undefined') {
     if (window.sessionStorage) {
         username = (<any>window).sessionStorage.username;

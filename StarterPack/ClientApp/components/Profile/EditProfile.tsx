@@ -160,7 +160,7 @@ class EditProfile extends React.Component<ProfileProps, any> {
         return isLoading ? <div className="container pt-4" style={{ height: "70vh" }}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "7vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin /></div> :
             <div className="container pt-4">
                 <div className="row justify-content-center">
-                    <div key="checkoutheader" className="col-12 col-sm-8 col-md-8 col-lg-12 form-wrapper">
+                    <div key="checkoutheader" className="col-12 form-wrapper">
                         <h2 className="text-center display-4">Profile.</h2>
                     </div>
                     <div className="col-12 col-sm-12 col-md-9 col-lg-7 form-wrapper pt-4">
@@ -179,25 +179,26 @@ class EditProfile extends React.Component<ProfileProps, any> {
                         <div className="row justify-content-center pt-4">
                             <div className="col-12 col-sm-10 col-md-8 col-lg-7 form-wrapper">
                             {isLoading && <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "10vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin />}
-                            {page === 1 && <ProfileNameForm
+                                {page === 1 && <ProfileNameForm
+                                    initialValues={profile}
                                 onSubmit={(values: IndexViewModel) => {
-                                    this.props.profileActions.updateProfile(values, () => {
-                                        this.props.alertActions.sendAlert('Your profile image was saved successfully.', AlertType.success, true);
-                                        this.nextPage
-                                    });
+                                    this.nextPage();
                                 }}
                             />}
                             {page === 2 &&
                                 <ProfileImageForm
                                     previousPage={this.previousPage}
+                                    initialValues={profile}
                                     onSubmit={
                                         (values: IndexViewModel) => {
                                             window.scrollTo(0, 0)
                                             this.setState({ isLoading: true });
                                             this.props.profileActions.updateProfile(values, () => {
-                                                this.props.alertActions.sendAlert('Your profile image was saved successfully.', AlertType.success, true);
-                                                this.nextPage
-                                            });
+                                                this.props.alertActions.sendAlert('Your profile was saved successfully.', AlertType.success, true);
+                                                this.props.history.push('/Profile');
+                                            }, (error) => {
+                                                this.props.alertActions.sendAlert(error.error_description, AlertType.danger, true);
+                                            })
                                         }}
                                 />}
                             </div>

@@ -47,13 +47,15 @@ export interface IndexViewModel {
     isEmailConfirmed?: boolean,
     email?: string,
     firstName?: string,
+    lastName?: string,
     userGuid?: string,
     imageUrl?: Blob,
-    imageThumbnailUrl?: Blob,
+    location?: string,
+    description?: string,
     statusMessage?: string
 }
 
-export interface Profile {
+export interface ProfileViewModel {
     username?: string,
     isEmailConfirmed?: boolean,
     email?: string,
@@ -61,12 +63,9 @@ export interface Profile {
     lastName?: string,
     userGuid?: string,
     imageUrl?: string,
-    imageThumbnailUrl?: string,
-}
-
-export interface ProfileViewModel {
-    firstName: string;
-    lastName: string;
+    location?: string,
+    description?: string,
+    statusMessage?: string
 }
 
 export interface RegisterViewModel {

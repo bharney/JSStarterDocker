@@ -23,7 +23,7 @@ const profileForm = ({ pristine, submitting, handleSubmit, ...props }) => {
             <InputField type="file" name="imageUrl" id="imageUrl" placeholder="Image Url" component={renderFileInput} className="form-control" />
         </div>
         <div className="form-group">
-            <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={pristine || submitting}>Save Profile</button>
+            <button className="btn btn-lg btn-primary btn-block" type="submit" disabled={submitting}>Save Profile</button>
         </div>
     </form>);
 }

@@ -125,7 +125,7 @@ namespace StarterKit.Controllers
             }
 
             var imageUrl = Path.GetFileName(user.ImageUrl);
-            if (model.ImageUrl.FileName != imageUrl)
+            if (model.ImageUrl != null && model.ImageUrl.FileName != imageUrl)
             {
                 user.ImageUrl = await Upload(model.ImageUrl);
                 var setNameResult = await _userManager.UpdateAsync(user);

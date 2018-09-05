@@ -6,7 +6,7 @@ import * as SessionState from '../../store/Session';
 import * as ProfileState from '../../store/Profile';
 import { bindActionCreators, Dispatch } from 'redux';
 import * as AlertState from '../../store/Alert';
-import { Profile as ProfileModel, AlertType, Field as ModelField } from '../../models';
+import { ProfileViewModel, AlertType, Field as ModelField } from '../../models';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 
@@ -24,22 +24,22 @@ type ProfileProps =
 
 class Profile extends React.Component<ProfileProps, any> {
     componentDidMount() {
-        debugger;
-
         this.props.profileActions.getProfile()
     }
 
     render() {
         const { isLoading } = this.props;
-        const profile = this.props.profile as ProfileModel;
+        const profile = this.props.profile as ProfileViewModel;
         return isLoading ? <div className="container pt-4" style={{ height: "70vh" }}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "7vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin /></div> :
             <div className="container pt-4">
                 <div className="row justify-content-center pt-4">
-                    <div className="col-12 col-sm-8 col-md-8 col-lg-6 form-wrapper">
+                    <div className="col-12 form-wrapper">
                         <h2 className="text-center display-4">Profile.</h2>
                     </div>
-                    <div className="col-12 col-sm-8 col-md-8 col-lg-4 form-wrapper">
-                        <img className="first-slide img-fluid" src={profile.imageUrl} alt="Profile Image" />
+                    <div className="col-12 col-sm-8 col-md-8 col-lg-5 text-center form-wrapper">
+                        <img className="img-fluid" src={profile.imageUrl} alt="Profile Image" />
+                    </div>
+                    <div className="col-12 col-sm-8 col-md-8 col-lg-5 form-wrapper">
                         <div className="form-group">
                             <label htmlFor="email" className="form-control-label">Email</label>
                             <p>{profile.email}</p>
