@@ -1,14 +1,14 @@
 import { fetch, addTask } from 'domain-task';
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
-import { Bearer, ErrorMessage, IndexViewModel, ProfileViewModel } from '../models';
+import { Bearer, ErrorMessage, ProfileViewModel } from '../models';
 import toFormData from "../controls/FormDataUtility";
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface ProfileState {
     isLoading: boolean;
-    profile?: ProfileViewModel | IndexViewModel;
+    profile?: ProfileViewModel;
     profiles?: ProfileViewModel [];
     token?: Bearer;
     isRequiredToken: boolean;
@@ -34,7 +34,7 @@ interface ReceiveProfilesAction {
 
 interface SubmitProfileAction {
     type: 'SUBMIT_PROFILE';
-    profile?: IndexViewModel;
+    profile?: ProfileViewModel;
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
@@ -103,7 +103,7 @@ export const actionCreators = {
             dispatch({ type: 'REQUEST_PROFILE' });
         }
     },
-    updateProfile: (value: IndexViewModel, callback: () => void, error?: (error: ErrorMessage) => void): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    updateProfile: (value: ProfileViewModel, callback: () => void, error?: (error: ErrorMessage) => void): AppThunkAction<KnownAction> => (dispatch, getState) => {
         let token = getState().session.token;
         if (token) {
             let fetchTask: Promise<any>;
@@ -111,7 +111,7 @@ export const actionCreators = {
             if (value.imageUrl) {
                 if (value.imageUrl) {
                     data.append('type', 'file');
-                    data.append('ImageUrl', value.imageUrl as Blob);
+                    data.append('ImageUrl', value.imageBlob as Blob);
                 }
             }
             fetchTask = fetch("/Manage/Index", {
@@ -128,6 +128,7 @@ export const actionCreators = {
                     dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
                 }
                 else {
+                    debugger;
                     dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
                     callback();
                 }
@@ -148,7 +149,7 @@ export const actionCreators = {
 ///Todo Update SessionStorage
 let bearerFromStore: Bearer = {};
 let username: string = '';
-let profile: IndexViewModel | ProfileViewModel = {};
+let profile: ProfileViewModel = {};
 if (typeof window !== 'undefined') {
     if (window.sessionStorage) {
         username = (<any>window).sessionStorage.username;

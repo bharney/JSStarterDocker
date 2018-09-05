@@ -27,8 +27,13 @@ namespace StarterKit.Models.ViewModels
 
         public string ImageUrl { get; set; }
 
+        public IFormFile ImageBlob { get; set; }
+
         public string ImageThumbnailUrl { get; set; }
-        
+        public string Location { get; set; }
+
+        public string Description { get; set; }
+
         public string StatusMessage { get; set; }
     }
 }
