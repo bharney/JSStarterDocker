@@ -125,20 +125,9 @@ namespace StarterKit.Controllers
             }
 
             var imageUrl = Path.GetFileName(user.ImageUrl);
-            if (model.ImageUrl.FileName != imageUrl)
+            if (model.ImageUrl != null && model.ImageUrl.FileName != imageUrl)
             {
                 user.ImageUrl = await Upload(model.ImageUrl);
-                var setNameResult = await _userManager.UpdateAsync(user);
-                if (!setNameResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting Image Url for user with ID '{user.Id}'.");
-                }
-            }
-
-            var imageThumbnailUrl = Path.GetFileName(user.ImageThumbnailUrl);
-            if (model.ImageThumbnailUrl.FileName != imageUrl)
-            {
-                user.ImageThumbnailUrl = await Upload(model.ImageThumbnailUrl);
                 var setNameResult = await _userManager.UpdateAsync(user);
                 if (!setNameResult.Succeeded)
                 {

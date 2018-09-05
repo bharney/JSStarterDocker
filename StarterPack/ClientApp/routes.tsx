@@ -52,6 +52,12 @@ const AsyncProfile = Loadable({
     webpack: () => [require.resolveWeak('./components/Profile/Profile')],
     loading: loading,
 })
+const AsyncEditProfile = Loadable({
+    loader: () => import(/* webpackChunkName: "EditProfile" */'./components/Profile/EditProfile'),
+    modules: ['./components/Profile/EditProfile'],
+    webpack: () => [require.resolveWeak('./components/Profile/EditProfile')],
+    loading: loading,
+})
 const AsyncRegister = Loadable({
     loader: () => import(/* webpackChunkName: "Register" */'./components/Account/Register'),
     modules: ['./components/Account/Register'],
@@ -107,6 +113,7 @@ export const routes = <div>
         <App path='/Account/ResetPassword/:userId?/:code?' component={AsyncResetPassword} layout={AsyncHomeLayout} />
         <App path='/ResetPasswordConfirmation' component={AsyncResetPasswordConfirmation} layout={AsyncHomeLayout} />
         <App path='/SignedOut' component={AsyncSignedOut} layout={AsyncHomeLayout} />
+        <App path='/Profile/Edit' component={RequiredAuthentication.requireAuthentication(AsyncEditProfile)} layout={AsyncHomeLayout} />
         <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncProfile)} layout={AsyncHomeLayout} />
         <App component={AsyncNotFound} layout={AsyncHomeLayout} />
     </Switch>
