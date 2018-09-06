@@ -73,12 +73,14 @@ namespace StarterKit.Controllers
                 IsEmailConfirmed = user.EmailConfirmed,
                 ImageThumbnailUrl = user.ImageThumbnailUrl,
                 ImageUrl = user.ImageUrl,
+                Location = "",
+                Description = "",
                 StatusMessage = StatusMessage
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(IndexViewModel model)
+        public async Task<IActionResult> Index(ProfileViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -125,9 +127,9 @@ namespace StarterKit.Controllers
             }
 
             var imageUrl = Path.GetFileName(user.ImageUrl);
-            if (model.ImageUrl != null && model.ImageUrl.FileName != imageUrl)
+            if (model.ImageBlob != null && model.ImageBlob.FileName != imageUrl)
             {
-                user.ImageUrl = await Upload(model.ImageUrl);
+                user.ImageUrl = await Upload(model.ImageBlob);
                 var setNameResult = await _userManager.UpdateAsync(user);
                 if (!setNameResult.Succeeded)
                 {

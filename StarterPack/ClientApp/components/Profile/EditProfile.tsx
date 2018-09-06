@@ -7,7 +7,7 @@ import * as SessionState from '../../store/Session';
 import * as ProfileState from '../../store/Profile';
 import { bindActionCreators, Dispatch } from 'redux';
 import * as AlertState from '../../store/Alert';
-import { IndexViewModel, AlertType, Field as ModelField } from '../../models';
+import { ProfileViewModel, AlertType, Field as ModelField } from '../../models';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
 import { InjectedFormProps } from 'redux-form';
@@ -180,8 +180,8 @@ class EditProfile extends React.Component<ProfileProps, any> {
                             <div className="col-12 col-sm-10 col-md-8 col-lg-7 form-wrapper">
                             {isLoading && <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "10vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin />}
                                 {page === 1 && <ProfileNameForm
-                                    initialValues={profile}
-                                onSubmit={(values: IndexViewModel) => {
+                                initialValues={profile}
+                                    onSubmit={(values: ProfileViewModel) => {
                                     this.nextPage();
                                 }}
                             />}
@@ -190,7 +190,7 @@ class EditProfile extends React.Component<ProfileProps, any> {
                                     previousPage={this.previousPage}
                                     initialValues={profile}
                                     onSubmit={
-                                        (values: IndexViewModel) => {
+                                        (values: ProfileViewModel) => {
                                             window.scrollTo(0, 0)
                                             this.setState({ isLoading: true });
                                             this.props.profileActions.updateProfile(values, () => {

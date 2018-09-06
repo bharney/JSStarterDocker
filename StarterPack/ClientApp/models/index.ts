@@ -42,19 +42,6 @@ export interface LoginViewModel {
     rememberMe?: boolean,
 }
 
-export interface IndexViewModel {
-    username?: string,
-    isEmailConfirmed?: boolean,
-    email?: string,
-    firstName?: string,
-    lastName?: string,
-    userGuid?: string,
-    imageUrl?: Blob,
-    location?: string,
-    description?: string,
-    statusMessage?: string
-}
-
 export interface ProfileViewModel {
     username?: string,
     isEmailConfirmed?: boolean,
@@ -62,6 +49,7 @@ export interface ProfileViewModel {
     firstName?: string,
     lastName?: string,
     userGuid?: string,
+    imageBlob?: Blob,
     imageUrl?: string,
     location?: string,
     description?: string,
