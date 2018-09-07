@@ -2,7 +2,7 @@
 This Starter template allows you to spin up a React/Redux and .Net Core application with SQL Server and .Net Core Identity Authentication/Authroization. The site takes advantage of Server-Side Rendering and Lazy Loading based on Routes. Authentication is built into the App with JWT and Authorize attributes on controllers. 
  
 # Technology Stack
- - .NET Core/ C#
+ - .NET Core/ C# 2.1
  - React 16.3/ JavaScript
  - TypeScript
  - Redux
@@ -15,6 +15,9 @@ This Starter template allows you to spin up a React/Redux and .Net Core applicat
  - Hot Module Reloading(HMR)
  - Docker
  - Docker-Compose
+ - Azure Resourcee Manager(ARM) Template
+ - Key Vault
+ - JWT Bearer Token
  
 # Setup Dependencies/ Requirements
  - Docker
