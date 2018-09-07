@@ -1,11 +1,8 @@
 import { fetch, addTask } from 'domain-task';
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
-import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel, AlertType } from '../models';
-import * as cookie from 'react-cookie';
-import * as AlertState from './Alert';
-
-const cookieKey = 'PCHUserGuid';
+import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel } from '../models';
+import { unloadedTokenState, removeToken, saveToken, decodeToken } from '../utils/TokenUtility';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -73,58 +70,14 @@ export const actionCreators = {
                     if (error) { error(data as ErrorMessage) }
                 }
                 else {
-                    let token = data["token"];
-                    let base64Url = token.split('.')[1];
-                    let base64 = base64Url.replace('-', '+').replace('_', '/');
-                    let decoded = JSON.parse(window.atob(base64));
-                    let BearerToken: Bearer = {
-                        access_token: token,
-                        audience: decoded.aud,
-                        expires: decoded.exp,
-                        claims: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                        issuer: decoded.iss,
-                        id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"],
-                        name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-                        userData: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/userData"],
-                        jti: decoded.jti,
-                        sub: decoded.sub
-                    }
-
+                    let BearerToken: Bearer = decodeToken(data);
                     dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
-                    const cookieDataFromServer = window['cookieData'];
-                    if (cookieDataFromServer) {
-                        Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
-                            cookie.save(name, cookieDataFromServer[name]);
-                        })
-                    }
-
-
-                    ///Todo Update SessionStorage
-                    if (typeof window !== 'undefined') {
-                        if (window.sessionStorage) {
-                            window.sessionStorage.setItem('username', value.email);
-                            window.sessionStorage.setItem('jwt', JSON.stringify(BearerToken));
-                        } else if (window.localStorage) {
-                            window.localStorage.setItem('username', value.email);
-                            window.localStorage.setItem('jwt', JSON.stringify(BearerToken));
-                        }
-                    }
+                    saveToken(BearerToken);
                     if (callback) { callback(); }
                 }
             })
             .catch(err => {
-                let bearerFromStore: Bearer = {};
-                let username: string = '';
-                if (typeof window !== 'undefined') {
-                    if (window.sessionStorage) {
-                        username = (<any>window).sessionStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-                    } else if (window.localStorage) {
-                        username = (<any>window).localStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-                    }
-                }
-                const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                const token = unloadedTokenState();
                 dispatch({ type: 'RECEIVE_TOKEN', token: token });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
@@ -144,16 +97,7 @@ export const actionCreators = {
                 credentials: "include",
             })
                 .then(() => {
-                    if (typeof window !== 'undefined') {
-                        if (window.sessionStorage) {
-                            window.sessionStorage.removeItem('username');
-                            window.sessionStorage.removeItem('jwt');
-                        } else if (window.localStorage) {
-                            window.localStorage.removeItem('username');
-                            window.localStorage.removeItem('jwt');
-                        }
-                    }
-
+                    removeToken();
                     dispatch({ type: 'LOGOUT' });
                     if (callback) { callback(); }
                 })
@@ -186,57 +130,14 @@ export const actionCreators = {
                         if (error) { error(data as ErrorMessage) }
                     }
                     else {
-                        let token = data["token"];
-                        let base64Url = token.split('.')[1];
-                        let base64 = base64Url.replace('-', '+').replace('_', '/');
-                        let decoded = JSON.parse(window.atob(base64));
-                        let BearerToken: Bearer = {
-                            access_token: token,
-                            audience: decoded.aud,
-                            expires: decoded.exp,
-                            claims: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                            issuer: decoded.iss,
-                            id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"],
-                            name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-                            userData: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/userData"],
-                            jti: decoded.jti,
-                            sub: decoded.sub
-                        }
-
+                        let BearerToken: Bearer = decodeToken(data);
                         dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
-                        const cookieDataFromServer = window['cookieData'];
-                        if (cookieDataFromServer) {
-                            Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
-                                cookie.save(name, cookieDataFromServer[name]);
-                            })
-                        }
-
-                        ///Todo Update SessionStorage
-                        if (typeof window !== 'undefined') {
-                            if (window.sessionStorage) {
-                                window.sessionStorage.setItem('username', value.email);
-                                window.sessionStorage.setItem('jwt', JSON.stringify(BearerToken));
-                            } else if (window.localStorage) {
-                                window.localStorage.setItem('username', value.email);
-                                window.localStorage.setItem('jwt', JSON.stringify(BearerToken));
-                            }
-                        }
+                        saveToken(BearerToken);
                         if (callback) { callback(); }
                     }
                 })
                 .catch(() => {
-                    let bearerFromStore: Bearer = {};
-                    let username: string = '';
-                    if (typeof window !== 'undefined') {
-                        if (window.sessionStorage) {
-                            username = (<any>window).sessionStorage.username;
-                            bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-                        } else if (window.localStorage) {
-                            username = (<any>window).localStorage.username;
-                            bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-                        }
-                    }
-                    const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                    const token = unloadedTokenState();
                     dispatch({ type: 'RECEIVE_TOKEN', token: token });
                 });
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
@@ -292,32 +193,13 @@ export const actionCreators = {
                     dispatch({ type: 'RECEIVE_TOKEN', token: undefined });
                 }
                 else {
-                    dispatch({ type: 'RECEIVE_TOKEN', username: username, token: data as Bearer });
-                    ///Todo Update SessionStorage
-                    if (typeof window !== 'undefined') {
-                        if (window.sessionStorage) {
-                            window.sessionStorage.setItem('username', username);
-                            window.sessionStorage.setItem('jwt', JSON.stringify(data));
-                        } else if (window.localStorage) {
-                            window.localStorage.setItem('username', username);
-                            window.localStorage.setItem('jwt', JSON.stringify(data));
-                        }
-                    }
+                    let BearerToken: Bearer = decodeToken(data);
+                    dispatch({ type: 'RECEIVE_TOKEN', username: username, token: BearerToken });
+                    saveToken(BearerToken);
                 }
             })
             .catch(() => {
-                let bearerFromStore: Bearer = {};
-                let username: string = '';
-                if (typeof window !== 'undefined') {
-                    if (window.sessionStorage) {
-                        username = (<any>window).sessionStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-                    } else if (window.localStorage) {
-                        username = (<any>window).localStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-                    }
-                }
-                const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                const token = unloadedTokenState();
                 dispatch({ type: 'RECEIVE_TOKEN', token: token });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
@@ -327,21 +209,9 @@ export const actionCreators = {
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
-
-///Todo Update SessionStorage
-let bearerFromStore: Bearer = {};
 let username: string = '';
-if (typeof window !== 'undefined') {
-    if (window.sessionStorage) {
-        username = (<any>window).sessionStorage.username;
-        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-    } else if (window.localStorage) {
-        username = (<any>window).localStorage.username;
-        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-    }
-}
-
-const unloadedState: AccountState = { token: bearerFromStore.issuer ? bearerFromStore : undefined, isRequiredToken: false, username: username, isRequiredRefreshOnClient: false, isLoading: false };
+let token = unloadedTokenState()
+const unloadedState: AccountState = { token: token, isRequiredToken: false, username: username, isRequiredRefreshOnClient: false, isLoading: false };
 
 export const reducer: Reducer<AccountState> = (state: AccountState, incomingAction: Action) => {
     const action = incomingAction as KnownAction | LogoutAction;
@@ -387,3 +257,4 @@ export const reducer: Reducer<AccountState> = (state: AccountState, incomingActi
 
     return state || unloadedState;
 };
+

@@ -2,9 +2,7 @@ import { fetch, addTask } from 'domain-task';
 import { Action, Reducer } from 'redux';
 import { AppThunkAction } from './';
 import { Bearer, ErrorMessage } from '../models';
-import * as cookie from 'react-cookie';
-
-const cookieKey = 'PCHUserGuid';
+import { unloadedTokenState, saveToken, decodeToken } from '../utils/TokenUtility';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -49,18 +47,7 @@ export const actionCreators = {
         dispatch({ type: 'CANCEL_REQUIRED_TOKEN' });
     },
     loadToken: (callback?: () => void): AppThunkAction<{}> => (dispatch, getState) => {
-        let bearerFromStore: Bearer | undefined = {};
-        let username: string | undefined = '';
-
-        if (typeof window !== 'undefined') {
-            if (window.sessionStorage) {
-                username = (<any>window).sessionStorage.username;
-                bearerFromStore = (<any>window).sessionStorage.jwt !== undefined ? JSON.parse((<any>window).sessionStorage.jwt) : undefined;
-            } else if (window.localStorage) {
-                username = (<any>window).localStorage.username;
-                bearerFromStore = (<any>window).localStorage.jwt !== undefined ? JSON.parse((<any>window).localStorage.jwt) : undefined;
-            }
-        }
+        let bearerFromStore: Bearer = unloadedTokenState();
         if (bearerFromStore !== getState().session.token) {
             if (bearerFromStore !== undefined && username !== undefined) {
                 dispatch({ type: 'RECEIVE_TOKEN', username: username, token: bearerFromStore });
@@ -86,57 +73,14 @@ export const actionCreators = {
                     dispatch({ type: 'RECEIVE_TOKEN', token: undefined });
                 }
                 else {
-                    let token = data["token"];
-                    let base64Url = token.split('.')[1];
-                    let base64 = base64Url.replace('-', '+').replace('_', '/');
-                    let decoded = JSON.parse(window.atob(base64));
-                    let BearerToken: Bearer = {
-                        access_token: token,
-                        audience: decoded.aud,
-                        expires: decoded.exp,
-                        claims: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                        issuer: decoded.iss,
-                        id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"],
-                        name: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-                        userData: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/userData"],
-                        jti: decoded.jti,
-                        sub: decoded.sub
-                    }
+                    let BearerToken: Bearer = decodeToken(data);
                     dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
-                    ///Todo Update SessionStorage
-                    const cookieDataFromServer = window['cookieData'];
-                    if (cookieDataFromServer) {
-                        Object.getOwnPropertyNames(cookieDataFromServer).forEach(name => {
-                            cookie.save(name, cookieDataFromServer[name]);
-                        })
-                    }
-
-                    if (typeof window !== 'undefined') {
-
-                        if (window.sessionStorage) {
-                            window.sessionStorage.setItem('username', BearerToken.name);
-                            window.sessionStorage.setItem('jwt', JSON.stringify(BearerToken));
-                        } else if (window.localStorage) {
-                            window.localStorage.setItem('username', BearerToken.name);
-                            window.localStorage.setItem('jwt', JSON.stringify(BearerToken));
-                        }
-                    }
+                    saveToken(BearerToken);
                     if (callback) { callback(); }
                 }
             })
             .catch(err => {
-                let bearerFromStore: Bearer = {};
-                let username: string = '';
-                if (typeof window !== 'undefined') {
-                    if (window.sessionStorage) {
-                        username = (<any>window).sessionStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-                    } else if (window.localStorage) {
-                        username = (<any>window).localStorage.username;
-                        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-                    }
-                }
-                const token = bearerFromStore.access_token ? bearerFromStore : undefined
+                let token: Bearer = unloadedTokenState();
                 dispatch({ type: 'RECEIVE_TOKEN', token: token });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
@@ -147,20 +91,9 @@ export const actionCreators = {
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-///Todo Update SessionStorage
-let bearerFromStore: Bearer = {};
 let username: string = '';
-if (typeof window !== 'undefined') {
-    if (window.sessionStorage) {
-        username = (<any>window).sessionStorage.username;
-        bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
-    } else if (window.localStorage) {
-        username = (<any>window).localStorage.username;
-        bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
-    }
-}
-
-const unloadedState: SessionState = { token: bearerFromStore.access_token ? bearerFromStore : undefined, isRequiredToken: false, username: username, isRequiredRefreshOnClient: false, isLoading: false };
+let token: Bearer = unloadedTokenState();
+const unloadedState: SessionState = { token: token, isRequiredToken: false, username: username, isRequiredRefreshOnClient: false, isLoading: false };
 
 export const reducer: Reducer<SessionState> = (state: SessionState, incomingAction: Action) => {
     const action = incomingAction as KnownAction | CancelRequiredTokenAction;

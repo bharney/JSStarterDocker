@@ -237,5 +237,5 @@ _Pvt_Extensions
 .fake/
 
 # Cache Files
-/.awcache
+.awcache
 .awcache/*
