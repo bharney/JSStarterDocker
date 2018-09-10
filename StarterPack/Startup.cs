@@ -101,8 +101,6 @@ namespace StarterKit
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbSeeder dbSeeder, IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
         {
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -118,6 +116,7 @@ namespace StarterKit
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseHttpsRedirection();
             app.UseResponseCompression();
             app.UseStaticFiles(new StaticFileOptions
             {
