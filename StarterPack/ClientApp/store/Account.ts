@@ -71,7 +71,7 @@ export const actionCreators = {
                 }
                 else {
                     let BearerToken: Bearer = decodeToken(data);
-                    dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
+                    dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
                     saveToken(BearerToken);
                     if (callback) { callback(); }
                 }
@@ -131,7 +131,7 @@ export const actionCreators = {
                     }
                     else {
                         let BearerToken: Bearer = decodeToken(data);
-                        dispatch({ type: 'RECEIVE_TOKEN', username: value.email, token: BearerToken });
+                        dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
                         saveToken(BearerToken);
                         if (callback) { callback(); }
                     }
@@ -194,7 +194,7 @@ export const actionCreators = {
                 }
                 else {
                     let BearerToken: Bearer = decodeToken(data);
-                    dispatch({ type: 'RECEIVE_TOKEN', username: username, token: BearerToken });
+                    dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
                     saveToken(BearerToken);
                 }
             })

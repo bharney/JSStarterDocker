@@ -48,15 +48,8 @@ export const actionCreators = {
     },
     loadToken: (callback?: () => void): AppThunkAction<{}> => (dispatch, getState) => {
         let bearerFromStore: Bearer = unloadedTokenState();
-        if (bearerFromStore !== getState().session.token) {
-            if (bearerFromStore !== undefined && username !== undefined) {
-                dispatch({ type: 'RECEIVE_TOKEN', username: username, token: bearerFromStore });
-                if (callback) callback();
-
-            } else if (typeof window !== 'undefined') {
-                dispatch({ type: 'CANCEL_REQUIRED_TOKEN' });
-            }
-        }
+        dispatch({ type: 'RECEIVE_TOKEN', username: bearerFromStore.name, token: bearerFromStore });
+        if (callback) callback();
     },
     getToken: (callback?: () => void): AppThunkAction<{}> => (dispatch) => {
         let fetchTask = fetch("/Account/GetToken", {

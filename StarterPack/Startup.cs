@@ -116,7 +116,6 @@ namespace StarterKit
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseHttpsRedirection();
             app.UseResponseCompression();
             app.UseStaticFiles(new StaticFileOptions
             {

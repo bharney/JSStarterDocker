@@ -4,14 +4,10 @@ import * as cookie from 'react-cookie';
 
 function unloadedTokenState() {
     let bearerFromStore: Bearer = {};
-    let username: string = '';
-    debugger;
     if (typeof window !== 'undefined') {
         if (window.sessionStorage) {
-            username = (<any>window).sessionStorage.username;
             bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
         } else if (window.localStorage) {
-            username = (<any>window).localStorage.username;
             bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
         }
     }

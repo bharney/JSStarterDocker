@@ -76,7 +76,8 @@ main {
 }
 
 .signed-in {
-    padding-bottom: .12em;
+    padding-top:.06em;
+    padding-bottom: .06em;
     font-size: 1.8em;
 }
 
@@ -98,6 +99,10 @@ main {
     word-break: keep-all !important;
 }
 
+.nav-link.userName {
+    padding-top:0;
+    padding-bottom:0;
+}
 
 @media (min-width: 1200px) {
     .container {

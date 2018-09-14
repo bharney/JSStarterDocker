@@ -9,7 +9,7 @@ import toFormData from "../utils/FormDataUtility";
 export interface ProfileState {
     isLoading: boolean;
     profile?: ProfileViewModel;
-    profiles?: ProfileViewModel [];
+    profiles?: ProfileViewModel[];
     token?: Bearer;
     isRequiredToken: boolean;
     isRequiredRefreshOnClient?: boolean;
@@ -48,29 +48,28 @@ export const actionCreators = {
     getProfile: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
         let token = getState().session.token;
         if (token) {
-            
-                let fetchTask = fetch("/Manage/Index", {
-                    method: "get",
-                    headers: {
-                        "Authorization": `Bearer ${token.access_token}`,
-                        "Content-Type": "application/json",
-                        "Accept": "application/json, text/plain, */*"
-                    },
-                })
-                    .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
-                    .then(data => {
-                        if ((data as ErrorMessage).error) {
-                            dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                        }
-                        else {
-                            dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
-                        }
-                    })
-                    .catch(err => {
-                        dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                    });
-                addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-                dispatch({ type: 'REQUEST_PROFILE' });
+            let fetchTask = fetch("/Manage/Index", {
+                method: "get",
+                headers: {
+                    "Authorization": `Bearer ${token.access_token}`,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/plain, */*"
+                },
+            })
+            .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
+                    dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+                }
+                else {
+                    dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
+                }
+            })
+            .catch(err => {
+                dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+            });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'REQUEST_PROFILE' });
         }
     },
     getProfiles: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
@@ -122,23 +121,23 @@ export const actionCreators = {
                 method: 'POST',
                 body: data
             })
-            .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
-            .then(data => {
-                if ((data as ErrorMessage).error) {
+                .then(response => response.json() as Promise<ProfileViewModel | ErrorMessage>)
+                .then(data => {
+                    if ((data as ErrorMessage).error) {
+                        dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
+                    }
+                    else {
+                        debugger;
+                        dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
+                        callback();
+                    }
+                })
+                .catch(err => {
+                    if (error) { error(err as ErrorMessage) };
                     dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-                }
-                else {
-                    debugger;
-                    dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
-                    callback();
-                }
-            })
-            .catch(err => {
-                if (error) { error(err as ErrorMessage) };
-                dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
-            });
-        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-        dispatch({ type: 'SUBMIT_PROFILE', profile: value });
+                });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'SUBMIT_PROFILE', profile: value });
         }
     }
 };

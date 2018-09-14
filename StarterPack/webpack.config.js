@@ -71,10 +71,10 @@ module.exports = (env) => {
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
-        watch: isDevBuild,
-        watchOptions: {
-            poll: isDevBuild ? 1000 : false
-        },
+        //watch: isDevBuild,
+        //watchOptions: {
+        //    poll: isDevBuild ? 1000 : false
+        //},
         plugins: [
             //new CleanWebpackPlugin([
             //    path.join(__dirname, clientBundleOutputDir, '*'),
