@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import * as SessionState from '../../store/Session';
-import * as AlertState from '../../store/Alert';
-import { AlertType } from '../../models';
+import { RouteComponentProps } from 'react-router-dom';
 import { bindActionCreators, Dispatch } from 'redux';
+import { AlertType } from '../../models';
+import { ApplicationState } from '../../store';
+import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
 
 export function requireAuthentication(Component:React.ComponentClass) {
     type SessionProps = SessionState.SessionState

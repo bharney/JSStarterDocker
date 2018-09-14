@@ -1,13 +1,13 @@
 import * as React from "react";
-import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../../store';
+import { RouteComponentProps } from 'react-router-dom';
 import { bindActionCreators, Dispatch } from 'redux';
-import { AlertType } from '../../models';
-import * as AccountState from '../../store/Account';
-import * as SessionState from '../../store/Session';
-import * as AlertState from '../../store/Alert';
 import URLSearchParams from 'url-search-params';
+import { AlertType } from '../../models';
+import { ApplicationState } from '../../store';
+import * as AccountState from '../../store/Account';
+import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
 
 type UserMenuProps = AccountState.AccountState
     & {

@@ -1,11 +1,11 @@
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect, Dispatch } from 'react-redux';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { ApplicationState } from '../../store';
 import * as WeatherForecastsState from '../../store/WeatherForecasts';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { bindActionCreators } from 'redux';
 
 // At runtime, Redux will merge together...
 type WeatherForecastProps =

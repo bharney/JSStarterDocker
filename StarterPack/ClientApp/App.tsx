@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Route, RouteComponentProps, Switch } from 'react-router';
 import * as ReactDOM from 'react-dom';
+import { Route, RouteComponentProps } from 'react-router';
+import Footer from './components/Footer/Footer';
 import NavMenu from './components/Nav/NavMenu';
 import { ApplicationState } from './store';
-import Footer from './components/Footer/Footer';
-import * as RoutesModule from './routes';
-import { Layout } from './components/Layout/Layout';
-import NotFound from './components/NotFound/NotFound';
-import * as SessionState from './store/Session';
 import * as AccountState from './store/Account';
 import * as AlertState from './store/Alert';
+import * as SessionState from './store/Session';
 type AppProps = any
 
 interface On {

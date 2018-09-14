@@ -1,14 +1,14 @@
-import * as React from "react";
-import { RouteComponentProps } from 'react-router-dom';
-import { ApplicationState } from '../../store';
-import { connect } from 'react-redux';
-import * as SessionState from '../../store/Session';
-import * as ProfileState from '../../store/Profile';
-import { bindActionCreators, Dispatch } from 'redux';
-import * as AlertState from '../../store/Alert';
-import { ProfileViewModel, AlertType, Field as ModelField } from '../../models';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from "react";
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { bindActionCreators, Dispatch } from 'redux';
+import { ProfileViewModel } from '../../models';
+import { ApplicationState } from '../../store';
+import * as AlertState from '../../store/Alert';
+import * as ProfileState from '../../store/Profile';
+import * as SessionState from '../../store/Session';
 
 type ProfileProps =
     ProfileState.ProfileState

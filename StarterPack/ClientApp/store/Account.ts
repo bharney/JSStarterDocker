@@ -1,8 +1,8 @@
-import { fetch, addTask } from 'domain-task';
+import { addTask, fetch } from 'domain-task';
 import { Action, Reducer } from 'redux';
-import { AppThunkAction } from './';
 import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel } from '../models';
-import { unloadedTokenState, removeToken, saveToken, decodeToken } from '../utils/TokenUtility';
+import { decodeToken, removeToken, saveToken, unloadedTokenState } from '../utils/TokenUtility';
+import { AppThunkAction } from './';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 

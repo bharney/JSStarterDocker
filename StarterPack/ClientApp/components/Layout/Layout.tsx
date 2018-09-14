@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { SliderMenu } from '../Slider/SliderMenu';
+import { RouteComponentProps } from 'react-router-dom';
 import { NavContext } from '../../App';
-import Alert from './AlertComponent';
-import * as SessionState from '../../store/Session';
+import { ApplicationState } from '../../store';
 import * as AccountState from '../../store/Account';
 import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
 import AdminSliderMenu from '../Slider/AdminSliderMenu';
 import MemberSliderMenu from '../Slider/MemberSliderMenu';
-import { ApplicationState } from '../../store';
-import { RouteComponentProps } from 'react-router-dom';
+import { SliderMenu } from '../Slider/SliderMenu';
+import Alert from './AlertComponent';
 
 interface NavProps {
     on: boolean;

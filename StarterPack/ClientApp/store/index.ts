@@ -1,11 +1,11 @@
 import { reducer as formReducer } from 'redux-form';
-
-import * as Session from './Session';
-import * as Alert from './Alert';
 import * as Account from './Account';
-import * as Profile from './Profile';
-import * as WeatherForecasts from './WeatherForecasts';
+import * as Alert from './Alert';
 import * as Counter from './Counter';
+import * as Profile from './Profile';
+import * as Session from './Session';
+import * as WeatherForecasts from './WeatherForecasts';
+
 // The top-level state object
 export interface ApplicationState {
     session: Session.SessionState;

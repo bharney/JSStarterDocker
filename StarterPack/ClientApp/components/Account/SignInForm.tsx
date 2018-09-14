@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Field, reduxForm } from 'redux-form';
 import { Link } from 'react-router-dom';
+import { Field, reduxForm } from 'redux-form';
 
 const signInForm = ({ pristine, submitting, handleSubmit }) => {
     return (<form id="signinForm" className='form-wrapper' onSubmit={handleSubmit}>

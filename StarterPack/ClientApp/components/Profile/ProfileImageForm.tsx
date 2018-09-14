@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Field, reduxForm, GenericField } from 'redux-form';
-import { Link } from 'react-router-dom';
+import { Field, GenericField, reduxForm } from 'redux-form';
 import renderFileInput from '../../controls/RenderFileInput';
 
 const DropDownMenu = Field as new () => GenericField<any>;

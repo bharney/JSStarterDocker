@@ -1,18 +1,16 @@
+import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
+import { createMemoryHistory } from 'history';
 import * as React from 'react';
+import cookie from 'react-cookie';
+import { renderToString } from 'react-dom/server';
+import Loadable from 'react-loadable';
+import { getBundles } from 'react-loadable/webpack';
 import { Provider } from 'react-redux';
-import { renderToString, renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { replace } from 'react-router-redux';
-import { createMemoryHistory } from 'history';
-import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import configureStore from './configureStore';
-import { getBundles } from 'react-loadable/webpack'
-import Loadable from 'react-loadable';
-import App from './App';
 import { routes } from './routes';
 const stats = require('./dist/react-loadable.json');
-import cookieUtil from 'cookie';
-import cookie from 'react-cookie';
 
 function plugInCookiesFromDotNet(cookieData: { key: string, value: string }[], res) {
     const formattedData = {};

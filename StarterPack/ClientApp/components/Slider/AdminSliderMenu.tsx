@@ -1,12 +1,10 @@
 import * as React from 'react';
-import * as SessionState from '../../store/Session';
-import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom';
-import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import { ExpandableListGroup } from '../../controls/ExpandableListGroup';
+import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import { NavContext } from '../../App';
+import { ExpandableListGroup } from '../../controls/ExpandableListGroup';
+import { ApplicationState } from '../../store';
+import * as SessionState from '../../store/Session';
 interface NavProps {
     onUpdate: () => void;
 }

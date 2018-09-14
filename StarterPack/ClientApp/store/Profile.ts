@@ -1,8 +1,8 @@
-import { fetch, addTask } from 'domain-task';
+import { addTask, fetch } from 'domain-task';
 import { Action, Reducer } from 'redux';
-import { AppThunkAction } from './';
 import { Bearer, ErrorMessage, ProfileViewModel } from '../models';
 import toFormData from "../utils/FormDataUtility";
+import { AppThunkAction } from './';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 

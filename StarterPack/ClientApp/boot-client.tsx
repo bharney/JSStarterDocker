@@ -1,17 +1,17 @@
-import './styles/styles.scss';
+import { createBrowserHistory } from 'history';
 import * as React from 'react';
+import cookie from 'react-cookie';
 import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
+import Loadable from 'react-loadable';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
-import { createBrowserHistory } from 'history';
 import configureStore from './configureStore';
-import { ApplicationState } from './store';
-import cookie from 'react-cookie';
-import Loadable from 'react-loadable';
 import * as RoutesModule from './routes';
-let routes = RoutesModule.routes;
+import { ApplicationState } from './store';
 import * as SessionState from './store/Session';
+import './styles/styles.scss';
+let routes = RoutesModule.routes;
 
 // Create browser history to use in the Redux store
 const history = createBrowserHistory();

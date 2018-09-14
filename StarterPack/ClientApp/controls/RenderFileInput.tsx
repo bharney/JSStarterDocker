@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons/faFolderOpen';
+import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
 import { Field } from 'redux-form';
 
 class renderFileInput extends React.Component<any, any> {

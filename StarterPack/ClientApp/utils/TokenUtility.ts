@@ -1,5 +1,5 @@
-import { Bearer, ErrorMessage } from '../models';
 import * as cookie from 'react-cookie';
+import { Bearer, ErrorMessage } from '../models';
 
 
 function unloadedTokenState() {
@@ -68,4 +68,5 @@ function decodeToken(data: Bearer | ErrorMessage) {
 }
 
 
-export { unloadedTokenState, removeToken, saveToken, decodeToken } 
+export { unloadedTokenState, removeToken, saveToken, decodeToken };
+ 
