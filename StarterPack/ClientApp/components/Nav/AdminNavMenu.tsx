@@ -15,7 +15,10 @@ type AdminNavMenuProps = SessionState.SessionState
 export class AdminNavMenu extends React.Component<AdminNavMenuProps, {}> {
 
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
+
+        if (username == "")
+            return null
 
         if (token == undefined)
             return null

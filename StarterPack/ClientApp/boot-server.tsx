@@ -91,6 +91,9 @@ export default createServerRenderer(params => {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <meta name="description" content="Starter Pack for React with ASP.NET Core" />
                     <title>Starter Pack</title>
+                    <style>
+                    html,body{overflow-x:hidden}body{padding-top:70px}#custom-nav{padding-top:1em;padding-bottom:1em;opacity:1;box-shadow:none;z-index:999;box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);-webkit-font-smoothing:antialiased}main{padding-top:3%}@media screen and (max-width:767px){.row-offcanvas{position:relative}.row-offcanvas-right{right:0}.row-offcanvas-right .sidebar-offcanvas{right:-100%}.sidebar-offcanvas{position:absolute;top:0;width:50%}}
+                    </style>
                     ${criticalStyles} 
                     ${vendorStyles} 
                     ${styles.map(style => `<link href="/dist/${style.file}" rel="stylesheet"/>`).join('\n')}

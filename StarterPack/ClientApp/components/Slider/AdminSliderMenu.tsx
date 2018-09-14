@@ -15,13 +15,17 @@ type AdminSliderMenuProps = SessionState.SessionState;
 
 export class AdminSliderMenu extends React.Component<AdminSliderMenuProps, {}> {
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
+        if (username == "")
+            return null
+
         if (token == undefined)
             return null
 
         if (Object.keys(token).length === 0)
             return null
-        const { claims } = token;
+        const { claims } = token
+
         if (claims && claims.constructor === Array) {
             if (claims.some((claim) => { return claim == "Admin"; })) {
                 return <NavContext.Consumer {...this.props}>

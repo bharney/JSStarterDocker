@@ -20,7 +20,10 @@ type AdminUserMenuProps = SessionState.SessionState
 
 export class AdminUserMenu extends React.Component<AdminUserMenuProps, {}> {
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
+
+        if (username == "")
+            return null
 
         if (token == undefined || Object.keys(token).length === 0)
             return null

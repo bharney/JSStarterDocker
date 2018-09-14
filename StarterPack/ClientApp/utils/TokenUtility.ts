@@ -5,6 +5,7 @@ import * as cookie from 'react-cookie';
 function unloadedTokenState() {
     let bearerFromStore: Bearer = {};
     let username: string = '';
+    debugger;
     if (typeof window !== 'undefined') {
         if (window.sessionStorage) {
             username = (<any>window).sessionStorage.username;

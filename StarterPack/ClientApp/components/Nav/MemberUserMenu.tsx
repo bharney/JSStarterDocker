@@ -44,9 +44,9 @@ export class MemberUserMenu extends React.Component<MemberUserMenuProps, {}> {
     }
 
     public render() {
-        const { username, token: { claims } } = this.props;
+        const { username } = this.props;
 
-        if (username == undefined)
+        if (username == "")
             return null
 
         if (username.indexOf("@guest.starterpack.com") === -1) {

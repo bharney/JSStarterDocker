@@ -17,8 +17,12 @@ export class MemberNavMenu extends React.Component<MemberNavMenuProps, {}> {
     public render() {
         const { username, token } = this.props;
 
+        if (username == "")
+            return null
+
         if (token == undefined)
             return null
+
         if (Object.keys(token).length === 0)
             return null
 
