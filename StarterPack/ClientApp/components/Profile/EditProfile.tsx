@@ -1,20 +1,19 @@
-import '../../styles/formStepper.scss';
-import * as React from "react";
-import { RouteComponentProps } from 'react-router-dom';
-import { ApplicationState } from '../../store';
-import { connect } from 'react-redux';
-import * as SessionState from '../../store/Session';
-import * as ProfileState from '../../store/Profile';
-import { bindActionCreators, Dispatch } from 'redux';
-import * as AlertState from '../../store/Alert';
-import { ProfileViewModel, AlertType, Field as ModelField } from '../../models';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import { InjectedFormProps } from 'redux-form';
-import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';
-import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
+import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from "react";
 import Loadable from 'react-loadable';
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { bindActionCreators, Dispatch } from 'redux';
+import { AlertType, ProfileViewModel } from '../../models';
+import { ApplicationState } from '../../store';
+import * as AlertState from '../../store/Alert';
+import * as ProfileState from '../../store/Profile';
+import * as SessionState from '../../store/Session';
+import '../../styles/formStepper.scss';
 
 const loading = () => {
     return <div><FontAwesomeIcon icon={faSpinner} spin size="2x" /></div>

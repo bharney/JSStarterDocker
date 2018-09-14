@@ -1,23 +1,17 @@
-import * as React from 'react';
-import * as SessionState from '../../store/Session';
-import * as AlertState from '../../store/Alert';
-import * as AccountState from '../../store/Account';
-import { AlertType } from '../../models';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom';
-import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import AdminUserMenu from './AdminUserMenu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons/faSignInAlt';
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons/faUserCircle';
-import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
 import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
-import { faShoppingBasket } from '@fortawesome/free-solid-svg-icons/faShoppingBasket';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
-
+import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons/faUserCircle';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { NavContext } from '../../App';
+import { AlertType } from '../../models';
+import * as AccountState from '../../store/Account';
+import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
+import AdminUserMenu from './AdminUserMenu';
+
 
 interface NavProps {
     onUpdate: () => void;
@@ -44,9 +38,9 @@ export class MemberUserMenu extends React.Component<MemberUserMenuProps, {}> {
     }
 
     public render() {
-        const { username, token: { claims } } = this.props;
+        const { username } = this.props;
 
-        if (username == undefined)
+        if (username == "")
             return null
 
         if (username.indexOf("@guest.starterpack.com") === -1) {

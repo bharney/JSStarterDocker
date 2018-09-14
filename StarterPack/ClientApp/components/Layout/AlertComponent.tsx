@@ -1,8 +1,8 @@
-import { connect } from 'react-redux';
-import * as AlertState from '../../store/Alert';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Alert } from '../../models';
 import { ApplicationState, AppThunkAction } from '../../store';
+import * as AlertState from '../../store/Alert';
 import { CloseAlertAction } from '../../store/Alert';
 
 export interface AlertProps {

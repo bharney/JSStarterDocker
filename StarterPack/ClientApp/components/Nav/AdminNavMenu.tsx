@@ -1,11 +1,7 @@
 import * as React from 'react';
-import * as SessionState from '../../store/Session';
-import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom';
-import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
-import { ApplicationState } from '../../store';
+import { NavLink } from 'react-router-dom';
 import { NavContext } from '../../App';
+import * as SessionState from '../../store/Session';
 interface NavProps {
     onUpdate: () => void;
 }
@@ -15,7 +11,10 @@ type AdminNavMenuProps = SessionState.SessionState
 export class AdminNavMenu extends React.Component<AdminNavMenuProps, {}> {
 
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
+
+        if (username == "")
+            return null
 
         if (token == undefined)
             return null

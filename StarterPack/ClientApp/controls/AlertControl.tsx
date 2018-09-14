@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Alert } from '../models';
-
 import { AppThunkAction } from '../store';
 import { CloseAlertAction } from '../store/Alert';
+
 
 export interface AlertProps {
     items: Alert[];

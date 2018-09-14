@@ -1,8 +1,8 @@
-import { fetch, addTask } from 'domain-task';
+import { addTask, fetch } from 'domain-task';
 import { Action, Reducer } from 'redux';
-import { AppThunkAction } from './';
 import { Bearer, ErrorMessage } from '../models';
-import { unloadedTokenState, saveToken, decodeToken } from '../utils/TokenUtility';
+import { decodeToken, saveToken, unloadedTokenState } from '../utils/TokenUtility';
+import { AppThunkAction } from './';
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -48,15 +48,8 @@ export const actionCreators = {
     },
     loadToken: (callback?: () => void): AppThunkAction<{}> => (dispatch, getState) => {
         let bearerFromStore: Bearer = unloadedTokenState();
-        if (bearerFromStore !== getState().session.token) {
-            if (bearerFromStore !== undefined && username !== undefined) {
-                dispatch({ type: 'RECEIVE_TOKEN', username: username, token: bearerFromStore });
-                if (callback) callback();
-
-            } else if (typeof window !== 'undefined') {
-                dispatch({ type: 'CANCEL_REQUIRED_TOKEN' });
-            }
-        }
+        dispatch({ type: 'RECEIVE_TOKEN', username: bearerFromStore.name, token: bearerFromStore });
+        if (callback) callback();
     },
     getToken: (callback?: () => void): AppThunkAction<{}> => (dispatch) => {
         let fetchTask = fetch("/Account/GetToken", {

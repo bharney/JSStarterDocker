@@ -3,8 +3,6 @@ import Loadable from 'react-loadable';
 import { Switch } from 'react-router-dom';
 import App from './App';
 import * as RequiredAuthentication from './components/Account/RequiredAuthentication';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const loading = () => {
     return <div></div>

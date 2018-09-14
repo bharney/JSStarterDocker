@@ -1,14 +1,13 @@
-import * as React from 'react';
-import * as SessionState from '../../store/Session';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom';
-import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { NavContext } from '../../App';
+import { ApplicationState } from '../../store';
+import * as SessionState from '../../store/Session';
+
 interface NavProps {
     onUpdate: () => void;
 }
@@ -20,7 +19,10 @@ type AdminUserMenuProps = SessionState.SessionState
 
 export class AdminUserMenu extends React.Component<AdminUserMenuProps, {}> {
     public render() {
-        const { token } = this.props;
+        const { username, token } = this.props;
+
+        if (username == "")
+            return null
 
         if (token == undefined || Object.keys(token).length === 0)
             return null

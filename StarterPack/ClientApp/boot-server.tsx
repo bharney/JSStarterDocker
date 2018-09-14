@@ -1,18 +1,16 @@
+import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
+import { createMemoryHistory } from 'history';
 import * as React from 'react';
+import cookie from 'react-cookie';
+import { renderToString } from 'react-dom/server';
+import Loadable from 'react-loadable';
+import { getBundles } from 'react-loadable/webpack';
 import { Provider } from 'react-redux';
-import { renderToString, renderToNodeStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { replace } from 'react-router-redux';
-import { createMemoryHistory } from 'history';
-import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import configureStore from './configureStore';
-import { getBundles } from 'react-loadable/webpack'
-import Loadable from 'react-loadable';
-import App from './App';
 import { routes } from './routes';
 const stats = require('./dist/react-loadable.json');
-import cookieUtil from 'cookie';
-import cookie from 'react-cookie';
 
 function plugInCookiesFromDotNet(cookieData: { key: string, value: string }[], res) {
     const formattedData = {};
@@ -91,6 +89,9 @@ export default createServerRenderer(params => {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <meta name="description" content="Starter Pack for React with ASP.NET Core" />
                     <title>Starter Pack</title>
+                    <style>
+                    html,body{overflow-x:hidden}body{padding-top:70px}#custom-nav{padding-top:1em;padding-bottom:1em;opacity:1;box-shadow:none;z-index:999;box-shadow:0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12),0 2px 4px -1px rgba(0,0,0,.2);-webkit-font-smoothing:antialiased}main{padding-top:3%}@media screen and (max-width:767px){.row-offcanvas{position:relative}.row-offcanvas-right{right:0}.row-offcanvas-right .sidebar-offcanvas{right:-100%}.sidebar-offcanvas{position:absolute;top:0;width:50%}}
+                    </style>
                     ${criticalStyles} 
                     ${vendorStyles} 
                     ${styles.map(style => `<link href="/dist/${style.file}" rel="stylesheet"/>`).join('\n')}

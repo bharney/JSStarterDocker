@@ -1,11 +1,7 @@
-import * as React from 'react';
-import { RouteComponentProps, Link } from 'react-router-dom';
-import { connect, Dispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { reset } from 'redux-form';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons/faCaretDown';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
 
 type ExpandablePanelProps = {
     displayTitle: string,

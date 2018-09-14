@@ -1,16 +1,13 @@
-import { Bearer, ErrorMessage } from '../models';
 import * as cookie from 'react-cookie';
+import { Bearer, ErrorMessage } from '../models';
 
 
 function unloadedTokenState() {
     let bearerFromStore: Bearer = {};
-    let username: string = '';
     if (typeof window !== 'undefined') {
         if (window.sessionStorage) {
-            username = (<any>window).sessionStorage.username;
             bearerFromStore = JSON.parse((<any>window).sessionStorage.jwt || "{}");
         } else if (window.localStorage) {
-            username = (<any>window).localStorage.username;
             bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
         }
     }
@@ -71,4 +68,5 @@ function decodeToken(data: Bearer | ErrorMessage) {
 }
 
 
-export { unloadedTokenState, removeToken, saveToken, decodeToken } 
+export { unloadedTokenState, removeToken, saveToken, decodeToken };
+ 

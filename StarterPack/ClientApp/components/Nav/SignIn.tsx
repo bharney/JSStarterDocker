@@ -1,24 +1,9 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import { bindActionCreators, Dispatch } from 'redux';
-import { AlertType } from '../../models';
-import * as AccountState from '../../store/Account';
-import * as SessionState from '../../store/Session';
-import * as AlertState from '../../store/Alert';
-import * as ReactDOM from 'react-dom';
-import MemberUserMenu from './MemberUserMenu';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import AdminUserMenu from './AdminUserMenu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons/faSignInAlt';
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons/faUserCircle';
-import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
-import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
-import { faShoppingBasket } from '@fortawesome/free-solid-svg-icons/faShoppingBasket';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { NavContext } from '../../App';
+
 
 interface NavProps {
     onUpdate: () => void;

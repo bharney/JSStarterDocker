@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { faBomb } from '@fortawesome/free-solid-svg-icons/faBomb';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from 'react';
 
 export class NotFound extends React.Component<{}, {}> {
     public render() {

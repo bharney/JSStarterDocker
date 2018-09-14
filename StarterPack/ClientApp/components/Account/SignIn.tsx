@@ -1,16 +1,16 @@
-import * as React from "react";
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import { bindActionCreators, Dispatch } from 'redux';
-import { AlertType, Field as ModelField, LoginViewModel } from '../../models';
-import * as AccountState from '../../store/Account';
-import * as SessionState from '../../store/Session';
-import * as AlertState from '../../store/Alert';
-import { InjectedFormProps } from 'redux-form';
-import Loadable from 'react-loadable';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as React from "react";
+import Loadable from 'react-loadable';
+import { connect } from 'react-redux';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { bindActionCreators, Dispatch } from 'redux';
+import { InjectedFormProps } from 'redux-form';
+import { AlertType, Field as ModelField, LoginViewModel } from '../../models';
+import { ApplicationState } from '../../store';
+import * as AccountState from '../../store/Account';
+import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
 
 const loading = () => {
     return <div><FontAwesomeIcon icon={faSpinner} spin size="2x" /></div>

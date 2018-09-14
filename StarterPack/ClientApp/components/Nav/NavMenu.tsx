@@ -1,17 +1,16 @@
+import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Link, NavLink, RouteComponentProps, match } from 'react-router-dom';
-import { ApplicationState } from '../../store';
+import { connect, Dispatch } from 'react-redux';
+import { Link, NavLink, RouteComponentProps } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
 import { NavContext } from '../../App';
-import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import * as SessionState from '../../store/Session';
-import UserMenu from '../Nav/UserMenu';
 import * as AccountState from '../../store/Account';
 import * as AlertState from '../../store/Alert';
+import * as SessionState from '../../store/Session';
 import MemberNavMenu from '../Nav/MemberNavMenu';
+import UserMenu from '../Nav/UserMenu';
 
 type NavMenuProps = SessionState.SessionState
     & {
@@ -52,7 +51,8 @@ export class NavMenu extends React.Component<NavMenuProps, {}> {
     }
 
     public render() {
-        const { sessionActions, alertActions, accountActions, token, isLoading } = this.props;
+        const { sessionActions, alertActions, accountActions, isLoading } = this.props;
+        debugger;
         return <NavContext.Consumer>
             {({ onUpdate, toggle }: NavProps) => {
                 return !isLoading && <nav id="custom-nav" className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">

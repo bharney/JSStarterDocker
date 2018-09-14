@@ -1,7 +1,7 @@
 import * as React from "react";
+import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { ApplicationState } from '../../store';
-import { connect } from 'react-redux';
 import * as AccountState from '../../store/Account';
 
 type UserMenuProps = AccountState.AccountState

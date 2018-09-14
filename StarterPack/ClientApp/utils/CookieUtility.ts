@@ -23,4 +23,5 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + value + expires + "; path=/";
 }
 
-export { getCookie, setCookie } 
+export { getCookie, setCookie };
+ 

@@ -1,25 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../../store';
 import { bindActionCreators, Dispatch } from 'redux';
-import { AlertType } from '../../models';
+import { ApplicationState } from '../../store';
 import * as AccountState from '../../store/Account';
-import * as SessionState from '../../store/Session';
 import * as AlertState from '../../store/Alert';
-import * as ReactDOM from 'react-dom';
+import * as SessionState from '../../store/Session';
 import MemberUserMenu from './MemberUserMenu';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import AdminUserMenu from './AdminUserMenu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignInAlt } from '@fortawesome/free-solid-svg-icons/faSignInAlt';
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons/faUserCircle';
-import { faSortDown } from '@fortawesome/free-solid-svg-icons/faSortDown';
-import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
-import { faShoppingBasket } from '@fortawesome/free-solid-svg-icons/faShoppingBasket';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt';
-
-import { NavContext } from '../../App';
 import { SignIn } from './SignIn';
+
 
 interface NavProps {
     onUpdate: () => void;
@@ -45,11 +33,9 @@ export class UserMenu extends React.Component<UserMenuProps, {}> {
     }
   
     public render() {
-        const { token, username } = this.props;
-
-        if (token == undefined)
-            return null
-        if (Object.keys(token).length === 0)
+        const { username } = this.props;
+        debugger;
+        if (username == "")
             return null
 
     return <React.Fragment>

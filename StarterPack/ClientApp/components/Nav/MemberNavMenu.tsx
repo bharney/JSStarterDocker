@@ -1,12 +1,11 @@
 import * as React from 'react';
-import * as SessionState from '../../store/Session';
-import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom';
-import * as ReactDOM from 'react-dom';
+import { connect, Dispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { Dispatch, connect } from 'react-redux';
-import { ApplicationState } from '../../store';
-import AdminNavMenu from './AdminNavMenu';
 import { NavContext } from '../../App';
+import { ApplicationState } from '../../store';
+import * as SessionState from '../../store/Session';
+import AdminNavMenu from './AdminNavMenu';
 interface NavProps {
     onUpdate: () => void;
 }
@@ -17,8 +16,12 @@ export class MemberNavMenu extends React.Component<MemberNavMenuProps, {}> {
     public render() {
         const { username, token } = this.props;
 
+        if (username == "")
+            return null
+
         if (token == undefined)
             return null
+
         if (Object.keys(token).length === 0)
             return null
 
