@@ -31,6 +31,7 @@ class renderFileInput extends React.Component<any, any> {
                             <input {...inputProps}
                         key={resetKey}
                         type="file"
+                        accept=".jpeg,.jpg,.png,.gif"
                         onChange={this.onChange}
                         onBlur={() => { }}
                         className="d-none" />

@@ -27,6 +27,7 @@ namespace StarterKit.Models.ViewModels
 
         public string ImageUrl { get; set; }
 
+        [FileExtensions(Extensions= ".jpeg,.jpg,.png,.gif", ErrorMessage= "Incorrect file format")]
         public IFormFile ImageBlob { get; set; }
 
         public string ImageThumbnailUrl { get; set; }
