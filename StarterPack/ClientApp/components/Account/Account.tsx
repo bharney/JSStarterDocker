@@ -12,30 +12,25 @@ import * as SessionState from '../../store/Session';
 import TabPanel from '../../controls/TabPanel';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons/faCaretDown';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
+import Profile from '../Profile/Profile';
 
-type AccountProps = RouteComponentProps<{}>;
-// At runtime, Redux will merge together...
+type AccountProps = ProfileState.ProfileState
+    & SessionState.SessionState
+    & {
+        profileActions: typeof ProfileState.actionCreators,
+        alertActions: typeof AlertState.actionCreators,
+        sessionActions: typeof SessionState.actionCreators
+    }
+    & RouteComponentProps<{}>;
 
-
-class Account extends React.Component<AccountProps, {}> {
-    state = { activeIndex: 1 };
+class Account extends React.Component<AccountProps, any> {
+    state = { currentTab: 1 };
 
     onUpdate = (activeIndex: number) => {
         this.setState({ currentTab: activeIndex });
     };
-
+        
     render() {
-
-        const Contacts = () => (
-            <div className="tabContent">
-                <ul>
-                    <li>contact 1 </li>
-                    <li>contact 2 </li>
-                    <li>contact 3 </li>
-                </ul>
-            </div>
-        );
-
         const AppleContent = () => (
             <div className="tabContent">
                 <p>This is a demo of apple</p>
@@ -43,32 +38,35 @@ class Account extends React.Component<AccountProps, {}> {
         );
 
         const LinuxContent = () => (
-            <div className="tabContent">
-                <p>Lets go Linux</p>
+            <div className="col-12 form-wrapper">
+                <h2 className="text-center display-4">Account.</h2>
             </div>
         );
 
-        return (<TabPanel activeIndex={this.state.activeIndex}
-            onUpdate={this.onUpdate}
-            {...this.props} >
-            <TabPanel.TabBar>
-                <TabPanel.Tab tabIndex={1}>
-                    Contacts
-                    </TabPanel.Tab>
-                <TabPanel.Tab tabIndex={2}>
-                    world
-                    </TabPanel.Tab>
-                <TabPanel.Tab tabIndex={3}>
-                    Hello
-                    </TabPanel.Tab>
-            </TabPanel.TabBar>
-            <TabPanel.Content>
-                {this.state.activeIndex === 1 ? <Contacts /> : null}
-                {this.state.activeIndex === 2 ? <LinuxContent /> : null}
-                {this.state.activeIndex === 3 ? <AppleContent /> : null}
-            </TabPanel.Content>
-        </TabPanel>
-        );
+        const { isLoading } = this.props;
+        return isLoading ? <div className="container pt-4" style={{ height: "70vh" }}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "7vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin /></div> :
+            <div className="container pt-4">
+            <div className="row justify-content-center pt-4">
+                <div className="col-12">
+                    <TabPanel activeIndex={this.state.currentTab}
+                        onUpdate={this.onUpdate}
+                        {...this.props} >
+                        <TabPanel.TabBar>
+                            <TabPanel.Tab tabIndex={1}>
+                                Account
+                </TabPanel.Tab>
+                            <TabPanel.Tab tabIndex={2}>
+                                Profile
+                </TabPanel.Tab>
+                        </TabPanel.TabBar>
+                        <TabPanel.Content>
+                            {this.state.currentTab === 1 ? <LinuxContent /> : null}
+                            {this.state.currentTab === 2 ? <Profile {...this.props} /> : null}
+                        </TabPanel.Content>
+                    </TabPanel>
+                </div>
+            </div>
+        </div>;
     }
 }
 

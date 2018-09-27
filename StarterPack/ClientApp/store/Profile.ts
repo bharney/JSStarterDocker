@@ -127,7 +127,6 @@ export const actionCreators = {
                         dispatch({ type: 'RECEIVE_PROFILE', profile: undefined });
                     }
                     else {
-                        debugger;
                         dispatch({ type: 'RECEIVE_PROFILE', profile: data as ProfileViewModel });
                         callback();
                     }

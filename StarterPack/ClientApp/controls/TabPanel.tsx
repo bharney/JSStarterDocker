@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Route, RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 
 interface ActiveIndex {
     activeIndex: number;
@@ -15,55 +16,55 @@ type TabPanelProps = & {
 } & RouteComponentProps<{}>;
 
 export class TabPanel extends React.Component<TabPanelProps, {}> {
+
     static Content = ({ children }) => children;
 
     static TabBar = ({ children, ...props }) => (
-        <div className="tabBar" {...props}>
+        <ul className="nav nav-tabs" {...props}>
             {children}
-        </div>
+        </ul>
     );
 
     static Tab = ({ children, tabIndex }) => (
         <TabPanelContext.Consumer>
-            {({ onUpdate, activeIndex }) => (
-                <div onClick={() => onUpdate(tabIndex)}
-                    className={`tab ${tabIndex === activeIndex ? "active" : ""}`} >
-                    {children}
-                </div>
-            )}
+            {({ onUpdate, activeIndex }) => {
+                debugger;
+               return  <li onClick={() => onUpdate(tabIndex)} className="nav-item">
+                    <a href="javascript:void(0)" role="button" className={`nav-link ${tabIndex === activeIndex ? "active" : ""}`} >
+                        {children}
+                    </a>
+                </li>
+            }}
         </TabPanelContext.Consumer>
     );
 
     tabChange = (activeIndex: number) => {
-        this.setState({ activeIndex },
-            () => this.props.onUpdate(activeIndex));
+        this.setState(({ activeIndex }: ActiveIndex) => ({ activeIndex }),
+            () => {
+                this.props.onUpdate(activeIndex)
+                window.scrollTo(0, 0);
+            });
     };
 
     state = {
         activeIndex: this.props.activeIndex || 1,
-        onTabChange: this.tabChange,
+        onTabChange: this.tabChange
     }
 
-    onUpdate = (activeIndex: number) => {
-        this.setState(
-            ({ activeIndex }: ActiveIndex) => ({ activeIndex }),
-            () => {
-                window.scrollTo(0, 0);
-            },
-        )
-    };
-
     render() {
+        debugger;
+
         const { ...rest } = this.props;
 
-        return <React.Fragment>
+        return (
             <TabPanelContext.Provider value={{
-                onUpdate: this.onUpdate,
-                activeIndex: this.state.activeIndex,
+                onUpdate: this.tabChange,
+                activeIndex: this.state.activeIndex
             }}>
-                {this.props.children}
+                    {this.props.children}
+                
             </TabPanelContext.Provider>
-        </React.Fragment>
+        );
     }
 }
 export default TabPanel;

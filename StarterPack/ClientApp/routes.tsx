@@ -98,6 +98,12 @@ const AsyncSignedOut = Loadable({
     webpack: () => [require.resolveWeak('./components/Account/SignedOut')],
     loading: loading,
 })
+const AsyncAccount = Loadable({
+    loader: () => import(/* webpackChunkName: "Account" */'./components/Account/Account'),
+    modules: ['./components/Account/Account'],
+    webpack: () => [require.resolveWeak('./components/Account/Account')],
+    loading: loading,
+})
 
 export const routes = <div>
     <Switch>
@@ -113,6 +119,7 @@ export const routes = <div>
         <App path='/SignedOut' component={AsyncSignedOut} layout={AsyncHomeLayout} />
         <App path='/Profile/Edit' component={RequiredAuthentication.requireAuthentication(AsyncEditProfile)} layout={AsyncHomeLayout} />
         <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncProfile)} layout={AsyncHomeLayout} />
+        <App path='/Account' component={RequiredAuthentication.requireAuthentication(AsyncAccount)} layout={AsyncHomeLayout} />
         <App component={AsyncNotFound} layout={AsyncHomeLayout} />
     </Switch>
 </div>;
