@@ -44,12 +44,6 @@ const AsyncNotFound = Loadable({
     webpack: () => [require.resolveWeak('./components/NotFound/NotFound')],
     loading: loading,
 });
-const AsyncProfile = Loadable({
-    loader: () => import(/* webpackChunkName: "Profile" */'./components/Profile/Profile'),
-    modules: ['./components/Profile/Profile'],
-    webpack: () => [require.resolveWeak('./components/Profile/Profile')],
-    loading: loading,
-})
 const AsyncEditProfile = Loadable({
     loader: () => import(/* webpackChunkName: "EditProfile" */'./components/Profile/EditProfile'),
     modules: ['./components/Profile/EditProfile'],
@@ -104,6 +98,12 @@ const AsyncAccount = Loadable({
     webpack: () => [require.resolveWeak('./components/Account/Account')],
     loading: loading,
 })
+const AsyncChangePassword = Loadable({
+    loader: () => import(/* webpackChunkName: "ChangePassword" */'./components/Account/ChangePassword'),
+    modules: ['./components/Account/ChangePassword'],
+    webpack: () => [require.resolveWeak('./components/Account/ChangePassword')],
+    loading: loading,
+})
 
 export const routes = <div>
     <Switch>
@@ -118,8 +118,9 @@ export const routes = <div>
         <App path='/ResetPasswordConfirmation' component={AsyncResetPasswordConfirmation} layout={AsyncHomeLayout} />
         <App path='/SignedOut' component={AsyncSignedOut} layout={AsyncHomeLayout} />
         <App path='/Profile/Edit' component={RequiredAuthentication.requireAuthentication(AsyncEditProfile)} layout={AsyncHomeLayout} />
-        <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncProfile)} layout={AsyncHomeLayout} />
+        <App path='/Profile' component={RequiredAuthentication.requireAuthentication(AsyncAccount)} layout={AsyncHomeLayout} />
         <App path='/Account' component={RequiredAuthentication.requireAuthentication(AsyncAccount)} layout={AsyncHomeLayout} />
+        <App path='/ChangePassword' component={RequiredAuthentication.requireAuthentication(AsyncChangePassword)} layout={AsyncHomeLayout} />
         <App component={AsyncNotFound} layout={AsyncHomeLayout} />
     </Switch>
 </div>;

@@ -1,8 +1,10 @@
 import { addTask, fetch } from 'domain-task';
 import { Action, Reducer } from 'redux';
-import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel } from '../models';
+import { Bearer, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel, AlertType } from '../models';
 import { decodeToken, removeToken, saveToken, unloadedTokenState } from '../utils/TokenUtility';
 import { AppThunkAction } from './';
+import { actionCreators as alertActions } from './Alert';
+
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -204,6 +206,110 @@ export const actionCreators = {
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: 'REQUEST_TOKEN', username: username });
+    },
+    changePassword: (oldPassword: string, newPassword: string, confirmPassword: string): AppThunkAction<KnownAction> => (dispatch) => {
+        if (newPassword === confirmPassword) {
+            const model = {
+                OldPassword: oldPassword,
+                NewPassword: newPassword,
+                ConfirmPassword: confirmPassword
+            };
+            let fetchTask = fetch("/Account/ChangePassword", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/plain, */*"
+                },
+                body: JSON.stringify(model)
+            })
+                .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                .then(data => {
+                    if ((data as ErrorMessage).error) {
+                        dispatch({ type: 'RECEIVE_TOKEN', token: undefined });
+                    }
+                    else {
+                        let BearerToken: Bearer = decodeToken(data);
+                        dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
+                        saveToken(BearerToken);
+                    }
+                })
+                .catch(() => {
+                    alertActions.sendAlert('Failed to change password. Please make sure your old password is correct.', AlertType.danger, true);
+                    const token = unloadedTokenState();
+                    dispatch({ type: 'RECEIVE_TOKEN', token: token });
+                });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: 'REQUEST_TOKEN', username: username });
+        } else {
+            alertActions.sendAlert('Your new password and confirmation password do not match. Please make sure they match.', AlertType.danger, true);
+        }
+    },
+    changeEmail: (username: string, password: string, userId: string, code: string): AppThunkAction<KnownAction> => (dispatch) => {
+        const model = {
+            Email: username,
+            Password: password,
+            ConfirmPassword: password,
+            UserId: userId,
+            Code: code
+        };
+        let fetchTask = fetch("/Account/ResetPassword", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/plain, */*"
+            },
+            body: JSON.stringify(model)
+        })
+            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
+                    dispatch({ type: 'RECEIVE_TOKEN', token: undefined });
+                }
+                else {
+                    let BearerToken: Bearer = decodeToken(data);
+                    dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
+                    saveToken(BearerToken);
+                }
+            })
+            .catch(() => {
+                const token = unloadedTokenState();
+                dispatch({ type: 'RECEIVE_TOKEN', token: token });
+            });
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+        dispatch({ type: 'REQUEST_TOKEN', username: username });
+    },
+    deleteAccount: (value: LoginViewModel, callback?: () => void, error?: (error: ErrorMessage) => void): AppThunkAction<KnownAction> => (dispatch) => {
+
+        if (!value.rememberMe) {
+            value.rememberMe = false;
+        }
+        let fetchTask = fetch("/Account/Login", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/plain, */*"
+            },
+            credentials: "include",
+            body: JSON.stringify(value)
+        })
+            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
+                    if (error) { error(data as ErrorMessage) }
+                }
+                else {
+                    let BearerToken: Bearer = decodeToken(data);
+                    dispatch({ type: 'RECEIVE_TOKEN', username: BearerToken.name, token: BearerToken });
+                    saveToken(BearerToken);
+                    if (callback) { callback(); }
+                }
+            })
+            .catch(err => {
+                const token = unloadedTokenState();
+                dispatch({ type: 'RECEIVE_TOKEN', token: token });
+            });
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+        dispatch({ type: 'REQUEST_TOKEN', username: value.email });
     }
 };
 

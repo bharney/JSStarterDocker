@@ -72,6 +72,12 @@ export interface ResetPasswordViewModel {
     confirmPassword?: string,
 }
 
+export interface ChangePasswordViewModel {
+    oldPassword?: string,
+    newPassword?: string,
+    confirmPassword?: string,
+}
+
 export interface ErrorMessage {
     error?: string,
     error_description?: string

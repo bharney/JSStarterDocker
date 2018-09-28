@@ -5,14 +5,14 @@ import { Route, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
 interface ActiveIndex {
-    activeIndex: number;
+    activeIndex: string;
 }
 
-export const TabPanelContext = React.createContext({ activeIndex: 1, onUpdate: (activeIndex: number) => { } })
+export const TabPanelContext = React.createContext({ activeIndex: "Account", onUpdate: (activeIndex: string) => { } })
 
 type TabPanelProps = & {
-    activeIndex: number,
-    onUpdate: (activeIndex: number) => void
+    activeIndex: string,
+    onUpdate: (activeIndex: string) => void
 } & RouteComponentProps<{}>;
 
 export class TabPanel extends React.Component<TabPanelProps, {}> {
@@ -38,7 +38,7 @@ export class TabPanel extends React.Component<TabPanelProps, {}> {
         </TabPanelContext.Consumer>
     );
 
-    tabChange = (activeIndex: number) => {
+    tabChange = (activeIndex: string) => {
         this.setState(({ activeIndex }: ActiveIndex) => ({ activeIndex }),
             () => {
                 this.props.onUpdate(activeIndex)
@@ -47,7 +47,7 @@ export class TabPanel extends React.Component<TabPanelProps, {}> {
     };
 
     state = {
-        activeIndex: this.props.activeIndex || 1,
+        activeIndex: this.props.activeIndex || "Account",
         onTabChange: this.tabChange
     }
 
