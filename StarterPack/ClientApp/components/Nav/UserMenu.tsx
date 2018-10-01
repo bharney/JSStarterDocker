@@ -34,7 +34,6 @@ export class UserMenu extends React.Component<UserMenuProps, {}> {
   
     public render() {
         const { username } = this.props;
-        debugger;
         if (username == "")
             return null
 

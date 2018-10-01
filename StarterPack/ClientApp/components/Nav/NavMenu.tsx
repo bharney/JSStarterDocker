@@ -52,7 +52,6 @@ export class NavMenu extends React.Component<NavMenuProps, {}> {
 
     public render() {
         const { sessionActions, alertActions, accountActions, isLoading } = this.props;
-        debugger;
         return <NavContext.Consumer>
             {({ onUpdate, toggle }: NavProps) => {
                 return !isLoading && <nav id="custom-nav" className="navbar navbar-expand-md fixed-top navbar-dark bg-dark">

@@ -53,7 +53,7 @@ export class MemberUserMenu extends React.Component<MemberUserMenuProps, {}> {
                     <NavContext.Consumer>
                         {({ onUpdate }: NavProps) => (
                             <div className="dropdown-menu" aria-labelledby="dropdown01">
-                                <Link key="profile" className="dropdown-item" to="/Profile" onClick={onUpdate}> <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" icon={faCog} /> Profile</Link>
+                                <Link key="account" className="dropdown-item" to="/Account" onClick={onUpdate}> <FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" icon={faCog} /> Account</Link>
                                 <AdminUserMenu {...this.props as AdminUserMenuProps} />
                                 <Link key="logout" className="dropdown-item" onClick={() => this.onLogout(onUpdate)} to="/signedout"><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" icon={faSignOutAlt} /> Log out</Link>
                             </div>)}

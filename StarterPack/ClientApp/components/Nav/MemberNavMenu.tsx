@@ -32,7 +32,7 @@ export class MemberNavMenu extends React.Component<MemberNavMenuProps, {}> {
             return <React.Fragment>
             <NavContext.Consumer {...this.props}>
                 {({ onUpdate }: NavProps) => (<li className="nav-item">
-                    <NavLink key="nav-account" className="nav-link" to={'/profile'} onClick={onUpdate} exact activeClassName='active'>Account</NavLink>
+                    <NavLink key="nav-account" className="nav-link" to={'/Account'} onClick={onUpdate} exact activeClassName='active'>Account</NavLink>
                 </li>)}
             </NavContext.Consumer>
             <AdminNavMenu {...this.props} />

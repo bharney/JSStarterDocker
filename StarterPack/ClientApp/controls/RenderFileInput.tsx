@@ -7,7 +7,6 @@ import { Field } from 'redux-form';
 class renderFileInput extends React.Component<any, any> {
     onChange = (e) => {
         const { input, displayFieldId } = this.props
-        debugger;
         input.onChange(e.target.files[0])
         var displayValue = document.getElementById(displayFieldId);
         (displayValue as HTMLInputElement).value = e.target.files[0].name;
@@ -22,7 +21,6 @@ class renderFileInput extends React.Component<any, any> {
 
     render() {
         const { resetKey, id, displayFieldId, defaultValue, ...inputProps } = this.props;
-        debugger;
         return (<div className="input-group">
             <label className="input-group-btn mb-0">
                 <span className="btn btn-outline-primary group-right">
@@ -31,6 +29,7 @@ class renderFileInput extends React.Component<any, any> {
                             <input {...inputProps}
                         key={resetKey}
                         type="file"
+                        accept=".jpeg,.jpg,.png,.gif"
                         onChange={this.onChange}
                         onBlur={() => { }}
                         className="d-none" />

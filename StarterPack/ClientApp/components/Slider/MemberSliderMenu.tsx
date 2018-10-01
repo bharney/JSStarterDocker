@@ -29,7 +29,7 @@ export class MemberSliderMenu extends React.Component<MemberSliderMenuProps, {}>
             return <NavContext.Consumer {...this.props}>
             {({ onUpdate }: NavProps) => (
                 <React.Fragment>
-                    <NavLink key="sliderMyProfile" className="list-group-item" to={'/profile'} onClick={onUpdate} activeClassName='active'>Account</NavLink>
+                        <NavLink key="sliderMyProfile" className="list-group-item" to={'/Account'} onClick={onUpdate} activeClassName='active'>Account</NavLink>
                 </React.Fragment>
             )}
         </NavContext.Consumer>
