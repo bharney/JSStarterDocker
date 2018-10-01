@@ -32,7 +32,7 @@ class Profile extends React.Component<ProfileProps, any> {
         const profile = this.props.profile as ProfileViewModel;
         return isLoading ? <div className="container pt-4" style={{ height: "70vh" }}><FontAwesomeIcon className="svg-inline--fa fa-w-16 fa-lg" size="1x" style={{ position: "absolute", top: "7vh", left: "50%", fontSize: "45px" }} icon={faSpinner} spin /></div> :
             <div className="container pt-4">
-                <div className="row justify-content-center pt-4">
+                <div className="row justify-content-center">
                     <div className="col-12 form-wrapper">
                         <h2 className="text-center display-4">Profile.</h2>
                     </div>
