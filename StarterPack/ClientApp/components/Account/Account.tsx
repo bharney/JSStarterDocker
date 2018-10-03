@@ -1,18 +1,12 @@
-import { faSpinner } from "@fortawesome/free-solid-svg-icons/faSpinner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import { bindActionCreators, Dispatch } from "redux";
-import { ProfileViewModel } from "../../models";
-import { ApplicationState } from "../../store";
+import TabPanel from "../../controls/TabPanel";
+import * as AccountState from "../../store/Account";
 import * as AlertState from "../../store/Alert";
 import * as ProfileState from "../../store/Profile";
 import * as SessionState from "../../store/Session";
-import * as AccountState from "../../store/Account";
-import TabPanel from "../../controls/TabPanel";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons/faCaretDown";
-import { faCaretRight } from "@fortawesome/free-solid-svg-icons/faCaretRight";
+import Loading from "../Common/Loading";
 import Profile from "../Profile/Profile";
 import AccountManagement from "./AccountManagement";
 type AccountManagementProps = AccountState.AccountState &
@@ -36,20 +30,7 @@ class Account extends React.Component<AccountProps, any> {
   render() {
     const { isLoading } = this.props;
     return isLoading ? (
-      <div className="container pt-4" style={{ height: "70vh" }}>
-        <FontAwesomeIcon
-          className="svg-inline--fa fa-w-16 fa-lg"
-          size="1x"
-          style={{
-            position: "absolute",
-            top: "7vh",
-            left: "50%",
-            fontSize: "45px"
-          }}
-          icon={faSpinner}
-          spin
-        />
-      </div>
+      <Loading />
     ) : (
       <div className="container">
         <div className="row justify-content-center">

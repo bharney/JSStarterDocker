@@ -78,6 +78,10 @@ export interface ChangePasswordViewModel {
     confirmPassword?: string,
 }
 
+export interface DeleteAccountViewModel {
+    userName?: string,
+}
+
 export interface ErrorMessage {
     error?: string,
     error_description?: string
