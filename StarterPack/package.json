@@ -28,6 +28,7 @@
     "babel-plugin-lodash": "^3.3.2",
     "bootstrap": "^4.1.1",
     "clean-webpack-plugin": "^0.1.19",
+    "core-js": "^2.5.7",
     "css-loader": "0.28.4",
     "domain-task": "^3.0.3",
     "event-source-polyfill": "0.0.9",

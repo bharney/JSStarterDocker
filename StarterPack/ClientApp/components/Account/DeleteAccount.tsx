@@ -56,14 +56,15 @@ export class DeleteAccount extends React.Component<
               onSubmit={(values: DeleteAccountViewModel, dispatch) => {
                 this.props.accountActions.deleteAccount(
                   values,
-                  () => {
+                    () => {
                     this.props.history.push("/");
                     this.props.alertActions.sendAlert(
                       "Your account has been deleted.",
                       AlertType.danger,
                       true
                     );
-                    dispatch(reset("deleteAccountForm"));
+                        dispatch(reset("deleteAccountForm"));
+                        this.props.sessionActions.getToken();
                   },
                   error => {
                     this.props.alertActions.sendAlert(

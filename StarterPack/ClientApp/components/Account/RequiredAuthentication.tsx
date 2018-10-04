@@ -33,9 +33,9 @@ export function requireAuthentication(Component:React.ComponentClass) {
             const { username } = this.props;
             if (username.indexOf("@guest.starterpack.com") > -1) {
                 this.props.alertActions.sendAlert('You must sign-in before you can access this area.', AlertType.danger, true);
-                this.props.sessionActions.cancelRequiredToken();
                 this.props.sessionActions.requiredToken();
                 this.props.history.replace(`/signin`);
+                this.props.sessionActions.loadToken();
             }
         }
 

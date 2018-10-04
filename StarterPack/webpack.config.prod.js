@@ -41,6 +41,7 @@ module.exports = (env) => {
             bundle: [
                 'domain-task',
                 'event-source-polyfill',
+                'core-js',
                 './ClientApp/boot-client.tsx'
             ],
             vendor: [

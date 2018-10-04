@@ -11,8 +11,7 @@ function unloadedTokenState() {
             bearerFromStore = JSON.parse((<any>window).localStorage.jwt || "{}");
         }
     }
-    const token = bearerFromStore.access_token ? bearerFromStore : undefined;
-    return token;
+    return bearerFromStore;
 }
 
 function removeToken() {
