@@ -1,33 +1,15 @@
 {
-  "env": {
-    "server": {
-      "presets": [
-        [
-          "env",
-          {
-            "useBuiltIns": "usage",
-            "targets": {
-              "browsers": [ "last 2 versions", "ie >= 11" ]
-            },
-            "modules": false
-          }
-        ]
-      ]
-    },
-    "client": {
-      "presets": [
-        [
-          "env",
-          {
-            "useBuiltIns": "usage",
-            "targets": {
-              "browsers": [ "last 2 versions", "ie >= 11" ]
-            }
-          }
-        ]
-      ]
-    }
-  },
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "targets": "> 0.25%, not dead",
+        "loose": true,
+        "modules": false
+      }
+    ]
+  ],
   "plugins": [
     "@babel/plugin-syntax-dynamic-import",
     "lodash",

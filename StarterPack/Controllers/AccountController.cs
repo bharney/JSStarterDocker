@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using StarterKit.Models;
+using StarterKit.Models.AccountViewModels;
+using StarterKit.Models.ManageViewModels;
+using StarterKit.Repository;
+using StarterKit.Services;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using StarterKit.Models;
-using StarterKit.Models.AccountViewModels;
-using StarterKit.Services;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using StarterKit.Repository;
-using Microsoft.AspNetCore.Http;
-using StarterKit.Models.ManageViewModels;
 
 namespace StarterKit.Controllers
 {
@@ -130,6 +123,7 @@ namespace StarterKit.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -225,6 +219,41 @@ namespace StarterKit.Controllers
             await _signInManager.SignInAsync(user, isPersistent: false);
             _logger.LogInformation("User changed their password successfully.");
             return Ok(new { token = _userContext.GenerateToken(user) });
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Delete([FromBody]DeleteAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok();
+            }
+
+            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (user.UserName != model.UserName)
+            {
+                return Ok();
+            }
+
+            await _signInManager.SignOutAsync();
+            _userContext.RemoveUserGuidCookies();
+
+            var deleteUserResult = await _userManager.DeleteAsync(user);
+            if (!deleteUserResult.Succeeded)
+            {
+                AddErrors(deleteUserResult);
+                return Ok();
+            }
+
+            _currentUser = _userContext.NewGuestUser();
+            _logger.LogInformation("User deleted and logged out.");
+            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
         }
 
         [HttpGet]

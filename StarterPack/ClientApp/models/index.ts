@@ -1,3 +1,4 @@
+
 export enum AlertType {
     success = 'success',
     warning = 'warning',
@@ -76,6 +77,10 @@ export interface ChangePasswordViewModel {
     oldPassword?: string,
     newPassword?: string,
     confirmPassword?: string,
+}
+
+export interface DeleteAccountViewModel {
+    userName?: string,
 }
 
 export interface ErrorMessage {

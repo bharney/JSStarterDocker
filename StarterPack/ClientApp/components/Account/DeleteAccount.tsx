@@ -1,24 +1,28 @@
 import * as React from "react";
 import Loadable from "react-loadable";
 import { connect } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { Dispatch, bindActionCreators } from "redux";
-import { InjectedFormProps } from "redux-form";
-import { AlertType, Field as ModelField, LoginViewModel } from "../../models";
+import { InjectedFormProps, reset } from "redux-form";
+import {
+  AlertType,
+  DeleteAccountViewModel,
+  Field as ModelField
+} from "../../models";
 import { ApplicationState } from "../../store";
 import * as AccountState from "../../store/Account";
 import * as AlertState from "../../store/Alert";
 import * as SessionState from "../../store/Session";
 import LoadingRoute from "../Common/LoadingRoute";
-
-const AsyncSigninForm = Loadable({
-  loader: () => import(/* webpackChunkName: "SignInForm" */ "./SignInForm"),
-  modules: ["./SignInForm"],
-  webpack: () => [require.resolveWeak("./SignInForm")],
+const AsyncDeleteAccountForm = Loadable({
+  loader: () =>
+    import(/* webpackChunkName: "DeleteAccountForm" */ "../Account/DeleteAccountForm"),
+  modules: ["../Account/DeleteAccountForm"],
+  webpack: () => [require.resolveWeak("../Account/DeleteAccountForm")],
   loading: LoadingRoute
 });
 
-type UserMenuProps = AccountState.AccountState & {
+type ChangePasswordProps = AccountState.AccountState & {
   accountActions: typeof AccountState.actionCreators;
   alertActions: typeof AlertState.actionCreators;
   sessionActions: typeof SessionState.actionCreators;
@@ -32,26 +36,35 @@ interface AdditionalProps {
 
 type FormProps = InjectedFormProps & AdditionalProps;
 
-class SignIn extends React.Component<UserMenuProps, FormProps> {
+export class DeleteAccount extends React.Component<
+  ChangePasswordProps,
+  FormProps
+> {
   render() {
     return (
       <div className="container pt-4">
         <div className="row justify-content-center pt-4">
-          <div className="col-12 col-sm-8 col-md-6 col-lg-5">
-            <h2 className="text-center display-4">Sign-In.</h2>
-            <AsyncSigninForm
-              form="signinForm"
-              onSubmit={(values: LoginViewModel) => {
-                this.props.accountActions.login(
+          <div className="col-12 col-sm-8 col-lg-7">
+            <h2 className="text-center display-4">Delete Account.</h2>
+            <p className="text-center lead">
+              To delete your account please enter your Email address in the
+              field below.
+            </p>
+            <AsyncDeleteAccountForm
+              form="deleteAccountForm"
+              enableReinitialize={true}
+              onSubmit={(values: DeleteAccountViewModel, dispatch) => {
+                this.props.accountActions.deleteAccount(
                   values,
-                  () => {
+                    () => {
                     this.props.history.push("/");
                     this.props.alertActions.sendAlert(
-                      "Signed in successfully!",
-                      AlertType.success,
+                      "Your account has been deleted.",
+                      AlertType.danger,
                       true
                     );
-                    this.props.sessionActions.loadToken();
+                        dispatch(reset("deleteAccountForm"));
+                        this.props.sessionActions.getToken();
                   },
                   error => {
                     this.props.alertActions.sendAlert(
@@ -63,9 +76,6 @@ class SignIn extends React.Component<UserMenuProps, FormProps> {
                 );
               }}
             />
-            <div className="bottom text-center">
-              New here? <Link to="/register">Register</Link>
-            </div>
           </div>
         </div>
       </div>
@@ -88,4 +98,4 @@ export default connect(
       sessionActions: bindActionCreators(SessionState.actionCreators, dispatch)
     };
   }
-)(SignIn) as typeof SignIn;
+)(DeleteAccount) as typeof DeleteAccount;
