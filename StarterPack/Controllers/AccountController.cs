@@ -5,14 +5,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using StarterKit.Models;
 using StarterKit.Models.AccountViewModels;
 using StarterKit.Models.ManageViewModels;
 using StarterKit.Repository;
 using StarterKit.Services;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace StarterKit.Controllers
@@ -255,6 +259,41 @@ namespace StarterKit.Controllers
             _logger.LogInformation("User deleted and logged out.");
             return Ok(new { token = _userContext.GenerateToken(_currentUser) });
         }
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Download()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok();
+            }
+
+            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            Dictionary<string, object> result = new Dictionary<string, object>()
+            {
+                { "Email", user.Email },
+                { "FirstName", user.FirstName },
+                { "LastName", user.LastName },
+                { "ImageUrl", user.ImageUrl },
+                { "ImageThumbnailUrl", user.ImageThumbnailUrl }
+            };
+
+            byte[] byteArray = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result, 
+                                                        new JsonSerializerSettings
+                                                        {
+                                                            NullValueHandling = NullValueHandling.Ignore
+                                                        })
+            );
+            MemoryStream stream = new MemoryStream(byteArray);
+            return File(stream, "application/octet-stream");
+        }
+
 
         [HttpGet]
         [AllowAnonymous]

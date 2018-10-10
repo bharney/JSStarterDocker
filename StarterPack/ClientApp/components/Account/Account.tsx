@@ -9,14 +9,17 @@ import * as SessionState from "../../store/Session";
 import Loading from "../Common/Loading";
 import Profile from "../Profile/Profile";
 import AccountManagement from "./AccountManagement";
-type AccountManagementProps = AccountState.AccountState &
-  RouteComponentProps<{}>;
+type AccountManagementProps = AccountState.AccountState
+  & {
+    accountActions: typeof AccountState.actionCreators
+} & RouteComponentProps<{}>;
 
 type AccountProps = ProfileState.ProfileState &
   SessionState.SessionState & {
     profileActions: typeof ProfileState.actionCreators;
     alertActions: typeof AlertState.actionCreators;
     sessionActions: typeof SessionState.actionCreators;
+    accountActions: typeof AccountState.actionCreators;
   } & RouteComponentProps<{}>;
 
 class Account extends React.Component<AccountProps, any> {

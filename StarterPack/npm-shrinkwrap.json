@@ -6447,6 +6447,12 @@
         }
       }
     },
+    "file-saver": {
+      "version": "2.0.0-rc.3",
+      "resolved": "https://registry.npmjs.org/file-saver/-/file-saver-2.0.0-rc.3.tgz",
+      "integrity": "sha512-LZ89x9kYxsAbJFoeLFiD5dRQnGoppXn3NLmPuULYyiKeAcEHQ8TTUwzGAEWT1VjoNGCapP3z+OG2qrwPoas80Q==",
+      "dev": true
+    },
     "file-type": {
       "version": "8.1.0",
       "resolved": "https://registry.npmjs.org/file-type/-/file-type-8.1.0.tgz",

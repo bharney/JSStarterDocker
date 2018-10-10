@@ -6,12 +6,15 @@ import { AlertType } from '../../models';
 import { ApplicationState } from '../../store';
 import * as AlertState from '../../store/Alert';
 import * as SessionState from '../../store/Session';
+import * as AccountState from '../../store/Account';
 
 export function requireAuthentication(Component:React.ComponentClass) {
     type SessionProps = SessionState.SessionState
     & {
         sessionActions: typeof SessionState.actionCreators,
-        alertActions: typeof AlertState.actionCreators
+        alertActions: typeof AlertState.actionCreators,
+        accountActions: typeof AccountState.actionCreators,
+
     }
     & RouteComponentProps<{}>
 
@@ -52,10 +55,11 @@ export function requireAuthentication(Component:React.ComponentClass) {
     }
     return connect(
         (state: ApplicationState) => state.session, // Selects which state properties are merged into the component's props
-        (dispatch: Dispatch<SessionState.SessionState> | Dispatch<AlertState.AlertState>) => {
+        (dispatch: Dispatch<SessionState.SessionState> | Dispatch<AlertState.AlertState> | Dispatch<AccountState.AccountState>) => {
             return {
                 sessionActions: bindActionCreators(SessionState.actionCreators, dispatch),
-                alertActions: bindActionCreators(AlertState.actionCreators, dispatch)
+                alertActions: bindActionCreators(AlertState.actionCreators, dispatch),
+                accountActions: bindActionCreators(AccountState.actionCreators, dispatch)
             }
         }                  // Selects which action creators are merged into the component's props
     )(AuthenticatedComponent) as typeof AuthenticatedComponent;
