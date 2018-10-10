@@ -3,14 +3,15 @@ import { RouteComponentProps } from "react-router-dom";
 import * as AccountState from "../../store/Account";
 import Loading from "../Common/Loading";
 
-type AccountManagementProps = AccountState.AccountState &
-  RouteComponentProps<{}>;
+type AccountManagementProps = AccountState.AccountState & {
+  accountActions: typeof AccountState.actionCreators;
+} & RouteComponentProps<{}>;
 // At runtime, Redux will merge together...
 
 class AccountManagement extends React.Component<AccountManagementProps, {}> {
   render() {
     const { isLoading } = this.props;
-    const { username } = this.props;
+      const { username, accountActions } = this.props;
     return isLoading ? (
       <Loading />
     ) : (
@@ -29,7 +30,7 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
             </div>
             <div className="form-group">
               <div className="row justify-content-center">
-                                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
+                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
                     onClick={() => this.props.history.push("/Account/Edit")}
@@ -41,7 +42,7 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
             </div>
             <div className="form-group">
               <div className="row justify-content-center">
-                                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
+                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
                     onClick={() => this.props.history.push("/ChangePassword")}
@@ -53,10 +54,10 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
             </div>
             <div className="form-group">
               <div className="row justify-content-center">
-                                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
+                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
-                    onClick={() => this.props.history.push("/Account/Export")}
+                                        onClick={() => accountActions.downloadAccountData() }
                   >
                     Export Account Data
                   </button>
@@ -65,7 +66,7 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
             </div>
             <div className="form-group">
               <div className="row justify-content-center">
-                                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
+                <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
                     onClick={() => this.props.history.push("/Account/Delete")}

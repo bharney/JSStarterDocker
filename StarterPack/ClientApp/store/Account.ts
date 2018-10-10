@@ -18,7 +18,7 @@ import {
 } from "../utils/TokenUtility";
 import { AppThunkAction } from "./";
 import { actionCreators as alertActions } from "./Alert";
-
+import saveAs from "file-saver";
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -108,7 +108,11 @@ export const actionCreators = {
             })
             .catch(err => {
                 const token = unloadedTokenState();
-                dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                dispatch({
+                    type: "RECEIVE_TOKEN",
+                    token: token,
+                    username: token.name || ""
+                });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: "REQUEST_TOKEN", username: value.email });
@@ -184,7 +188,11 @@ export const actionCreators = {
                 })
                 .catch(() => {
                     const token = unloadedTokenState();
-                    dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                    dispatch({
+                        type: "RECEIVE_TOKEN",
+                        token: token,
+                        username: token.name || ""
+                    });
                 });
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: "REQUEST_TOKEN", username: value.email });
@@ -219,7 +227,7 @@ export const actionCreators = {
                 }
             })
             .catch(() => {
-                dispatch({ type: "REQUEST_VERIFICATION", username: undefined, });
+                dispatch({ type: "REQUEST_VERIFICATION", username: undefined });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: "REQUEST_VERIFICATION", username: username });
@@ -261,7 +269,11 @@ export const actionCreators = {
             })
             .catch(() => {
                 const token = unloadedTokenState();
-                dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                dispatch({
+                    type: "RECEIVE_TOKEN",
+                    token: token,
+                    username: token.name || ""
+                });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: "REQUEST_TOKEN", username: username });
@@ -306,7 +318,11 @@ export const actionCreators = {
                     };
                     error(errorMessage);
                     const token = unloadedTokenState();
-                    dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                    dispatch({
+                        type: "RECEIVE_TOKEN",
+                        token: token,
+                        username: token.name || ""
+                    });
                 });
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
             dispatch({ type: "REQUEST_TOKEN", username: username });
@@ -356,7 +372,11 @@ export const actionCreators = {
             })
             .catch(() => {
                 const token = unloadedTokenState();
-                dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                dispatch({
+                    type: "RECEIVE_TOKEN",
+                    token: token,
+                    username: token.name || ""
+                });
             });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: "REQUEST_TOKEN", username: username });
@@ -408,11 +428,36 @@ export const actionCreators = {
                     })
                     .catch(err => {
                         const token = unloadedTokenState();
-                        dispatch({ type: "RECEIVE_TOKEN", token: token, username: token.name || "" });
+                        dispatch({
+                            type: "RECEIVE_TOKEN",
+                            token: token,
+                            username: token.name || ""
+                        });
                     });
                 addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
                 dispatch({ type: "REQUEST_TOKEN", username: value.userName });
             }
+        }
+    },
+    downloadAccountData: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        let token = getState().session.token;
+        let fetchTask: Promise<any>;
+        if (token) {
+            fetchTask = fetch("/Account/Download", {
+                method: "get",
+                headers: {
+                    Authorization: `Bearer ${token.access_token}`,
+                    "Content-Disposition":
+                        "attachment; filename='data.json' filename*='data.json'"
+                },
+                credentials: "include"
+            })
+                .then(response => response.blob())
+                .then(blob => saveAs(blob, "data.json"))
+                .catch(err => {
+                    console.log(err);
+                });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         }
     }
 };
