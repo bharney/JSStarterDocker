@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 //using SendGrid;
@@ -24,7 +25,7 @@ namespace StarterKit.Services
         {
             var apiKey = _config["MailServiceKey"];
             //var client = new SendGridClient(apiKey);
-            
+
             //var msg = new SendGridMessage()
             //{
             //    From = new EmailAddress("StarterKit@StarterKitFarms.com", "StarterKit Farms"),
@@ -38,6 +39,15 @@ namespace StarterKit.Services
 
             //msg.AddTos(tos);
             //var response = await client.SendEmailAsync(msg);
+        }
+
+        public async Task SendEmailConfirmationAsync(string email, string link, string name)
+        {
+            await SendEmailAsync(email, "Confirm your email",
+                $@"<h3>Thank you for creating an account with StarterKit.</h3>
+                    <h3>Please confirm your account by clicking this 
+                    link: <a href='{HtmlEncoder.Default.Encode(link)}'>link</a></h3>",
+                name);
         }
     }
 }

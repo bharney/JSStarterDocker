@@ -8,5 +8,6 @@ namespace StarterKit.Services
     public interface IEmailSender
     {
         Task SendEmailAsync(string email, string subject, string message, string name = "");
+        Task SendEmailConfirmationAsync(string email, string callbackUrl, string name = "");
     }
 }

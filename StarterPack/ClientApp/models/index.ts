@@ -83,6 +83,11 @@ export interface DeleteAccountViewModel {
     userName?: string,
 }
 
+export interface ChangeEmailViewModel {
+    confirmedEmail?: string,
+    unConfirmedEmail?: string,
+}
+
 export interface ErrorMessage {
     error?: string,
     error_description?: string

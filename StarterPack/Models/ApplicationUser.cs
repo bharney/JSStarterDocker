@@ -11,5 +11,6 @@ namespace StarterKit.Models
         public Guid UserGuid { get; set; }
         public string ImageUrl { get; set; }
         public string ImageThumbnailUrl { get; set; }
+        public string UnConfirmedEmail { get; set; }
     }
 }

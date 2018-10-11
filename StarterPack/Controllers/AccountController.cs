@@ -66,19 +66,36 @@ namespace StarterKit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody]LoginViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
+                var allowPassOnEmailVerfication = false;
                 var user = await _userManager.FindByEmailAsync(model.Email);
-
                 if (user != null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                    if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                    {
+                        allowPassOnEmailVerfication = true;
+                    }
+
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+                    if (result.IsNotAllowed)
+                    {
+                        return Ok(new { error = "Account Banned", error_description = "User account is now allowed." });
+                    }
+                    if (allowPassOnEmailVerfication)
+                    {
+                        return allowPassOnEmailVerfication ? RedirectToLocal(returnUrl) : RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    }
                     if (result.Succeeded)
                     {
                         _userContext.SetUserGuidCookies(user.UserGuid);
                         return Ok(new { token = _userContext.GenerateToken(user) });
                     }
+                    if (result.IsLockedOut)
+                    {
+                        return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
+                    }
+
                     return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
                 }
                 else
@@ -95,7 +112,6 @@ namespace StarterKit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody]RegisterViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var userGuid = Guid.NewGuid();
@@ -105,10 +121,9 @@ namespace StarterKit.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
-                    //var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
-                    //await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
+                    var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
                     var signInResult = await _signInManager.CheckPasswordSignInAsync(_currentUser, model.Password, false);
                     if (signInResult.Succeeded)
                     {
@@ -284,7 +299,7 @@ namespace StarterKit.Controllers
                 { "ImageThumbnailUrl", user.ImageThumbnailUrl }
             };
 
-            byte[] byteArray = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result, 
+            byte[] byteArray = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result,
                                                         new JsonSerializerSettings
                                                         {
                                                             NullValueHandling = NullValueHandling.Ignore
@@ -294,6 +309,61 @@ namespace StarterKit.Controllers
             return File(stream, "application/octet-stream");
         }
 
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> ChangeEmail([FromBody]ChangeEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+                if (user != null)
+                {
+                    //doing a quick swap so we can send the appropriate confirmation email
+                    user.UnConfirmedEmail = user.Email;
+                    user.Email = model.UnConfirmedEmail;
+                    user.EmailConfirmed = false;
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        var tempUnconfirmed = user.Email;
+                        user.Email = user.UnConfirmedEmail;
+                        user.UnConfirmedEmail = tempUnconfirmed;
+                        result = await _userManager.UpdateAsync(user);
+
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
+                        var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
+                        await _emailSender.SendEmailAsync(user.Email, "StarterKit Email Changed Successfully",
+                            $@"<h3>Thank you for confirming your account with StarterKit.</h3>
+                            <h3>Your account email has been changed to {user.UnConfirmedEmail}</h3>");
+                    }
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return Ok();
+                }
+                var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User confirmed email successfully.");
+                    _userContext.SetUserGuidCookies(user.UserGuid);
+                    return Ok(new { token = _userContext.GenerateToken(user) });
+                }
+            }
+
+            return BadRequest();
+        }
 
         [HttpGet]
         [AllowAnonymous]

@@ -8,7 +8,8 @@ import {
     LoginViewModel,
     RegisterViewModel,
     ChangePasswordViewModel,
-    DeleteAccountViewModel
+    DeleteAccountViewModel,
+    ChangeEmailViewModel
 } from "../models";
 import {
     decodeToken,
@@ -232,52 +233,6 @@ export const actionCreators = {
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
         dispatch({ type: "REQUEST_VERIFICATION", username: username });
     },
-    resetPassword: (
-        username: string,
-        password: string,
-        userId: string,
-        code: string
-    ): AppThunkAction<KnownAction> => dispatch => {
-        const model = {
-            Email: username,
-            Password: password,
-            ConfirmPassword: password,
-            UserId: userId,
-            Code: code
-        };
-        let fetchTask = fetch("/Account/ResetPassword", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json, text/plain, */*"
-            },
-            body: JSON.stringify(model)
-        })
-            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
-            .then(data => {
-                if ((data as ErrorMessage).error) {
-                    dispatch({ type: "RECEIVE_TOKEN", token: undefined, username: "" });
-                } else {
-                    let BearerToken: Bearer = decodeToken(data);
-                    dispatch({
-                        type: "RECEIVE_TOKEN",
-                        username: BearerToken.name,
-                        token: BearerToken
-                    });
-                    saveToken(BearerToken);
-                }
-            })
-            .catch(() => {
-                const token = unloadedTokenState();
-                dispatch({
-                    type: "RECEIVE_TOKEN",
-                    token: token,
-                    username: token.name || ""
-                });
-            });
-        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-        dispatch({ type: "REQUEST_TOKEN", username: username });
-    },
     changePassword: (
         value: ChangePasswordViewModel,
         callback?: () => void,
@@ -334,7 +289,7 @@ export const actionCreators = {
             error(errorMessage);
         }
     },
-    changeEmail: (
+    resetPassword: (
         username: string,
         password: string,
         userId: string,
@@ -458,6 +413,65 @@ export const actionCreators = {
                     console.log(err);
                 });
             addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+        }
+    },
+    changeEmail: (
+        value: ChangeEmailViewModel,
+        callback?: () => void,
+        error?: (error: ErrorMessage) => void
+    ): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        debugger;
+        let token = getState().session.token;
+        let fetchTask: Promise<any>;
+        if (token) {
+            if (!value.unConfirmedEmail && value.confirmedEmail != token.name) {
+                let errorMessage: ErrorMessage = {
+                    error_description:
+                        "Failed to delete account. Please make sure you typed your email correctly."
+                };
+                error(errorMessage);
+            } else {
+                fetchTask = fetch("/Account/ChangeEmail", {
+                    method: "post",
+                    headers: {
+                        Authorization: `Bearer ${token.access_token}`,
+                        "Content-Type": "application/json",
+                        Accept: "application/json, text/plain, */*"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(value)
+                })
+                    .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                    .then(data => {
+                        if ((data as ErrorMessage).error) {
+                            if (error) {
+                                error(data as ErrorMessage);
+                            }
+                        } else {
+                            removeToken();
+                            let BearerToken: Bearer = decodeToken(data);
+                            dispatch({
+                                type: "RECEIVE_TOKEN",
+                                username: BearerToken.name,
+                                token: BearerToken
+                            });
+                            saveToken(BearerToken);
+                            if (callback) {
+                                callback();
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        const token = unloadedTokenState();
+                        dispatch({
+                            type: "RECEIVE_TOKEN",
+                            token: token,
+                            username: token.name || ""
+                        });
+                    });
+                addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+                dispatch({ type: "REQUEST_TOKEN", username: value.confirmedEmail });
+            }
         }
     }
 };
