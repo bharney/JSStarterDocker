@@ -23,7 +23,7 @@ type ConfirmEmailProps = AccountState.AccountState & {
     accountActions: typeof AccountState.actionCreators;
     alertActions: typeof AlertState.actionCreators;
     sessionActions: typeof SessionState.actionCreators;
-} & RouteComponentProps<{ userId: string, code: string }>;
+} & RouteComponentProps<{userId: string, code: string }>;
 
 interface AdditionalProps {
     onCancel: () => void;

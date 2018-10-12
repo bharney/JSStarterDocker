@@ -184,13 +184,13 @@ export const routes = (
                 layout={AsyncHomeLayout}
             />
             <App
-                path="/Account/ResetPassword/:userId?/:code?"
-                component={AsyncResetPassword}
+                path="/ConfirmEmail/:userId?/:code?"
+                component={AsyncConfirmEmail}
                 layout={AsyncHomeLayout}
             />
             <App
-                path="/Account/ConfirmEmail/:userId?/:code?"
-                component={AsyncConfirmEmail}
+                path="/Account/ResetPassword/:userId?/:code?"
+                component={AsyncResetPassword}
                 layout={AsyncHomeLayout}
             />
             <App

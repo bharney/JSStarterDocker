@@ -481,7 +481,6 @@ export const actionCreators = {
         error?: (error: ErrorMessage) => void
     ): AppThunkAction<KnownAction> => (dispatch, getState) => {
         debugger;
-        getState().account.username
         let fetchTask: Promise<any>;
                 fetchTask = fetch("/Account/ConfirmEmail", {
                     method: "post",
@@ -489,6 +488,7 @@ export const actionCreators = {
                         "Content-Type": "application/json",
                         Accept: "application/json, text/plain, */*"
                     },
+                    credentials: "include",
                     body: JSON.stringify(value)
                 })
                     .then(response => response.json() as Promise<Bearer | ErrorMessage>)

@@ -96,10 +96,8 @@ namespace StarterKit.Controllers
                         return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
                     }
                 }
-                else
-                {
-                    return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
-                }
+
+                return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
             }
 
             // If we got this far, something failed, redisplay form
@@ -335,7 +333,7 @@ namespace StarterKit.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailViewModel model)
         {

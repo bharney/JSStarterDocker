@@ -90,7 +90,7 @@ export interface ChangeEmailViewModel {
 export interface ConfirmEmailViewModel {
     userId?: string,
     password?: string,
-    code?: boolean,
+    code?: string,
 }
 
 export interface ErrorMessage {
