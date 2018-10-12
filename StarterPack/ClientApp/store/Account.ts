@@ -9,7 +9,8 @@ import {
     RegisterViewModel,
     ChangePasswordViewModel,
     DeleteAccountViewModel,
-    ChangeEmailViewModel
+    ChangeEmailViewModel,
+    ConfirmEmailViewModel
 } from "../models";
 import {
     decodeToken,
@@ -473,6 +474,52 @@ export const actionCreators = {
                 dispatch({ type: "REQUEST_TOKEN", username: value.confirmedEmail });
             }
         }
+    },
+    confirmEmail: (
+        value: ConfirmEmailViewModel,
+        callback?: () => void,
+        error?: (error: ErrorMessage) => void
+    ): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        debugger;
+        getState().account.username
+        let fetchTask: Promise<any>;
+                fetchTask = fetch("/Account/ConfirmEmail", {
+                    method: "post",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json, text/plain, */*"
+                    },
+                    body: JSON.stringify(value)
+                })
+                    .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                    .then(data => {
+                        if ((data as ErrorMessage).error) {
+                            if (error) {
+                                error(data as ErrorMessage);
+                            }
+                        } else {
+                            removeToken();
+                            let BearerToken: Bearer = decodeToken(data);
+                            dispatch({
+                                type: "RECEIVE_TOKEN",
+                                username: BearerToken.name,
+                                token: BearerToken
+                            });
+                            saveToken(BearerToken);
+                            if (callback) {
+                                callback();
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        const token = unloadedTokenState();
+                        dispatch({
+                            type: "RECEIVE_TOKEN",
+                            token: token,
+                            username: token.name || ""
+                        });
+                    });
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
     }
 };
 

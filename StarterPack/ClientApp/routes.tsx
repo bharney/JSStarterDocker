@@ -148,6 +148,15 @@ const AsyncChangeEmailConfirmation = Loadable({
     ],
     loading: loading
 });
+const AsyncConfirmEmail = Loadable({
+    loader: () =>
+        import(/* webpackChunkName: "ConfirmEmail" */ "./components/Account/ConfirmEmail"),
+    modules: ["./components/Account/ConfirmEmail"],
+    webpack: () => [
+        require.resolveWeak("./components/Account/ConfirmEmail")
+    ],
+    loading: loading
+});
 export const routes = (
     <div>
         <Switch>
@@ -180,6 +189,11 @@ export const routes = (
                 layout={AsyncHomeLayout}
             />
             <App
+                path="/Account/ConfirmEmail/:userId?/:code?"
+                component={AsyncConfirmEmail}
+                layout={AsyncHomeLayout}
+            />
+            <App
                 path="/ResetPasswordConfirmation"
                 component={AsyncResetPasswordConfirmation}
                 layout={AsyncHomeLayout}
@@ -209,20 +223,19 @@ export const routes = (
                 layout={AsyncHomeLayout}
             />
             <App
-                path="/Account/ChangeEmail"
-                component={RequiredAuthentication.requireAuthentication(
-                    AsyncChangeEmail
-                )}
-                layout={AsyncHomeLayout}
-            />
-            <App
                 path="/Account/ChangeEmail/Confirmation"
                 component={RequiredAuthentication.requireAuthentication(
                     AsyncChangeEmailConfirmation
                 )}
                 layout={AsyncHomeLayout}
             />
-            
+            <App
+                path="/Account/ChangeEmail"
+                component={RequiredAuthentication.requireAuthentication(
+                    AsyncChangeEmail
+                )}
+                layout={AsyncHomeLayout}
+            />
             <App
                 path="/Account"
                 component={RequiredAuthentication.requireAuthentication(AsyncAccount)}

@@ -13,7 +13,7 @@ type UserMenuProps = AccountState.AccountState & {
   accountActions: typeof AccountState.actionCreators;
   alertActions: typeof AlertState.actionCreators;
   sessionActions: typeof SessionState.actionCreators;
-} & RouteComponentProps<{}>;
+} & RouteComponentProps<{ userId: string, code: string }>;
 
 export class ResetPassword extends React.Component<UserMenuProps, any> {
   refs: {

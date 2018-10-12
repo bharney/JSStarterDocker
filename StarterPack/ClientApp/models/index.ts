@@ -68,7 +68,6 @@ export interface ForgotPasswordViewModel {
 }
 
 export interface ResetPasswordViewModel {
-    username?: string,
     password?: string,
     confirmPassword?: string,
 }
@@ -86,6 +85,12 @@ export interface DeleteAccountViewModel {
 export interface ChangeEmailViewModel {
     confirmedEmail?: string,
     unConfirmedEmail?: string,
+}
+
+export interface ConfirmEmailViewModel {
+    userId?: string,
+    password?: string,
+    code?: boolean,
 }
 
 export interface ErrorMessage {

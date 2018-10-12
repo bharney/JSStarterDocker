@@ -32,7 +32,7 @@ namespace StarterKit.Controllers
         private readonly IConfiguration _config;
         private readonly IUserContext _userContext;
         private HttpContext _httpContext;
-        ApplicationUser _currentUser;
+        
         private const string UserGuidCookiesName = "StarterPackUserGuid";
 
         public AccountController(
@@ -95,8 +95,6 @@ namespace StarterKit.Controllers
                     {
                         return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
                     }
-
-                    return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
                 }
                 else
                 {
@@ -115,22 +113,22 @@ namespace StarterKit.Controllers
             if (ModelState.IsValid)
             {
                 var userGuid = Guid.NewGuid();
-                _currentUser = new ApplicationUser { UserName = model.Email, Email = model.Email, UserGuid = userGuid };
-                var result = await _userManager.CreateAsync(_currentUser, model.Password);
+                ApplicationUser user = new ApplicationUser { UserName = model.Email, Email = model.Email, UserGuid = userGuid };
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
-                    var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                    var signInResult = await _signInManager.CheckPasswordSignInAsync(_currentUser, model.Password, false);
+                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                     if (signInResult.Succeeded)
                     {
                         _logger.LogInformation("User signed into a new account.");
-                        await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "Member"));
-                        _userContext.SetUserGuidCookies(_currentUser.UserGuid);
-                        return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+                        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Member"));
+                        _userContext.SetUserGuidCookies(user.UserGuid);
+                        return Ok(new { token = _userContext.GenerateToken(user) });
                     }
                 }
                 AddErrors(result);
@@ -147,9 +145,8 @@ namespace StarterKit.Controllers
         {
             await _signInManager.SignOutAsync();
             _userContext.RemoveUserGuidCookies();
-            _currentUser = _userContext.NewGuestUser();
             _logger.LogInformation("User logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpPost]
@@ -270,9 +267,8 @@ namespace StarterKit.Controllers
                 return Ok();
             }
 
-            _currentUser = _userContext.NewGuestUser();
             _logger.LogInformation("User deleted and logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpGet]
@@ -330,12 +326,9 @@ namespace StarterKit.Controllers
                         user.Email = user.UnConfirmedEmail;
                         user.UnConfirmedEmail = tempUnconfirmed;
                         result = await _userManager.UpdateAsync(user);
-
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
-                        var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
-                        await _emailSender.SendEmailAsync(user.Email, "StarterKit Email Changed Successfully",
-                            $@"<h3>Thank you for confirming your account with StarterKit.</h3>
-                            <h3>Your account email has been changed to {user.UnConfirmedEmail}</h3>");
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                        await _emailSender.SendEmailChangeConfirmationAsync(new List<string>() { user.Email, user.UnConfirmedEmail }, callbackUrl);
                     }
                 }
             }
@@ -353,24 +346,69 @@ namespace StarterKit.Controllers
                 {
                     return Ok();
                 }
+               
                 var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
+
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User confirmed email successfully.");
-                    _userContext.SetUserGuidCookies(user.UserGuid);
-                    return Ok(new { token = _userContext.GenerateToken(user) });
+                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+
+                    if (signInResult.IsNotAllowed)
+                    {
+                        return Ok(new { error = "Account Banned", error_description = "User account is now allowed." });
+                    }
+                    if (signInResult.Succeeded)
+                    {
+                        if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                        {
+                            user.Email = user.UnConfirmedEmail;
+                            user.UserName = user.UnConfirmedEmail;
+                            user.UnConfirmedEmail = "";
+
+                            await _userManager.UpdateAsync(user);
+                        }
+
+                        _logger.LogInformation("User confirmed email successfully.");
+                        _userContext.SetUserGuidCookies(user.UserGuid);
+                        return Ok(new { token = _userContext.GenerateToken(user) });
+                    }
+                    if (signInResult.IsLockedOut)
+                    {
+                        return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
+                    }
                 }
             }
 
             return BadRequest();
         }
 
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> CancelUnconfirmedEmail([FromBody]string username)
+        {
+            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+            if (user == null)
+            {
+                _logger.Log(LogLevel.Warning, $"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok();
+            }
+
+            if (user.UserName != username)
+            {
+                return Ok();
+            }
+           
+            user.UnConfirmedEmail = "";
+            user.EmailConfirmed = true;
+            var result = await _userManager.UpdateAsync(user);
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetToken()
         {
-            _currentUser = await _userContext.GetCurrentUser();
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(await _userContext.GetCurrentUser()) });
         }
 
 

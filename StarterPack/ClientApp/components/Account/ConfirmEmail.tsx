@@ -4,25 +4,26 @@ import { connect } from "react-redux";
 import { RouteComponentProps, Link } from "react-router-dom";
 import { Dispatch, bindActionCreators } from "redux";
 import { InjectedFormProps, reset } from "redux-form";
-import { AlertType, ChangeEmailViewModel, Field as ModelField } from "../../models";
+import { AlertType, ConfirmEmailViewModel, Field as ModelField } from "../../models";
 import { ApplicationState } from "../../store";
 import * as AccountState from "../../store/Account";
 import * as AlertState from "../../store/Alert";
 import * as SessionState from "../../store/Session";
+import URLSearchParams from "url-search-params";
 import LoadingRoute from "../Common/LoadingRoute";
-const AsyncChangeEmailForm = Loadable({
+const AsyncConfirmEmailForm = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "ChangeEmailForm" */ "../Account/ChangeEmailForm"),
-    modules: ["../Account/ChangeEmailForm"],
-    webpack: () => [require.resolveWeak("../Account/ChangeEmailForm")],
+        import(/* webpackChunkName: "ConfirmEmailForm" */ "../Account/ConfirmEmailForm"),
+    modules: ["../Account/ConfirmEmailForm"],
+    webpack: () => [require.resolveWeak("../Account/ConfirmEmailForm")],
     loading: LoadingRoute
 });
 
-type ChangePasswordProps = AccountState.AccountState & {
+type ConfirmEmailProps = AccountState.AccountState & {
     accountActions: typeof AccountState.actionCreators;
     alertActions: typeof AlertState.actionCreators;
     sessionActions: typeof SessionState.actionCreators;
-} & RouteComponentProps<{}>;
+} & RouteComponentProps<{ userId: string, code: string }>;
 
 interface AdditionalProps {
     onCancel: () => void;
@@ -32,30 +33,37 @@ interface AdditionalProps {
 
 type FormProps = InjectedFormProps & AdditionalProps;
 
-export class ChangeEmail extends React.Component<
-    ChangePasswordProps,
+export class ConfirmEmail extends React.Component<
+    ConfirmEmailProps,
     FormProps
     > {
     render() {
+        const searchParams = new URLSearchParams(this.props.location.search);
+
         return (
             <div className="container pt-4">
                 <div className="row justify-content-center pt-4">
                     <div className="col-12 col-sm-8 col-lg-7">
-                        <h2 className="text-center display-4">Change Email.</h2>
-                        <AsyncChangeEmailForm
+                        <h2 className="text-center display-4">Confirm Email.</h2>
+                        <AsyncConfirmEmailForm
                             form="changeEmailForm"
                             enableReinitialize={true}
-                            onSubmit={(values: ChangeEmailViewModel, dispatch) => {
-                                this.props.accountActions.changeEmail(
-                                    values,
+                            onSubmit={(values: ConfirmEmailViewModel, dispatch) => {
+                                this.props.accountActions.confirmEmail(
+                                    {
+                                        code: searchParams.get("code"),
+                                        userId: searchParams.get("userId"),
+                                        ...values
+                                    },
                                     () => {
-                                        this.props.history.push("/Account/ChangeEmail/Confirmation");
+                                        this.props.history.push("/Account");
                                         this.props.alertActions.sendAlert(
-                                            "Confirmation Email as been sent successfully!",
+                                            "Email as been changed successfully!",
                                             AlertType.success,
                                             true
                                         );
-                                        dispatch(reset("changeEmailForm"));
+                                        dispatch(reset("confirmEmailForm"));
+                                        this.props.sessionActions.loadToken();
                                     },
                                     error => {
                                         this.props.alertActions.sendAlert(
@@ -68,7 +76,6 @@ export class ChangeEmail extends React.Component<
                             }}
                         />
                         <p><Link to="/account">Go back</Link></p>
-
                     </div>
                 </div>
             </div>
@@ -91,4 +98,4 @@ export default connect(
             sessionActions: bindActionCreators(SessionState.actionCreators, dispatch)
         };
     }
-)(ChangeEmail) as typeof ChangeEmail;
+)(ConfirmEmail) as typeof ConfirmEmail;
