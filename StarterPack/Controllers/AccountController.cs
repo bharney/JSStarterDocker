@@ -80,7 +80,7 @@ namespace StarterKit.Controllers
                     var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
                     if (result.IsNotAllowed)
                     {
-                        return Ok(new { error = "Account Banned", error_description = "User account is now allowed." });
+                        return Ok(new { error = "Account Requires Email Confirmation", error_description = "You must verify your email address using the confirmation email link before logging in." });
                     }
                     if (allowPassOnEmailVerfication)
                     {
@@ -118,22 +118,45 @@ namespace StarterKit.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                    var callbackUrl = Url.RegistrationEmailConfirmationLink(user.Id, code, Request.Scheme);
+                    //Once routes are fixed remove this substr
+                    //Current need to remove the /Account from start of URL because
+                    //There is a conflict with the routes on client side for /Account
+                    callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                    if (signInResult.Succeeded)
-                    {
-                        _logger.LogInformation("User signed into a new account.");
-                        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Member"));
-                        _userContext.SetUserGuidCookies(user.UserGuid);
-                        return Ok(new { token = _userContext.GenerateToken(user) });
-                    }
+                    return Ok(new { });
                 }
-                AddErrors(result);
+
                 return Ok(new { error = "Registration Failed", error_description = "User could not be created using that user name" });
             }
 
             // If we got this far, something failed, redisplay form
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmRegistrationEmail([FromBody]ConfirmRegistrationViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return Ok();
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User signed into a new account.");
+                    await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Member"));
+                    _userContext.SetUserGuidCookies(user.UserGuid);
+                    return Ok(new { token = _userContext.GenerateToken(user) });
+                }
+            }
+
             return BadRequest();
         }
 
@@ -179,14 +202,14 @@ namespace StarterKit.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -326,6 +349,10 @@ namespace StarterKit.Controllers
                         result = await _userManager.UpdateAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                        //Once routes are fixed remove this substr
+                        //Current need to remove the /Account from start of URL because
+                        //There is a conflict with the routes on client side for /Account
+                        callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
                         await _emailSender.SendEmailChangeConfirmationAsync(new List<string>() { user.Email, user.UnConfirmedEmail }, callbackUrl);
                     }
                 }
@@ -344,6 +371,11 @@ namespace StarterKit.Controllers
                 {
                     return Ok();
                 }
+
+                if (user.Email != model.Email)
+                {
+                    return Ok();
+                }
                
                 var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
 
@@ -353,7 +385,7 @@ namespace StarterKit.Controllers
 
                     if (signInResult.IsNotAllowed)
                     {
-                        return Ok(new { error = "Account Banned", error_description = "User account is now allowed." });
+                        return Ok(new { error = "Account Requires Email Confirmation", error_description = "You must verify your email address using the confirmation email link before logging in." });
                     }
                     if (signInResult.Succeeded)
                     {

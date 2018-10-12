@@ -1,26 +1,9 @@
 import { addTask, fetch } from "domain-task";
-import { Action, Reducer } from "redux";
-import {
-    AlertType,
-    Bearer,
-    ErrorMessage,
-    ForgotPasswordViewModel,
-    LoginViewModel,
-    RegisterViewModel,
-    ChangePasswordViewModel,
-    DeleteAccountViewModel,
-    ChangeEmailViewModel,
-    ConfirmEmailViewModel
-} from "../models";
-import {
-    decodeToken,
-    removeToken,
-    saveToken,
-    unloadedTokenState
-} from "../utils/TokenUtility";
-import { AppThunkAction } from "./";
-import { actionCreators as alertActions } from "./Alert";
 import saveAs from "file-saver";
+import { Action, Reducer } from "redux";
+import { AlertType, Bearer, ChangeEmailViewModel, ChangePasswordViewModel, ConfirmEmailViewModel, ConfirmRegistrationViewModel, DeleteAccountViewModel, ErrorMessage, ForgotPasswordViewModel, LoginViewModel, RegisterViewModel, ResetPasswordViewModel } from "../models";
+import { decodeToken, removeToken, saveToken, unloadedTokenState } from "../utils/TokenUtility";
+import { AppThunkAction } from "./";
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
@@ -169,20 +152,13 @@ export const actionCreators = {
                 credentials: "include",
                 body: JSON.stringify(value)
             })
-                .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                .then(response => response.json() as Promise<{} | ErrorMessage>)
                 .then(data => {
                     if ((data as ErrorMessage).error) {
                         if (error) {
                             error(data as ErrorMessage);
                         }
                     } else {
-                        let BearerToken: Bearer = decodeToken(data);
-                        dispatch({
-                            type: "RECEIVE_TOKEN",
-                            username: BearerToken.name,
-                            token: BearerToken
-                        });
-                        saveToken(BearerToken);
                         if (callback) {
                             callback();
                         }
@@ -291,51 +267,62 @@ export const actionCreators = {
         }
     },
     resetPassword: (
-        username: string,
-        password: string,
-        userId: string,
-        code: string
+        value: ResetPasswordViewModel,
+        callback?: () => void,
+        error?: (error: ErrorMessage) => void
     ): AppThunkAction<KnownAction> => dispatch => {
-        const model = {
-            Email: username,
-            Password: password,
-            ConfirmPassword: password,
-            UserId: userId,
-            Code: code
-        };
-        let fetchTask = fetch("/Account/ResetPassword", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json, text/plain, */*"
-            },
-            credentials: "include",
-            body: JSON.stringify(model)
-        })
-            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
-            .then(data => {
-                if ((data as ErrorMessage).error) {
-                    dispatch({ type: "RECEIVE_TOKEN", token: undefined, username: "" });
-                } else {
-                    let BearerToken: Bearer = decodeToken(data);
+        if (value.email && value.password && value.confirmPassword &&
+            value.password === value.confirmPassword)
+        {
+            debugger;
+            let fetchTask = fetch("/Account/ResetPassword", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json, text/plain, */*"
+                },
+                credentials: "include",
+                body: JSON.stringify(value)
+            })
+                .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+                .then(data => {
+                    if ((data as ErrorMessage).error) {
+                        dispatch({ type: "RECEIVE_TOKEN", token: undefined, username: "" });
+                    } else {
+                        let BearerToken: Bearer = decodeToken(data);
+                        dispatch({
+                            type: "RECEIVE_TOKEN",
+                            username: BearerToken.name,
+                            token: BearerToken
+                        });
+                        saveToken(BearerToken);
+                        if (callback) {
+                            callback();
+                        }
+                    }
+                })
+                .catch(() => {
+                    let errorMessage: ErrorMessage = {
+                        error_description:
+                            "Failed to reset password."
+                    };
+                    error(errorMessage);
+                    const token = unloadedTokenState();
                     dispatch({
                         type: "RECEIVE_TOKEN",
-                        username: BearerToken.name,
-                        token: BearerToken
+                        token: token,
+                        username: token.name || ""
                     });
-                    saveToken(BearerToken);
-                }
-            })
-            .catch(() => {
-                const token = unloadedTokenState();
-                dispatch({
-                    type: "RECEIVE_TOKEN",
-                    token: token,
-                    username: token.name || ""
                 });
-            });
-        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
-        dispatch({ type: "REQUEST_TOKEN", username: username });
+            addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+            dispatch({ type: "REQUEST_TOKEN", username: username });
+        } else {
+            this.props.alertActions.sendAlert(
+                "You cannot have any empty fields, and the password fields must match.",
+                AlertType.warning,
+                true
+            );
+        }
     },
     deleteAccount: (
         value: DeleteAccountViewModel,
@@ -482,43 +469,89 @@ export const actionCreators = {
     ): AppThunkAction<KnownAction> => (dispatch, getState) => {
         debugger;
         let fetchTask: Promise<any>;
-                fetchTask = fetch("/Account/ConfirmEmail", {
-                    method: "post",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json, text/plain, */*"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify(value)
-                })
-                    .then(response => response.json() as Promise<Bearer | ErrorMessage>)
-                    .then(data => {
-                        if ((data as ErrorMessage).error) {
-                            if (error) {
-                                error(data as ErrorMessage);
-                            }
-                        } else {
-                            removeToken();
-                            let BearerToken: Bearer = decodeToken(data);
-                            dispatch({
-                                type: "RECEIVE_TOKEN",
-                                username: BearerToken.name,
-                                token: BearerToken
-                            });
-                            saveToken(BearerToken);
-                            if (callback) {
-                                callback();
-                            }
-                        }
-                    })
-                    .catch(err => {
-                        const token = unloadedTokenState();
-                        dispatch({
-                            type: "RECEIVE_TOKEN",
-                            token: token,
-                            username: token.name || ""
-                        });
+        fetchTask = fetch("/Account/ConfirmEmail", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json, text/plain, */*"
+            },
+            credentials: "include",
+            body: JSON.stringify(value)
+        })
+            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
+                    if (error) {
+                        error(data as ErrorMessage);
+                    }
+                } else {
+                    removeToken();
+                    let BearerToken: Bearer = decodeToken(data);
+                    dispatch({
+                        type: "RECEIVE_TOKEN",
+                        username: BearerToken.name,
+                        token: BearerToken
                     });
+                    saveToken(BearerToken);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            })
+            .catch(err => {
+                const token = unloadedTokenState();
+                dispatch({
+                    type: "RECEIVE_TOKEN",
+                    token: token,
+                    username: token.name || ""
+                });
+            });
+        addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
+    },
+    confirmRegistrationEmail: (
+        value: ConfirmRegistrationViewModel,
+        callback?: () => void,
+        error?: (error: ErrorMessage) => void
+    ): AppThunkAction<KnownAction> => (dispatch, getState) => {
+        debugger;
+        let fetchTask: Promise<any>;
+        fetchTask = fetch("/Account/ConfirmRegistrationEmail", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json, text/plain, */*"
+            },
+            credentials: "include",
+            body: JSON.stringify(value)
+        })
+            .then(response => response.json() as Promise<Bearer | ErrorMessage>)
+            .then(data => {
+                if ((data as ErrorMessage).error) {
+                    if (error) {
+                        error(data as ErrorMessage);
+                    }
+                } else {
+                    removeToken();
+                    let BearerToken: Bearer = decodeToken(data);
+                    dispatch({
+                        type: "RECEIVE_TOKEN",
+                        username: BearerToken.name,
+                        token: BearerToken
+                    });
+                    saveToken(BearerToken);
+                    if (callback) {
+                        callback();
+                    }
+                }
+            })
+            .catch(err => {
+                const token = unloadedTokenState();
+                dispatch({
+                    type: "RECEIVE_TOKEN",
+                    token: token,
+                    username: token.name || ""
+                });
+            });
         addTask(fetchTask); // Ensure server-side prerendering waits for this to complete
     }
 };

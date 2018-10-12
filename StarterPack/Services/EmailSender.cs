@@ -53,8 +53,9 @@ namespace StarterKit.Services
         {
             await SendEmailAsync(email, "Confirm your email",
                 $@"<h3>Thank you for creating an account with StarterKit.</h3>
-                    <h3>Please confirm your account by clicking this 
-                    link: <a href='{HtmlEncoder.Default.Encode(link)}'>link</a></h3>",
+                    <h3>You must confirm your account before you can login. 
+                    Please confirm your account by clicking this link: 
+                    <a href='{HtmlEncoder.Default.Encode(link)}'>Confirm Email</a></h3>",
                 name);
         }
 

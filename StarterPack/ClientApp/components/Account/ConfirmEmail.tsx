@@ -46,7 +46,7 @@ export class ConfirmEmail extends React.Component<
                     <div className="col-12 col-sm-8 col-lg-7">
                         <h2 className="text-center display-4">Confirm Email.</h2>
                         <AsyncConfirmEmailForm
-                            form="changeEmailForm"
+                            form="confirmEmailForm"
                             enableReinitialize={true}
                             onSubmit={(values: ConfirmEmailViewModel, dispatch) => {
                                 this.props.accountActions.confirmEmail(

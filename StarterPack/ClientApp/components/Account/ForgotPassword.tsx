@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { ApplicationState } from '../../store';
 import * as AccountState from '../../store/Account';
 
@@ -42,6 +42,7 @@ export class ForgotPassword extends React.Component<UserMenuProps, any> {
                             <button className="btn btn-lg btn-primary btn-block" type="submit" >Send Password Assistance Email</button>
                         </div>
                     </form>
+                    <p><Link to="/login">Go back</Link></p>
                 </div>
             </div>
         </div>;

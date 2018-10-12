@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace StarterKit.Models.AccountViewModels
 {
-    public class ConfirmEmailViewModel
+    public class ConfirmRegistrationViewModel
     {
         public string UserId { get; set; }
         public string Code { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
     }
 }

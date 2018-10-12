@@ -157,6 +157,24 @@ const AsyncConfirmEmail = Loadable({
     ],
     loading: loading
 });
+const AsyncConfirmRegistrationEmail = Loadable({
+    loader: () =>
+        import(/* webpackChunkName: "ConfirmRegistrationEmail" */ "./components/Account/ConfirmRegistrationEmail"),
+    modules: ["./components/Account/ConfirmRegistrationEmail"],
+    webpack: () => [
+        require.resolveWeak("./components/Account/ConfirmRegistrationEmail")
+    ],
+    loading: loading
+});
+const AsyncRegisterConfirmation = Loadable({
+    loader: () =>
+        import(/* webpackChunkName: "RegisterConfirmation" */ "./components/Account/RegisterConfirmation"),
+    modules: ["./components/Account/RegisterConfirmation"],
+    webpack: () => [
+        require.resolveWeak("./components/Account/RegisterConfirmation")
+    ],
+    loading: loading
+});
 export const routes = (
     <div>
         <Switch>
@@ -181,6 +199,16 @@ export const routes = (
             <App
                 path="/ForgotPasswordConfirmation"
                 component={AsyncForgotPasswordConfirmation}
+                layout={AsyncHomeLayout}
+            />
+            <App
+                path="/RegistrationConfirmation"
+                component={AsyncRegisterConfirmation}
+                layout={AsyncHomeLayout}
+            />
+            <App
+                path="/ConfirmRegistrationEmail/:userId?/:code?"
+                component={AsyncConfirmRegistrationEmail}
                 layout={AsyncHomeLayout}
             />
             <App
