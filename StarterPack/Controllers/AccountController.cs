@@ -32,7 +32,7 @@ namespace StarterKit.Controllers
         private readonly IConfiguration _config;
         private readonly IUserContext _userContext;
         private HttpContext _httpContext;
-        ApplicationUser _currentUser;
+        
         private const string UserGuidCookiesName = "StarterPackUserGuid";
 
         public AccountController(
@@ -66,25 +66,38 @@ namespace StarterKit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody]LoginViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
+                var allowPassOnEmailVerfication = false;
                 var user = await _userManager.FindByEmailAsync(model.Email);
-
                 if (user != null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                    if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                    {
+                        allowPassOnEmailVerfication = true;
+                    }
+
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+                    if (result.IsNotAllowed)
+                    {
+                        return Ok(new { error = "Account Requires Email Confirmation", error_description = "You must verify your email address using the confirmation email link before logging in." });
+                    }
+                    if (allowPassOnEmailVerfication)
+                    {
+                        return allowPassOnEmailVerfication ? RedirectToLocal(returnUrl) : RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    }
                     if (result.Succeeded)
                     {
                         _userContext.SetUserGuidCookies(user.UserGuid);
                         return Ok(new { token = _userContext.GenerateToken(user) });
                     }
-                    return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
+                    if (result.IsLockedOut)
+                    {
+                        return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
+                    }
                 }
-                else
-                {
-                    return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
-                }
+
+                return Ok(new { error = "Login Failed", error_description = "User could not be found. Or Password does not match login." });
             }
 
             // If we got this far, something failed, redisplay form
@@ -95,34 +108,55 @@ namespace StarterKit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody]RegisterViewModel model, string returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
                 var userGuid = Guid.NewGuid();
-                _currentUser = new ApplicationUser { UserName = model.Email, Email = model.Email, UserGuid = userGuid };
-                var result = await _userManager.CreateAsync(_currentUser, model.Password);
+                ApplicationUser user = new ApplicationUser { UserName = model.Email, Email = model.Email, UserGuid = userGuid };
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(_currentUser);
-                    //var callbackUrl = Url.EmailConfirmationLink(_currentUser.Id, code, Request.Scheme);
-                    //await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-
-                    var signInResult = await _signInManager.CheckPasswordSignInAsync(_currentUser, model.Password, false);
-                    if (signInResult.Succeeded)
-                    {
-                        _logger.LogInformation("User signed into a new account.");
-                        await _userManager.AddClaimAsync(_currentUser, new Claim(ClaimTypes.Role, "Member"));
-                        _userContext.SetUserGuidCookies(_currentUser.UserGuid);
-                        return Ok(new { token = _userContext.GenerateToken(_currentUser) });
-                    }
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.RegistrationEmailConfirmationLink(user.Id, code, Request.Scheme);
+                    //Once routes are fixed remove this substr
+                    //Current need to remove the /Account from start of URL because
+                    //There is a conflict with the routes on client side for /Account
+                    callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    return Ok(new { });
                 }
-                AddErrors(result);
+
                 return Ok(new { error = "Registration Failed", error_description = "User could not be created using that user name" });
             }
 
             // If we got this far, something failed, redisplay form
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmRegistrationEmail([FromBody]ConfirmRegistrationViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return Ok();
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User signed into a new account.");
+                    await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Member"));
+                    _userContext.SetUserGuidCookies(user.UserGuid);
+                    return Ok(new { token = _userContext.GenerateToken(user) });
+                }
+            }
+
             return BadRequest();
         }
 
@@ -132,9 +166,8 @@ namespace StarterKit.Controllers
         {
             await _signInManager.SignOutAsync();
             _userContext.RemoveUserGuidCookies();
-            _currentUser = _userContext.NewGuestUser();
             _logger.LogInformation("User logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpPost]
@@ -169,14 +202,14 @@ namespace StarterKit.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -255,9 +288,8 @@ namespace StarterKit.Controllers
                 return Ok();
             }
 
-            _currentUser = _userContext.NewGuestUser();
             _logger.LogInformation("User deleted and logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpGet]
@@ -284,7 +316,7 @@ namespace StarterKit.Controllers
                 { "ImageThumbnailUrl", user.ImageThumbnailUrl }
             };
 
-            byte[] byteArray = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result, 
+            byte[] byteArray = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result,
                                                         new JsonSerializerSettings
                                                         {
                                                             NullValueHandling = NullValueHandling.Ignore
@@ -294,13 +326,119 @@ namespace StarterKit.Controllers
             return File(stream, "application/octet-stream");
         }
 
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> ChangeEmail([FromBody]ChangeEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+                if (user != null)
+                {
+                    //doing a quick swap so we can send the appropriate confirmation email
+                    user.UnConfirmedEmail = user.Email;
+                    user.Email = model.UnConfirmedEmail;
+                    user.EmailConfirmed = false;
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        var tempUnconfirmed = user.Email;
+                        user.Email = user.UnConfirmedEmail;
+                        user.UnConfirmedEmail = tempUnconfirmed;
+                        result = await _userManager.UpdateAsync(user);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                        //Once routes are fixed remove this substr
+                        //Current need to remove the /Account from start of URL because
+                        //There is a conflict with the routes on client side for /Account
+                        callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
+                        await _emailSender.SendEmailChangeConfirmationAsync(new List<string>() { user.Email, user.UnConfirmedEmail }, callbackUrl);
+                    }
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return Ok();
+                }
+
+                if (user.Email != model.Email)
+                {
+                    return Ok();
+                }
+               
+                var result = await _userManager.ConfirmEmailAsync(user, model.Code.Replace(" ", "+"));
+
+                if (result.Succeeded)
+                {
+                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+
+                    if (signInResult.IsNotAllowed)
+                    {
+                        return Ok(new { error = "Account Requires Email Confirmation", error_description = "You must verify your email address using the confirmation email link before logging in." });
+                    }
+                    if (signInResult.Succeeded)
+                    {
+                        if (!string.IsNullOrWhiteSpace(user.UnConfirmedEmail))
+                        {
+                            user.Email = user.UnConfirmedEmail;
+                            user.UserName = user.UnConfirmedEmail;
+                            user.UnConfirmedEmail = "";
+
+                            await _userManager.UpdateAsync(user);
+                        }
+
+                        _logger.LogInformation("User confirmed email successfully.");
+                        _userContext.SetUserGuidCookies(user.UserGuid);
+                        return Ok(new { token = _userContext.GenerateToken(user) });
+                    }
+                    if (signInResult.IsLockedOut)
+                    {
+                        return Ok(new { error = "Account Locked", error_description = "User account locked out. Please wait 5 minutes before trying to login again." });
+                    }
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> CancelUnconfirmedEmail([FromBody]string username)
+        {
+            var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
+            if (user == null)
+            {
+                _logger.Log(LogLevel.Warning, $"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok();
+            }
+
+            if (user.UserName != username)
+            {
+                return Ok();
+            }
+           
+            user.UnConfirmedEmail = "";
+            user.EmailConfirmed = true;
+            var result = await _userManager.UpdateAsync(user);
+            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
+        }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetToken()
         {
-            _currentUser = await _userContext.GetCurrentUser();
-            return Ok(new { token = _userContext.GenerateToken(_currentUser) });
+            return Ok(new { token = _userContext.GenerateToken(await _userContext.GetCurrentUser()) });
         }
 
 

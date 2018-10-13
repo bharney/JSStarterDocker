@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 class SignedOut extends React.Component<{}, {}> {
     render() {
@@ -9,6 +10,7 @@ class SignedOut extends React.Component<{}, {}> {
                     <p>You have successfully signed out.</p>
                 </div>
             </div>
+            <p><Link to="/">Go back</Link></p>
         </div>;
     }
 }

@@ -46,14 +46,13 @@ export class Register extends React.Component<RegisterProps, FormProps> {
                 this.props.accountActions.register(
                   values,
                   () => {
-                    this.props.history.push("/");
+                      this.props.history.push("/RegistrationConfirmation");
                     this.props.alertActions.sendAlert(
-                      "Your account is created.",
+                      "Before logging in, you must confirm your email address. We have sent a confirmation email.",
                       AlertType.success,
                       true
                     );
                     dispatch(reset("registerForm"));
-                    this.props.sessionActions.loadToken();
                   },
                   error => {
                     this.props.alertActions.sendAlert(

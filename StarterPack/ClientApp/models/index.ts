@@ -63,12 +63,19 @@ export interface RegisterViewModel {
     confirmPassword?: string,
 }
 
+export interface ConfirmRegistrationViewModel {
+    userId?: string,
+    code?: string,
+}
+
 export interface ForgotPasswordViewModel {
     username?: string
 }
 
 export interface ResetPasswordViewModel {
-    username?: string,
+    userId?: string,
+    code?: string,
+    email?: string,
     password?: string,
     confirmPassword?: string,
 }
@@ -81,6 +88,18 @@ export interface ChangePasswordViewModel {
 
 export interface DeleteAccountViewModel {
     userName?: string,
+}
+
+export interface ChangeEmailViewModel {
+    confirmedEmail?: string,
+    unConfirmedEmail?: string,
+}
+
+export interface ConfirmEmailViewModel {
+    userId?: string,
+    code?: string,
+    email?: string,
+    password?: string
 }
 
 export interface ErrorMessage {

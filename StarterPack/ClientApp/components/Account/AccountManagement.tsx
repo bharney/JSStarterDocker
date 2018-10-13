@@ -11,7 +11,7 @@ type AccountManagementProps = AccountState.AccountState & {
 class AccountManagement extends React.Component<AccountManagementProps, {}> {
   render() {
     const { isLoading } = this.props;
-      const { username, accountActions } = this.props;
+    const { username, accountActions } = this.props;
     return isLoading ? (
       <Loading />
     ) : (
@@ -33,7 +33,7 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
                 <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
-                    onClick={() => this.props.history.push("/Account/Edit")}
+                                        onClick={() => this.props.history.push("/Account/ChangeEmail")}
                   >
                     Change email
                   </button>
@@ -57,7 +57,7 @@ class AccountManagement extends React.Component<AccountManagementProps, {}> {
                 <div className="col-12 col-sm-10 col-md-8 form-wrapper">
                   <button
                     className="btn btn-lg btn-primary btn-block"
-                                        onClick={() => accountActions.downloadAccountData() }
+                    onClick={() => accountActions.downloadAccountData()}
                   >
                     Export Account Data
                   </button>

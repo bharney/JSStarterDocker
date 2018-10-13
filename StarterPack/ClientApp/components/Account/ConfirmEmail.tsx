@@ -1,33 +1,29 @@
 import * as React from "react";
 import Loadable from "react-loadable";
 import { connect } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { Dispatch, bindActionCreators } from "redux";
 import { InjectedFormProps, reset } from "redux-form";
-import URLSearchParams from "url-search-params";
-import {
-    AlertType,
-    Field as ModelField,
-    ResetPasswordViewModel
-} from "../../models";
+import { AlertType, ConfirmEmailViewModel, Field as ModelField } from "../../models";
 import { ApplicationState } from "../../store";
 import * as AccountState from "../../store/Account";
 import * as AlertState from "../../store/Alert";
 import * as SessionState from "../../store/Session";
+import URLSearchParams from "url-search-params";
 import LoadingRoute from "../Common/LoadingRoute";
-
-const AsyncResetPasswordForm = Loadable({
+const AsyncConfirmEmailForm = Loadable({
     loader: () =>
-        import(/* webpackChunkName: "ResetPasswordForm" */ "../Account/ResetPasswordForm"),
-    modules: ["../Account/ResetPasswordForm"],
-    webpack: () => [require.resolveWeak("../Account/ResetPasswordForm")],
+        import(/* webpackChunkName: "ConfirmEmailForm" */ "../Account/ConfirmEmailForm"),
+    modules: ["../Account/ConfirmEmailForm"],
+    webpack: () => [require.resolveWeak("../Account/ConfirmEmailForm")],
     loading: LoadingRoute
 });
-type ResetPasswordProps = AccountState.AccountState & {
+
+type ConfirmEmailProps = AccountState.AccountState & {
     accountActions: typeof AccountState.actionCreators;
     alertActions: typeof AlertState.actionCreators;
     sessionActions: typeof SessionState.actionCreators;
-} & RouteComponentProps<{ userId: string; code: string }>;
+} & RouteComponentProps<{userId: string, code: string }>;
 
 interface AdditionalProps {
     onCancel: () => void;
@@ -37,36 +33,37 @@ interface AdditionalProps {
 
 type FormProps = InjectedFormProps & AdditionalProps;
 
-export class ResetPassword extends React.Component<
-    ResetPasswordProps,
+export class ConfirmEmail extends React.Component<
+    ConfirmEmailProps,
     FormProps
     > {
     render() {
         const searchParams = new URLSearchParams(this.props.location.search);
+
         return (
             <div className="container pt-4">
                 <div className="row justify-content-center pt-4">
                     <div className="col-12 col-sm-8 col-lg-7">
-                        <h2 className="text-center display-4">Reset Password.</h2>
-                        <AsyncResetPasswordForm
-                            form="changeEmailForm"
+                        <h2 className="text-center display-4">Confirm Email.</h2>
+                        <AsyncConfirmEmailForm
+                            form="confirmEmailForm"
                             enableReinitialize={true}
-                            onSubmit={(values: ResetPasswordViewModel, dispatch) => {
-                                this.props.accountActions.resetPassword(
+                            onSubmit={(values: ConfirmEmailViewModel, dispatch) => {
+                                this.props.accountActions.confirmEmail(
                                     {
-                                        userId: searchParams.get("userId"),
                                         code: searchParams.get("code"),
+                                        userId: searchParams.get("userId"),
                                         ...values
                                     },
                                     () => {
-                                        this.props.history.push("/ResetPasswordConfirmation");
+                                        this.props.history.push("/Account");
                                         this.props.alertActions.sendAlert(
-                                            "Password has been reset successfully!",
+                                            "Email as been changed successfully!",
                                             AlertType.success,
                                             true
                                         );
-                                        dispatch(reset("changeEmailForm"));
-                                        this.props.sessionActions.requiredToken();
+                                        dispatch(reset("confirmEmailForm"));
+                                        this.props.sessionActions.loadToken();
                                     },
                                     error => {
                                         this.props.alertActions.sendAlert(
@@ -78,9 +75,7 @@ export class ResetPassword extends React.Component<
                                 );
                             }}
                         />
-                        <p>
-                            <Link to="/account">Go back</Link>
-                        </p>
+                        <p><Link to="/account">Go back</Link></p>
                     </div>
                 </div>
             </div>
@@ -103,4 +98,4 @@ export default connect(
             sessionActions: bindActionCreators(SessionState.actionCreators, dispatch)
         };
     }
-)(ResetPassword) as typeof ResetPassword;
+)(ConfirmEmail) as typeof ConfirmEmail;

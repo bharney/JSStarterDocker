@@ -1,7 +1,7 @@
 import * as React from "react";
 import Loadable from "react-loadable";
 import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { Dispatch, bindActionCreators } from "redux";
 import { InjectedFormProps, reset } from "redux-form";
 import {
@@ -71,7 +71,9 @@ export class ChangePassword extends React.Component<
                   }
                 );
               }}
-            />
+                    />
+                    <p><Link to="/account">Go back</Link></p>
+
           </div>
         </div>
       </div>

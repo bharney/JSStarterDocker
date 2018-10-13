@@ -2,15 +2,9 @@
 
 namespace StarterKit.Models.ManageViewModels
 {
-    public class ChangePasswordViewModel
+    public class DeleteAccountViewModel
     {
         [Required]
-        public string OldPassword { get; set; }
-
-        [Required]
-        public string NewPassword { get; set; }
-
-        [Required]
-        public string ConfirmPassword { get; set; }
+        public string UserName { get; set; }
     }
 }
