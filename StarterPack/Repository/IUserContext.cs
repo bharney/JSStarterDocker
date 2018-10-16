@@ -7,7 +7,7 @@ namespace StarterKit.Repository
 {
     public interface IUserContext
     {
-        string GenerateToken(ApplicationUser model);
+        Task<string> GenerateToken(ApplicationUser model);
         Task<ApplicationUser> GetCurrentUser();
         ApplicationUser NewGuestUser();
         void RemoveUserGuidCookies();
