@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +8,6 @@ using StarterKit.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,28 +17,49 @@ namespace StarterKit.Repository
     public class UserContext : IUserContext
     {
         private readonly ILogger _logger;
-        private readonly IUserRepository _userRepository;
+        private readonly ICachedUserRepository<ApplicationUser> _userRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private HttpContext _httpContext;
         private readonly IConfiguration _config;
         ApplicationUser _currentUser;
         private const string UserGuidCookiesName = "StarterPackUserGuid";
-        public UserContext(IUserRepository userRepository,
+        private readonly IMemoryCache _cache;
+        private const string MyModelCacheKey = "UserContext";
+        private MemoryCacheEntryOptions cacheOptions;
+        private const int DEFAULT_CACHE_SECONDS = 10;
+
+        public UserContext(ICachedUserRepository<ApplicationUser> userRepository,
             UserManager<ApplicationUser> userManager,
             IHttpContextAccessor contextAccessor,
             IConfiguration config,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IMemoryCache cache)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _httpContext = contextAccessor.HttpContext;
             _config = config;
             _logger = loggerFactory.CreateLogger("UserContext");
+            _cache = cache;
+
+            // 5 second cache
+            cacheOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(relative: TimeSpan.FromSeconds(DEFAULT_CACHE_SECONDS));
         }
 
-        public string GenerateToken(ApplicationUser model)
+        public async Task<string> GenerateToken(ApplicationUser model)
         {
+            string key = MyModelCacheKey + "-" + model.Id;
 
+            return await _cache.GetOrCreate(key, async entry =>
+            {
+                entry.SetOptions(cacheOptions);
+                return await TokenBuilder(model);
+            });
+        }
+
+        private async Task<string> TokenBuilder(ApplicationUser model)
+        {
             var claims = new List<Claim>
             {
               new Claim(JwtRegisteredClaimNames.Sub, model.Email),
@@ -50,8 +69,8 @@ namespace StarterKit.Repository
               new Claim(ClaimTypes.UserData, model.UserGuid.ToString()),
             };
 
-            var userClaims = _userManager.GetClaimsAsync(model);
-            claims.AddRange(userClaims.Result);
+            var userClaims = await _userManager.GetClaimsAsync(model);
+            claims.AddRange(userClaims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -70,7 +89,7 @@ namespace StarterKit.Repository
             var userGuid = GetUserGuidFromCookies();
             if (userGuid.HasValue)
             {
-                _currentUser = _userRepository.Users.FirstOrDefault(x => x.UserGuid == userGuid);
+                _currentUser = await _userRepository.GetByIdAsync(userGuid.Value);
             }
 
             if (_currentUser != null)
@@ -121,7 +140,7 @@ namespace StarterKit.Repository
             var userGuid = GetUserGuidFromCookies();
             if (userGuid.HasValue)
             {
-                return await _userRepository.GetUserByIdAsync(userGuid.Value);
+                return await _userRepository.GetByIdAsync(userGuid.Value);
             }
 
             return null;

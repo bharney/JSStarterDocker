@@ -89,6 +89,7 @@ namespace StarterKit
                 options.Lockout.AllowedForNewUsers = true;
             });
 
+            services.AddScoped<ICachedUserRepository<ApplicationUser>, CachedUserRepositoryDecorator>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IImageStorageService, ImageStorageService>();
             services.AddTransient<IEmailSender, EmailSender>();

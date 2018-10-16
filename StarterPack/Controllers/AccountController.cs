@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ namespace StarterKit.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserRepository _userRepository;
+        private readonly ICachedUserRepository<ApplicationUser> _userRepository;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
@@ -42,7 +43,8 @@ namespace StarterKit.Controllers
             ILoggerFactory loggerFactory,
             IConfiguration config,
             IHttpContextAccessor contextAccessor,
-            IUserRepository userRepository)
+            ICachedUserRepository<ApplicationUser> userRepository,
+            IMemoryCache cache)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -56,7 +58,8 @@ namespace StarterKit.Controllers
                 _userManager,
                 contextAccessor,
                 _config,
-                loggerFactory);
+                loggerFactory,
+                cache);
         }
 
         [TempData]
@@ -89,7 +92,7 @@ namespace StarterKit.Controllers
                     if (result.Succeeded)
                     {
                         _userContext.SetUserGuidCookies(user.UserGuid);
-                        return Ok(new { token = _userContext.GenerateToken(user) });
+                        return Ok(new { token = await _userContext.GenerateToken(user) });
                     }
                     if (result.IsLockedOut)
                     {
@@ -153,7 +156,7 @@ namespace StarterKit.Controllers
                     _logger.LogInformation("User signed into a new account.");
                     await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Member"));
                     _userContext.SetUserGuidCookies(user.UserGuid);
-                    return Ok(new { token = _userContext.GenerateToken(user) });
+                    return Ok(new { token = await _userContext.GenerateToken(user) });
                 }
             }
 
@@ -167,7 +170,7 @@ namespace StarterKit.Controllers
             await _signInManager.SignOutAsync();
             _userContext.RemoveUserGuidCookies();
             _logger.LogInformation("User logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
+            return Ok(new { token = await _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpPost]
@@ -188,13 +191,10 @@ namespace StarterKit.Controllers
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.ResetPasswordCallbackLink(user.Id, code, Request.Scheme);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                   $@"<h5>Hello!</h5><p>You are receiving this email because we have received 
-                        a password reset request from your account.</p><p>Please reset your password 
-                        by clicking here: <a href='{callbackUrl}'>link</a></p><p>If you did not request 
-                        a password reset, no further action is needed on your part.</p><br/>
-                        <p>Kind Regards,<br/>StarterKit Farms</p>",
-                   $"{user.FirstName} {user.LastName}");
-                return Ok(Json(model.Email));
+                   $@"<h3> You have requested a password reset request from your account.</h3>
+                        <h3>Please reset your password by clicking here: <a href='{callbackUrl}'>link</a></h3>
+                        <h3>If you did not request a password reset, no further action is needed on your part.</h3>");
+                return Ok(new { });
             }
 
             // If we got this far, something failed, redisplay form
@@ -225,7 +225,7 @@ namespace StarterKit.Controllers
             {
                 _logger.LogInformation("User changed password successfully.");
                 _userContext.SetUserGuidCookies(user.UserGuid);
-                return Ok(new { token = _userContext.GenerateToken(user) });
+                return Ok(new { token = await _userContext.GenerateToken(user) });
             }
             AddErrors(result);
             return Ok();
@@ -255,7 +255,7 @@ namespace StarterKit.Controllers
 
             await _signInManager.SignInAsync(user, isPersistent: false);
             _logger.LogInformation("User changed their password successfully.");
-            return Ok(new { token = _userContext.GenerateToken(user) });
+            return Ok(new { token = await _userContext.GenerateToken(user) });
         }
 
         [HttpPost]
@@ -289,7 +289,7 @@ namespace StarterKit.Controllers
             }
 
             _logger.LogInformation("User deleted and logged out.");
-            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
+            return Ok(new { token = await _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpGet]
@@ -400,7 +400,7 @@ namespace StarterKit.Controllers
 
                         _logger.LogInformation("User confirmed email successfully.");
                         _userContext.SetUserGuidCookies(user.UserGuid);
-                        return Ok(new { token = _userContext.GenerateToken(user) });
+                        return Ok(new { token = await _userContext.GenerateToken(user) });
                     }
                     if (signInResult.IsLockedOut)
                     {
@@ -431,14 +431,14 @@ namespace StarterKit.Controllers
             user.UnConfirmedEmail = "";
             user.EmailConfirmed = true;
             var result = await _userManager.UpdateAsync(user);
-            return Ok(new { token = _userContext.GenerateToken(_userContext.NewGuestUser()) });
+            return Ok(new { token = await _userContext.GenerateToken(_userContext.NewGuestUser()) });
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> GetToken()
         {
-            return Ok(new { token = _userContext.GenerateToken(await _userContext.GetCurrentUser()) });
+            return Ok(new { token = await _userContext.GenerateToken(await _userContext.GetCurrentUser()) });
         }
 
 

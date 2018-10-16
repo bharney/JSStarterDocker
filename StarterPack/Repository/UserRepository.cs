@@ -19,19 +19,11 @@ namespace StarterKit.Repository
             _Logger = loggerFactory.CreateLogger("UserRepository");
         }
 
-        public IEnumerable<ApplicationUser> Users
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
-            get
-            {
-                return _Context.Users;
-            }
+            return await _Context.Users.ToListAsync();
         }
 
-        public ApplicationUser GetUserById(Guid userGuid)
-        {
-            return _Context.Users
-                .FirstOrDefault(x => x.UserGuid == userGuid);
-        }
 
         public async Task<ApplicationUser> GetUserByIdAsync(Guid userGuid)
         {

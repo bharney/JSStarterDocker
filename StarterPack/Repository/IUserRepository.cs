@@ -7,10 +7,8 @@ namespace StarterKit.Repository
 {
     public interface IUserRepository
     {
-        IEnumerable<ApplicationUser> Users { get; }
-
+        Task<IEnumerable<ApplicationUser>> GetUsersAsync();
         Task<bool> DeleteUserAsync(Guid id);
-        ApplicationUser GetUserById(Guid userGuid);
         Task<ApplicationUser> InsertUserAsync(ApplicationUser user);
         Task<bool> UpdateUserAsync(ApplicationUser user);
         Task<ApplicationUser> GetUserByIdAsync(Guid userGuid);
