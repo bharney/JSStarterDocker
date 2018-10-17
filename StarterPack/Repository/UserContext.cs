@@ -51,10 +51,10 @@ namespace StarterKit.Repository
         {
             string key = MyModelCacheKey + "-" + model.Id;
 
-            return await _cache.GetOrCreate(key, async entry =>
+            return await _cache.GetOrCreateAsync(key, entry =>
             {
                 entry.SetOptions(cacheOptions);
-                return await TokenBuilder(model);
+                return TokenBuilder(model);
             });
         }
 

@@ -243,7 +243,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
@@ -270,7 +270,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             if (user.UserName != model.UserName)
@@ -304,7 +304,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             Dictionary<string, object> result = new Dictionary<string, object>()

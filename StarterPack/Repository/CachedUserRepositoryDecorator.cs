@@ -31,19 +31,19 @@ namespace StarterKit.Repository
         {
             string key = MyModelCacheKey + "-" + userGuid;
 
-            return await _cache.GetOrCreate(key, async entry =>
+            return await _cache.GetOrCreateAsync(key, entry =>
             {
                 entry.SetOptions(cacheOptions);
-                return await _userRepository.GetUserByIdAsync(userGuid);
+                return _userRepository.GetUserByIdAsync(userGuid);
             });
         }
 
         public async Task<IEnumerable<ApplicationUser>> ListAsync()
         {
-            return await _cache.GetOrCreate(MyModelCacheKey, async entry =>
+            return await _cache.GetOrCreateAsync(MyModelCacheKey, entry =>
              {
                  entry.SetOptions(cacheOptions);
-                 return await _userRepository.GetUsersAsync();
+                 return _userRepository.GetUsersAsync();
              });
         }
     }
