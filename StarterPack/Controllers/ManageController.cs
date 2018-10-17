@@ -59,7 +59,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             return Ok(new ProfileViewModel {
@@ -88,7 +88,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             var email = user.Email;
@@ -98,7 +98,7 @@ namespace StarterKit.Controllers
                 var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
                 if (!setEmailResult.Succeeded)
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
+                    return Ok(new { error = "Failed to change Email.", error_description = $"Unexpected error occurred setting email for user with ID '{user.Id}'." });
                 }
             }
 
@@ -109,7 +109,7 @@ namespace StarterKit.Controllers
                 var setNameResult = await _userManager.UpdateAsync(user);
                 if (!setNameResult.Succeeded)
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting first name for user with ID '{user.Id}'.");
+                    return Ok(new { error = "Failed to change First Name.", error_description = $"Unexpected error occurred setting first name for user with ID '{user.Id}'." });
                 }
             }
 
@@ -120,7 +120,7 @@ namespace StarterKit.Controllers
                 var setNameResult = await _userManager.UpdateAsync(user);
                 if (!setNameResult.Succeeded)
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting last name for user with ID '{user.Id}'.");
+                    return Ok(new { error = "Failed to change Last Name.", error_description = $"Unexpected error occurred setting last name for user with ID '{user.Id}'." });
                 }
             }
 
@@ -131,7 +131,7 @@ namespace StarterKit.Controllers
                 var setNameResult = await _userManager.UpdateAsync(user);
                 if (!setNameResult.Succeeded)
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting Image Url for user with ID '{user.Id}'.");
+                    return Ok(new { error = "Failed to change Image Url.", error_description = $"Unexpected error occurred setting image url for user with ID '{user.Id}'." });
                 }
             }
 
@@ -141,22 +141,34 @@ namespace StarterKit.Controllers
 
         public async Task<string> Upload(IFormFile model)
         {
-            if (model != null)
+            try
             {
-                using (var stream = new MemoryStream())
+                //check if the image is less than 200kb
+                if (model != null && ((model.Length / 1048576.0) < .2))
                 {
-                    model.CopyTo(stream);
-                    var fileBytes = stream.ToArray();
-                    var op = _imageService.StoreProfile(model.FileName, fileBytes);
+                    using (var stream = new MemoryStream())
+                    {
+                        model.CopyTo(stream);
+                        var fileBytes = stream.ToArray();
+                        var op = _imageService.StoreProfile(model.FileName, fileBytes);
 
-                    op.Wait();
-                    if (!op.IsCompletedSuccessfully) throw op.Exception;
-
-                    return await op;
+                        op.Wait();
+                        if (!op.IsCompletedSuccessfully)
+                        {
+                            _logger.Log(LogLevel.Error, $"Unable to upload image file: {op.Exception}");
+                            throw op.Exception;
+                        }
+                        return await op;
+                    }
                 }
-            }
 
-            return "";
+                return "";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpGet]
@@ -165,7 +177,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
             var userClaims = _userManager.GetClaimsAsync(user);
             if (userClaims.Result.Any(x => x.Type == ClaimTypes.Role && x.Value == "Admin"))
@@ -200,7 +212,7 @@ namespace StarterKit.Controllers
             var user = await _userManager.FindByIdAsync(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid).Value); ;
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return Ok(new { error = "User not found.", error_description = $"Unable to load user with ID '{_userManager.GetUserId(User)}'." });
             }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
