@@ -34,7 +34,6 @@ namespace StarterKit.Test
         private IConfiguration _config;
         private Mock<IUserContext> _userContext;
         private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IMemoryCache> _cache;
 
         private const string UserGuidCookiesName = "StarterPackUserGuid";
 
@@ -55,8 +54,9 @@ namespace StarterKit.Test
             _logger = new Mock<ILoggerFactory>();
             _config = GetConfiguration.GetIConfiguration();
             _userContext = new Mock<IUserContext>();
-            _cache = new Mock<IMemoryCache>();
             _userContext.Setup(x => x.GetCurrentUser()).ReturnsAsync(It.IsAny<ApplicationUser>());
+            _userContext.Setup(x => x.GenerateToken(It.IsAny<ApplicationUser>())).ReturnsAsync(It.IsAny<string>());
+            //_cache.Setup(x => x.GetOrCreateAsync(It.IsAny<string>(), It.IsAny<Func<ICacheEntry, string>>())).ReturnsAsync(It.IsAny<string>());
         }
 
         [TestMethod]
@@ -64,6 +64,7 @@ namespace StarterKit.Test
         {
             IList<Claim> guestClaim = new List<Claim>();
             _userManager.Setup(x => x.GetClaimsAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(guestClaim);
+            
             Controllers.AccountController accountController = new Controllers.AccountController(_userManager.Object,
                 _signInManager.Object,
                 _emailSender.Object,
@@ -71,7 +72,7 @@ namespace StarterKit.Test
                 _config,
                 _contextAccessor.Object,
                 _userRepository.Object,
-                _cache.Object);
+                new MemoryCache(new MemoryCacheOptions()));
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
@@ -94,7 +95,7 @@ namespace StarterKit.Test
                 _config, 
                 _contextAccessor.Object, 
                 _userRepository.Object,
-                _cache.Object);
+                new MemoryCache(new MemoryCacheOptions()));
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
@@ -123,7 +124,7 @@ namespace StarterKit.Test
                 _config, 
                 _contextAccessor.Object, 
                 _userRepository.Object,
-                _cache.Object);
+                new MemoryCache(new MemoryCacheOptions()));
             var actionResult = accountController.GetToken();
             var objectResult = actionResult.Result as OkObjectResult;
             Assert.IsNotNull(objectResult.Value);
