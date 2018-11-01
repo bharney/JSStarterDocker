@@ -16,10 +16,10 @@ export const NavContext = React.createContext({ on: false, toggle: () => { }, on
 
 type NavMenuProps = ApplicationState
     & {
-        accountActions: typeof AccountState.actionCreators,
-        sessionActions: typeof SessionState.actionCreators,
-        alertActions: typeof AlertState.actionCreators;
-    }
+    accountActions: typeof AccountState.actionCreators,
+    sessionActions: typeof SessionState.actionCreators,
+    alertActions: typeof AlertState.actionCreators;
+}
     & RouteComponentProps<{}>;
 export class App extends React.Component<AppProps, {}> {
     state = { on: false }
@@ -36,11 +36,7 @@ export class App extends React.Component<AppProps, {}> {
             this.setState(
                 ({ on }: On) => ({ on: false }),
                 () => {
-                    let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar'));
-                    if (sidebar) {
-                        (sidebar as HTMLElement).removeAttribute("style");
-                    }
-                    document.getElementsByTagName("html")[0].style.overflowY = "auto";
+                    this.handleSidebarToggle()
                 })
         }
     }
@@ -49,19 +45,10 @@ export class App extends React.Component<AppProps, {}> {
         this.setState(
             ({ on }: On) => ({ on: !on }),
             () => {
-                let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar')) as HTMLElement;
-                let bounding = sidebar.getBoundingClientRect()
-                let offset = bounding.top + document.body.scrollTop
                 if (this.state.on) {
-                    let totalOffset = ((offset - 100) * -1);
-                    totalOffset = totalOffset < 0 ? 0 : totalOffset;
-                    (sidebar as HTMLElement).style.top = totalOffset + "px";
-                    document.getElementsByTagName("html")[0].style.overflowY = "hidden";
+                    this.handleSidebarPosition();
                 } else {
-                    if (sidebar) {
-                        (sidebar as HTMLElement).removeAttribute("style");
-                    }
-                    document.getElementsByTagName("html")[0].style.overflowY = "auto";
+                    this.handleSidebarToggle()
                 }
             },
         )
@@ -70,11 +57,7 @@ export class App extends React.Component<AppProps, {}> {
         this.setState(
             ({ on }: On) => ({ on: false }),
             () => {
-                let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar'));
-                if (sidebar) {
-                    (sidebar as HTMLElement).removeAttribute("style");
-                }
-                document.getElementsByTagName("html")[0].style.overflowY = "auto";
+                this.handleSidebarToggle()
                 window.scrollTo(0, 0);
             },
         )
@@ -84,15 +67,29 @@ export class App extends React.Component<AppProps, {}> {
             this.setState(
                 ({ on }: On) => ({ on: false }),
                 () => {
-                    let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar'));
-                    if (sidebar) {
-                        (sidebar as HTMLElement).removeAttribute("style");
-                    }
-                    document.getElementsByTagName("html")[0].style.overflowY = "auto";
+                    this.handleSidebarToggle()
                 },
             )
         }
     }
+    private handleSidebarPosition() {
+        let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar')) as HTMLElement;
+        let bounding = sidebar.getBoundingClientRect();
+        let offset = bounding.top + document.body.scrollTop;
+        let totalOffset = ((offset - 100) * -1);
+        totalOffset = totalOffset < 0 ? 0 : totalOffset;
+        (sidebar as HTMLElement).style.top = totalOffset + "px";
+        document.getElementsByTagName("html")[0].style.overflowY = "hidden";
+    }
+
+    private handleSidebarToggle() {
+        let sidebar = ReactDOM.findDOMNode(document.getElementById('sidebar'));
+        if (sidebar) {
+            (sidebar as HTMLElement).removeAttribute("style");
+        }
+        document.getElementsByTagName("html")[0].style.overflowY = "auto";
+    }
+
     render() {
         const { component: Component,
             layout: Layout,
@@ -111,9 +108,9 @@ export class App extends React.Component<AppProps, {}> {
                     handleOverlayToggle: this.handleOverlayToggle
                 }}>
                     <NavMenu accountActions={accountActions}
-                    alertActions={alertActions}
-                    sessionActions={sessionActions}
-                    {...session} />
+                        alertActions={alertActions}
+                        sessionActions={sessionActions}
+                        {...session} />
                     <this.props.layout {...rest} {...props}>
                         <this.props.component {...props} />
                     </this.props.layout>

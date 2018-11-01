@@ -274,7 +274,6 @@ export const actionCreators = {
         if (value.email && value.password && value.confirmPassword &&
             value.password === value.confirmPassword)
         {
-            debugger;
             let fetchTask = fetch("/Account/ResetPassword", {
                 method: "post",
                 headers: {
@@ -408,7 +407,6 @@ export const actionCreators = {
         callback?: () => void,
         error?: (error: ErrorMessage) => void
     ): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        debugger;
         let token = getState().session.token;
         let fetchTask: Promise<any>;
         if (token) {
@@ -467,7 +465,6 @@ export const actionCreators = {
         callback?: () => void,
         error?: (error: ErrorMessage) => void
     ): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        debugger;
         let fetchTask: Promise<any>;
         fetchTask = fetch("/Account/ConfirmEmail", {
             method: "post",
@@ -513,7 +510,6 @@ export const actionCreators = {
         callback?: () => void,
         error?: (error: ErrorMessage) => void
     ): AppThunkAction<KnownAction> => (dispatch, getState) => {
-        debugger;
         let fetchTask: Promise<any>;
         fetchTask = fetch("/Account/ConfirmRegistrationEmail", {
             method: "post",
@@ -521,7 +517,6 @@ export const actionCreators = {
                 "Content-Type": "application/json",
                 Accept: "application/json, text/plain, */*"
             },
-            credentials: "include",
             body: JSON.stringify(value)
         })
             .then(response => response.json() as Promise<Bearer | ErrorMessage>)
