@@ -62,9 +62,9 @@ namespace StarterKit
                 var keyVaultConfigBuilder = new ConfigurationBuilder();
 
                 keyVaultConfigBuilder.AddAzureKeyVault(
-                    builtConfig["MSI_ENDPOINT"],
-                    builtConfig["MSI_CLIENT"],
-                    builtConfig["MSI_SECRET"]);
+                    builtConfig["VaultEndpoint"],
+                    builtConfig["ClientId"],
+                    builtConfig["ClientSecret"]);
                 var keyVaultConfig = keyVaultConfigBuilder.Build();
                 config.AddConfiguration(keyVaultConfig);
 

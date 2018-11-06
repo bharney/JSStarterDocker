@@ -1,126 +1,139 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
   "parameters": {
-    "JSStarterPackApp": {
-      "value": "jsstarterpack"
+    "JSStarterApp": {
+      "value": "JSStarterApp"
     },
-    "StarterPackVault": {
-      "value": "StarterPackVault"
+    "JSStarterVault": {
+      "value": "JSStarterVault"
     },
-    "JSStarterPackAppInsights": {
-      "value": "jsstarterpack"
+    "JSStarterAppInsights": {
+      "value": "JSStarterAppInsights"
     },
-    "jsstarterpackStorage": {
-      "value": "jsstarterpack"
+    "jssstarterblob": {
+      "value": "jssstarterblob"
     },
-    "ServicePlan698eb4ae_9e2b": {
-      "value": "ServicePlan698eb4ae-9e2b"
+    "JSStarterServicePlan": {
+      "value": "JSStarterServicePlan"
     },
-    "jsstarterpackSqlServer": {
-      "value": "javascriptservicesstarterpack"
+    "JSStarterSqlServer": {
+      "value": "jsstartersqlserver"
     },
-    "administratorLogin": {
-      "value": "starterpack"
+    "JSStarterSqlDB": {
+      "value": "jsstartersqldb"
     },
-    "appLogin": {
+    "sqlUserName": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "appLogin"
+        "secretName": "sqlUserName"
       }
     },
-    "administratorLoginPassword": {
+    "sqlPassword": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "administratorLoginPassword"
+        "secretName": "sqlPassword"
       }
     },
-    "Token": {
+    "ClientSecret": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "Token"
+        "secretName": "ClientSecret"
       }
     },
-    "MailServiceKey": {
+    "ClientId": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "MailServiceKey"
+        "secretName": "ClientId"
       }
     },
-    "BlobServiceKey": {
+    "VaultEndpoint": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "BlobServiceKey"
+        "secretName": "VaultEndpoint"
       }
     },
-    "MailServiceUser": {
+    "Token--Key": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "MailServiceUser"
+        "secretName": "Token--Key"
       }
     },
-    "SeedAccountGuest": {
+    "Token--Issuer": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "SeedAccountGuest"
+        "secretName": "Token--Issuer"
       }
     },
-    "ConnectionString": {
+    "MailService--Key": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "ConnectionString"
+        "secretName": "MailService--Key"
       }
     },
-    "BlobServiceAccount": {
+    "BlobService--Key": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "BlobServiceAccount"
+        "secretName": "BlobService--Key"
       }
     },
-    "SeedAccountUserName": {
+    "MailService--User": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "SeedAccountUserName"
+        "secretName": "MailService--User"
       }
     },
-    "SeedAccountPassword": {
+    "BlobService--Account": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
-        "secretName": "SeedAccountPassword"
+        "secretName": "BlobService--Account"
+      }
+    },
+    "SeedAccount--UserName": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
+        },
+        "secretName": "SeedAccount--UserName"
+      }
+    },
+    "SeedAccount--Password": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
+        },
+        "secretName": "SeedAccount--Password"
       }
     },
     "ConnectionStrings--DefaultConnection": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault"
+          "id": "/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JSStarter/providers/Microsoft.KeyVault/vaults/JSStarterVault"
         },
         "secretName": "ConnectionStrings--DefaultConnection"
       }
-    },
-    "javascriptservicesstarterpackSql": {
-      "value": "javascriptservicesstarterpack"
     }
   }
 }

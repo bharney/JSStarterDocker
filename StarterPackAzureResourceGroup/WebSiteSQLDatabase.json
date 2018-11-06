@@ -2,109 +2,98 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "administratorLogin": {
-      "defaultValue": "starterpack",
-      "type": "string"
+    "sqlUserName": {
+      "defaultValue": "sqlUserName",
+      "type": "securestring"
     },
-    "appLogin": {
-      "defaultValue": "appLogin",
-      "type": "string"
+    "sqlPassword": {
+      "defaultValue": "sqlPassword",
+      "type": "securestring"
     },
-    "JSStarterPackApp": {
+    "ClientSecret": {
+      "defaultValue": "ClientSecret",
+      "type": "securestring"
+    },
+    "ClientId": {
+      "defaultValue": "ClientId",
+      "type": "securestring"
+    },
+    "VaultEndpoint": {
+      "defaultValue": "VaultEndpoint",
+      "type": "securestring"
+    },
+    "JSStarterApp": {
       "defaultValue": "jsstarterpack",
       "type": "string"
     },
-    "StarterPackVault": {
-      "defaultValue": "StarterPackVault",
+    "JSStarterVault": {
+      "defaultValue": "JSStarterVault",
       "type": "string"
     },
-    "JSStarterPackAppInsights": {
+    "JSStarterAppInsights": {
       "defaultValue": "jsstarterpack",
       "type": "string"
     },
-    "jsstarterpackStorage": {
-      "defaultValue": "jsstarterpack",
+    "jssstarterblob": {
+      "defaultValue": "jsstarterblob",
       "type": "string"
     },
-    "ServicePlan698eb4ae_9e2b": {
+    "JSStarterServicePlan": {
       "defaultValue": "ServicePlan698eb4ae-9e2b",
       "type": "string"
     },
-    "jsstarterpackSqlServer": {
-      "defaultValue": "javascriptservicesstarterpack",
+    "JSStarterSqlServer": {
+      "defaultValue": "jsstartersqlserver",
       "type": "string"
     },
-    "Token": {
-      "defaultValue": "Token",
-      "type": "string"
+    "Token--Key": {
+      "defaultValue": "Token--Key",
+      "type": "securestring"
     },
-    "MailServiceKey": {
-      "defaultValue": "MailServiceKey",
-      "type": "string"
+    "Token--Issuer": {
+      "defaultValue": "Token--Issuer",
+      "type": "securestring"
     },
-    "BlobServiceKey": {
-      "defaultValue": "BlobServiceKey",
-      "type": "string"
+    "MailService--Key": {
+      "defaultValue": "MailService--Key",
+      "type": "securestring"
     },
-    "MailServiceUser": {
-      "defaultValue": "MailServiceUser",
-      "type": "string"
+    "MailService--User": {
+      "defaultValue": "MailService--User",
+      "type": "securestring"
     },
-    "SeedAccountGuest": {
-      "defaultValue": "SeedAccountGuest",
-      "type": "string"
+    "BlobService--Key": {
+      "defaultValue": "BlobService--Key",
+      "type": "securestring"
     },
-    "ConnectionString": {
-      "defaultValue": "ConnectionString",
-      "type": "string"
+    "BlobService--Account": {
+      "defaultValue": "BlobService--Account",
+      "type": "securestring"
     },
-    "BlobServiceAccount": {
-      "defaultValue": "BlobServiceAccount",
-      "type": "string"
+    "SeedAccount--UserName": {
+      "defaultValue": "SeedAccount--UserName",
+      "type": "securestring"
     },
-    "SeedAccountUserName": {
-      "defaultValue": "SeedAccountUserName",
-      "type": "string"
-    },
-    "SeedAccountPassword": {
-      "defaultValue": "SeedAccountPassword",
-      "type": "string"
-    },
-    "administratorLoginPassword": {
-      "defaultValue": "administratorLoginPassword",
-      "type": "string"
-    },
-    "hostNameBindings_jsstarterpack.azurewebsites.net_name": {
-      "defaultValue": "jsstarterpack.azurewebsites.net",
-      "type": "string"
+    "SeedAccount--Password": {
+      "defaultValue": "SeedAccount--Password",
+      "type": "securestring"
     },
     "ConnectionStrings--DefaultConnection": {
       "defaultValue": "ConnectionStrings--DefaultConnection",
-      "type": "string"
+      "type": "securestring"
     },
-    "javascriptservicesstarterpackSql": {
-      "defaultValue": "javascriptservicesstarterpack",
-      "type": "string"
+    "JSStarterSqlDB": {
+      "defaultValue": "jsstartersqldb",
+      "type": "securestring"
     }
   },
-  "outputs": {
-    "password": {
-      "type": "securestring",
-      "value": "[parameters('administratorLoginPassword')]"
-    }
-  },
-  "variables": {},
   "resources": [
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/microsoft.insights/components/jsstarterpack'.",
       "type": "Microsoft.Insights/components",
       "kind": "web",
-      "name": "[parameters('JSStarterPackAppInsights')]",
+      "name": "[parameters('JSStarterAppInsights')]",
       "apiVersion": "2015-05-01",
       "location": "westus2",
-      "tags": {
-        "hidden-link:/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Web/sites/jsstarterpack": "Resource"
-      },
       "scale": null,
       "properties": {
         "Application_Type": "web",
@@ -114,9 +103,8 @@
       "dependsOn": []
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault'.",
       "type": "Microsoft.KeyVault/vaults",
-      "name": "[parameters('StarterPackVault')]",
+      "name": "[parameters('JSStarterVault')]",
       "apiVersion": "2016-10-01",
       "location": "westus2",
       "tags": {},
@@ -126,77 +114,11 @@
           "family": "A",
           "name": "standard"
         },
-        "tenantId": "32e1d8d3-bc39-4b94-9c4d-4192d41b2a63",
+        "tenantId": "[subscription().tenantId]",
         "accessPolicies": [
           {
-            "tenantId": "32e1d8d3-bc39-4b94-9c4d-4192d41b2a63",
-            "objectId": "abae750d-fbde-4339-9a5d-d101c988b5ed",
-            "permissions": {
-              "keys": [
-                "get",
-                "list",
-                "update",
-                "create",
-                "import",
-                "delete",
-                "recover",
-                "backup",
-                "restore"
-              ],
-              "secrets": [
-                "get",
-                "list",
-                "set",
-                "delete",
-                "recover",
-                "backup",
-                "restore"
-              ],
-              "certificates": [
-                "get",
-                "list",
-                "update",
-                "create",
-                "import",
-                "delete",
-                "recover",
-                "managecontacts",
-                "manageissuers",
-                "getissuers",
-                "listissuers",
-                "setissuers",
-                "deleteissuers"
-              ]
-            }
-          },
-          {
-            "tenantId": "32e1d8d3-bc39-4b94-9c4d-4192d41b2a63",
-            "objectId": "0e387ad8-4961-4c94-8d20-55ef3faabe18",
-            "applicationId": "c67f4a3f-d502-4639-b24b-41a7f672d620",
-            "permissions": {
-              "keys": [],
-              "secrets": [
-                "get",
-                "list"
-              ],
-              "certificates": []
-            }
-          },
-          {
-            "tenantId": "32e1d8d3-bc39-4b94-9c4d-4192d41b2a63",
-            "objectId": "54656ac4-e13a-44b4-b44e-194b5909cadd",
-            "permissions": {
-              "keys": [],
-              "secrets": [
-                "get",
-                "list"
-              ],
-              "certificates": []
-            }
-          },
-          {
-            "tenantId": "32e1d8d3-bc39-4b94-9c4d-4192d41b2a63",
-            "objectId": "2f2164ad-6b0b-4af8-a38e-e3a05bf970ee",
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "778a718e-4dda-40af-9d3f-0f334a652b54",
             "permissions": {
               "keys": [],
               "secrets": [
@@ -214,9 +136,8 @@
       "dependsOn": [],
       "resources": [
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/SeedAccountUserName'.",
           "type": "secrets",
-          "name": "SeedAccountUserName",
+          "name": "SeedAccount--UserName",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -224,16 +145,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('SeedAccountUserName')]"
+            "value": "[parameters('SeedAccount--UserName')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/Token'.",
           "type": "secrets",
-          "name": "Token",
+          "name": "Token--Key",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -241,16 +161,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('Token')]"
+            "value": "[parameters('Token--Key')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/MailServiceUser'.",
           "type": "secrets",
-          "name": "MailServiceUser",
+          "name": "Token--Issuer",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -258,16 +177,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('MailServiceUser')]"
+            "value": "[parameters('Token--Issuer')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/SeedAccountGuest'.",
           "type": "secrets",
-          "name": "SeedAccountGuest",
+          "name": "MailService--User",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -275,16 +193,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('SeedAccountGuest')]"
+            "value": "[parameters('MailService--User')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/SeedAccountPassword'.",
           "type": "secrets",
-          "name": "SeedAccountPassword",
+          "name": "SeedAccount--Password",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -292,14 +209,13 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('SeedAccountPassword')]"
+            "value": "[parameters('SeedAccount--Password')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/ConnectionStrings--DefaultConnection'.",
           "type": "secrets",
           "name": "ConnectionStrings--DefaultConnection",
           "apiVersion": "2016-10-01",
@@ -312,13 +228,12 @@
             "value": "[parameters('ConnectionStrings--DefaultConnection')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/MailServiceKey'.",
           "type": "secrets",
-          "name": "MailServiceKey",
+          "name": "MailService--Key",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -326,16 +241,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('MailServiceKey')]"
+            "value": "[parameters('MailService--Key')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/BlobServiceAccount'.",
           "type": "secrets",
-          "name": "BlobServiceAccount",
+          "name": "BlobService--Account",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -343,16 +257,15 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('BlobServiceAccount')]"
+            "value": "[parameters('BlobService--Account')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         },
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.KeyVault/vaults/StarterPackVault/secrets/BlobServiceKey'.",
           "type": "secrets",
-          "name": "BlobServiceKey",
+          "name": "BlobService--Key",
           "apiVersion": "2016-10-01",
           "location": "westus2",
           "scale": null,
@@ -360,27 +273,26 @@
             "attributes": {
               "enabled": true
             },
-            "value": "[parameters('BlobServiceKey')]"
+            "value": "[parameters('BlobService--Key')]"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults/', parameters('StarterPackVault'))]"
+            "[resourceId('Microsoft.KeyVault/vaults/', parameters('JSStarterVault'))]"
           ]
         }
       ]
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Sql/servers/javascriptservicesstarterpack'.",
-      "name": "[parameters('jsstarterpackSqlServer')]",
+      "name": "[parameters('JSStarterSqlServer')]",
       "type": "Microsoft.Sql/servers",
       "location": "westus2",
       "apiVersion": "2014-04-01",
       "properties": {
-        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLogin": "[parameters('sqlUserName')]",
+        "administratorLoginPassword": "[parameters('sqlPassword')]"
       },
       "resources": [
         {
-          "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Sql/servers/javascriptservicesstarterpack/databases/javascriptservicesstarterpack'.",
-          "name": "[parameters('javascriptservicesstarterpackSql')]",
+          "name": "[parameters('JSStarterSqlDB')]",
           "kind": "v12.0,user",
           "type": "databases",
           "location": "westus2",
@@ -392,14 +304,14 @@
           },
           "apiVersion": "2014-04-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers/', parameters('jsstarterpackSqlServer'))]"
+            "[resourceId('Microsoft.Sql/servers/', parameters('JSStarterSqlServer'))]"
           ]
         },
         {
           "type": "firewallRules",
           "apiVersion": "2014-04-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers/', parameters('jsstarterpackSqlServer'))]"
+            "[resourceId('Microsoft.Sql/servers/', parameters('JSStarterSqlServer'))]"
           ],
           "location": "westus2",
           "name": "AllowAppFirewallIps",
@@ -411,16 +323,15 @@
       ]
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Storage/storageAccounts/jsstarterpack'.",
       "type": "Microsoft.Storage/storageAccounts",
       "sku": {
         "name": "Standard_LRS",
         "tier": "Standard"
       },
       "kind": "Storage",
-      "name": "[parameters('jsstarterpackStorage')]",
+      "name": "[parameters('jssstarterblob')]",
       "apiVersion": "2018-03-01-preview",
-      "location": "centralus",
+      "location": "westus2",
       "tags": {},
       "scale": null,
       "properties": {
@@ -446,7 +357,6 @@
       "dependsOn": []
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Web/serverfarms/ServicePlan698eb4ae-9e2b'.",
       "type": "Microsoft.Web/serverfarms",
       "sku": {
         "name": "S1",
@@ -456,12 +366,12 @@
         "capacity": 1
       },
       "kind": "app",
-      "name": "[parameters('ServicePlan698eb4ae_9e2b')]",
+      "name": "[parameters('JSStarterServicePlan')]",
       "apiVersion": "2016-09-01",
-      "location": "Central US",
+      "location": "westus2",
       "scale": null,
       "properties": {
-        "name": "[parameters('ServicePlan698eb4ae_9e2b')]"
+        "name": "[parameters('JSStarterServicePlan')]"
       },
       "dependsOn": [],
       "resources": [
@@ -469,12 +379,11 @@
       ]
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/f9344551-eed5-47b3-a8f4-46fa282af927/resourceGroups/JavascriptServicesStarterPack/providers/Microsoft.Web/sites/jsstarterpack'.",
       "type": "Microsoft.Web/sites",
       "kind": "app",
-      "name": "[parameters('JSStarterPackApp')]",
+      "name": "[parameters('JSStarterApp')]",
       "apiVersion": "2015-08-01",
-      "location": "Central US",
+      "location": "westus2",
       "identity": {
         "principalId": null,
         "tenantId": null,
@@ -485,21 +394,21 @@
         "enabled": true,
         "hostNameSslStates": [
           {
-            "name": "[concat(parameters('JSStarterPackApp'),'.azurewebsites.net')]",
+            "name": "[concat(parameters('JSStarterApp'),'.azurewebsites.net')]",
             "sslState": "Disabled",
             "virtualIP": null,
             "toUpdate": null,
             "hostType": "Standard"
           },
           {
-            "name": "[concat(parameters('JSStarterPackApp'),'.scm.azurewebsites.net')]",
+            "name": "[concat(parameters('JSStarterApp'),'.scm.azurewebsites.net')]",
             "sslState": "Disabled",
             "virtualIP": null,
             "toUpdate": null,
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('ServicePlan698eb4ae_9e2b'))]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('JSStarterServicePlan'))]",
         "reserved": false,
         "siteConfig": null,
         "scmSiteAlsoStopped": false,
@@ -512,7 +421,7 @@
         "cloningInfo": null
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('ServicePlan698eb4ae_9e2b'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('JSStarterServicePlan'))]"
       ],
       "resources": [
         {
@@ -520,13 +429,15 @@
           "type": "config",
           "apiVersion": "2015-08-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('JSStarterPackApp'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('JSStarterApp'))]"
           ],
           "tags": {
             "displayName": "AppSettings"
           },
           "properties": {
-            "AzureServicesAuthConnectionString": "[parameters('appLogin')]",
+            "ClientSecret": "[parameters('ClientSecret')]",
+            "ClientId": "[parameters('ClientId')]",
+            "VaultEndpoint": "[parameters('VaultEndpoint')]",
             "WEBSITE_NODE_DEFAULT_VERSION": "8.9.4"
           }
         }
