@@ -62,23 +62,6 @@ docker-compose -f ".\docker-compose.yml" -f ".\docker-compose.override.yml" buil
 ```
 This will build two docker containers. One for the web application, and another for the SQL server database. The databae will be seeded with a starting Admin Account to login with. 
 
-# Setup Dependencies/ Requirements without Docker
- - VS 2017 or .Net Core Service Pack
- - Webpack 4
- - Local Database
-  
- # Run Project without Docker
- Install Webpack
- - `npm install webpack webpack-cli -g`
- 
- Setup Project
- - Navigate to Project Directory
- - `dotnet restore`
- - `dotnet build`
- 
- Setup local database
- - add connection string to appsettings.json
- 
 # Run Project
  - `dotnet run`
  
@@ -86,7 +69,8 @@ This will build two docker containers. One for the web application, and another 
  - `$Env:ASPNETCORE_ENVIRONMENT = "Development"`
  - `$Env:ASPNETCORE_ENVIRONMENT = "Production"` 
 
-I will be working to split this template into multiple repos in the future: 
- - One that contains Authentication
- - Move to the new JavaScriptServices React+Redux template folder structure.
- - One that uses Docker
+# Road Map
+I am working to split this template into repos the correspond to the ARM templating. That is one that spins up Azure Resources needed for Docker, and one that spins up more of a classic application without docker
+ - [The project without docker can be found here called JSStarter](https://github.com/bharney/JSStarter)
+ - One that uses Docker. Thats this one.
+
