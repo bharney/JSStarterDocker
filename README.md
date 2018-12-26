@@ -60,7 +60,7 @@ Switch out the values in `appsettings.json` with your own seed account.
 docker-compose -f ".\docker-compose.yml" -f ".\docker-compose.override.yml" build
 
 ```
-This will build two docker containers. One for the web application, and another for the SQL server database. The databae will be seeded with a starting Admin Account to login with. 
+This will build two docker containers. One for the web application, and another for the SQL server database. The database will be seeded with a starting Admin Account to login with. 
 
 # Run Project
  - `dotnet run`
