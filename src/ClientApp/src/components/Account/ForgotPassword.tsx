@@ -42,7 +42,7 @@ export class ForgotPassword extends React.Component<UserMenuProps, any> {
                             <button className="btn btn-lg btn-primary btn-block" type="submit" >Send Password Assistance Email</button>
                         </div>
                     </form>
-                    <p><Link to="/login">Go back</Link></p>
+                    <p><Link to="/signin">Go back</Link></p>
                 </div>
             </div>
         </div>;

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StarterPack\StarterKit.csproj" />
+    <ProjectReference Include="..\..\src\StarterKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

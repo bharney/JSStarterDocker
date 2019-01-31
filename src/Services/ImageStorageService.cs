@@ -19,7 +19,7 @@ namespace StarterKit.Repository
         {
             var filenameonly = Path.GetFileName(filename);
 
-            var url = string.Concat(_config["BlobService:StorageUrl"], "images/", filenameonly);
+            var url = string.Concat(string.Format("https://{0}.blob.core.windows.net/", _config["BlobServiceAccount"]), "images/", filenameonly);
 
             var creds = new StorageCredentials(_config["BlobServiceAccount"], _config["BlobServiceKey"]);
             var blob = new CloudBlockBlob(new Uri(url), creds);
@@ -46,7 +46,7 @@ namespace StarterKit.Repository
         {
             var filenameonly = Path.GetFileName(filename);
 
-            var url = string.Concat(_config["BlobService:StorageUrl"], "profile/", filenameonly);
+            var url = string.Concat(string.Format("https://{0}.blob.core.windows.net/", _config["BlobServiceAccount"]), "profile/", filenameonly);
 
             var creds = new StorageCredentials(_config["BlobServiceAccount"], _config["BlobServiceKey"]);
             var blob = new CloudBlockBlob(new Uri(url), creds);

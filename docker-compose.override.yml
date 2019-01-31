@@ -6,7 +6,7 @@ services:
     depends_on: 
       - db
     build:
-      context: StarterPack
+      context: src
       dockerfile: Dockerfile.local
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -17,7 +17,7 @@ services:
     volumes:
       - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
       - ${APPDATA}\Microsoft\UserSecrets\${USER_SECRETS_ID}:/root/.microsoft/usersecrets/${USER_SECRETS_ID}:ro
-      - ${PROJECT_PATH}/StarterPack:/app
+      - ${PROJECT_PATH}\src:/app
       - /app/node_modules/
 
   db:

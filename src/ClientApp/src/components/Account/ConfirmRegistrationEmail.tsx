@@ -64,8 +64,7 @@ export class ConfirmRegistrationEmail extends React.Component<
                     <div className="col-12 col-sm-8 col-lg-7">
                         <h2 className="text-center display-4">Confirm Email.</h2>
                         <p>Thank you for confirming your email. You can now login using your Account.
-                            Remember if you forget your password you can always use the
-                            <Link to="/forgotpassword">Forgot Password</Link> Assistance.</p>
+                            Remember if you forget your password you can always use <Link to="/forgotpassword">Forgot Password</Link> Assistance.</p>
                         <br />
                         <br />
                         <p><Link to="/">Go back</Link></p>

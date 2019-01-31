@@ -121,12 +121,12 @@ namespace StarterKit.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.RegistrationEmailConfirmationLink(user.Id, code, Request.Scheme);
+                    var callbackUrl = Url.RegistrationEmailConfirmationLink(user.Id, code, Uri.UriSchemeHttps);
                     //Once routes are fixed remove this substr
                     //Current need to remove the /Account from start of URL because
                     //There is a conflict with the routes on client side for /Account
-                    callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
-                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    var updatedCallbackUrl = callbackUrl.Remove(callbackUrl.IndexOf("/Account"), 8);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, updatedCallbackUrl);
                     return Ok(new { });
                 }
 
@@ -189,7 +189,7 @@ namespace StarterKit.Controllers
                 // For more information on how to enable account confirmation and password reset please
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.ResetPasswordCallbackLink(user.Id, code, Request.Scheme);
+                var callbackUrl = Url.ResetPasswordCallbackLink(user.Id, code, Uri.UriSchemeHttps);
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                    $@"<h3> You have requested a password reset request from your account.</h3>
                         <h3>Please reset your password by clicking here: <a href='{callbackUrl}'>link</a></h3>
@@ -348,12 +348,13 @@ namespace StarterKit.Controllers
                         user.UnConfirmedEmail = tempUnconfirmed;
                         result = await _userManager.UpdateAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Uri.UriSchemeHttps);
                         //Once routes are fixed remove this substr
                         //Current need to remove the /Account from start of URL because
                         //There is a conflict with the routes on client side for /Account
-                        callbackUrl = callbackUrl.Substring(8, callbackUrl.Length - 8);
-                        await _emailSender.SendEmailChangeConfirmationAsync(new List<string>() { user.Email, user.UnConfirmedEmail }, callbackUrl);
+                        var updatedCallbackUrl = callbackUrl.Remove(callbackUrl.IndexOf("/Account"), 8);
+
+                        await _emailSender.SendEmailChangeConfirmationAsync(new List<string>() { user.Email, user.UnConfirmedEmail }, updatedCallbackUrl);
                     }
                 }
             }

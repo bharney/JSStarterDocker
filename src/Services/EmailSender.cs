@@ -23,12 +23,12 @@ namespace StarterKit.Services
 
         public async Task SendEmailAsync(string email, string subject, string message, string name = "")
         {
-            var apiKey = _config["MailServiceKey"];
+            var apiKey = _config["MailService:Key"];
             var client = new SendGridClient(apiKey);
-
+            var mailClientSender = _config["MailService:User"];
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("jsstarter@jsstarter.com", "JSStarter"),
+                From = new EmailAddress($"{mailClientSender}@{mailClientSender}.com", mailClientSender),
                 Subject = subject,
                 HtmlContent = message
             };

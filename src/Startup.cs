@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +35,7 @@ namespace StarterKit
         public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
@@ -41,7 +43,13 @@ namespace StarterKit
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // In production, the React files will be served from this directory
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp/build";
+            //});
             services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
 
             services.AddCors();
@@ -99,7 +107,10 @@ namespace StarterKit
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-            return services.BuildServiceProvider();
+
+            // Adding the following for SSR
+            services.AddNodeServices();
+            services.AddSpaPrerenderer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,11 +121,10 @@ namespace StarterKit
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
+                    ProjectPath = System.IO.Path.Combine(env.ContentRootPath, "ClientApp/"),
                     HotModuleReplacement = true,
                     ReactHotModuleReplacement = true,
-                    HotModuleReplacementServerPort = 5001
                 });
-                
             }
             else
             {
@@ -130,6 +140,7 @@ namespace StarterKit
                         "public,max-age=" + durationInSeconds;
                 }
             });
+            //app.UseSpaStaticFiles();
 
             app.UseAuthentication();
 
@@ -143,6 +154,20 @@ namespace StarterKit
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
+
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "ClientApp";
+
+            //    if (env.IsDevelopment())
+            //    {
+            //        // uncomment the following line and use `npm run start` from
+            //        // a separate console to not have to restart node on backend changes
+            //        spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+            //        // this is for single start-up command. I prefer the line above
+            //        //spa.UseReactDevelopmentServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }

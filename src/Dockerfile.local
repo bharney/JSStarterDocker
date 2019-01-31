@@ -13,7 +13,7 @@ COPY StarterKit.csproj ./
 RUN dotnet restore StarterKit.csproj
 
 COPY . .
-RUN npm install
+RUN npm install ./ClientApp
 
 RUN dotnet build StarterKit.csproj -c Debug
 

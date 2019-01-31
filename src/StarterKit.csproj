@@ -7,33 +7,35 @@
     <IsPackable>false</IsPackable>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <UserSecretsId>f986c0ad-1451-4764-ab20-4f8fb8512e45</UserSecretsId>
-    <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <UserSecretsId>f986c0ad-1451-4764-ab20-4f8fb8512e46</UserSecretsId>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <SpaRoot>ClientApp\</SpaRoot>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="2.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.1.1" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.3.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
-    <Content Remove="ClientApp\**" />
-    <Content Remove="wwwroot\dist\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\components\Admin\" />
-    <Folder Include="ClientApp\types\" />
+    <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Content Remove="$(SpaRoot)**" />
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,40 +44,42 @@
     </Content>
   </ItemGroup>
 
-  <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
-
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <!-- In development, the dist files won't exist on the first run or when cloning to
          a different machine, so rebuild them if not already present. -->
     <Message Importance="high" Text="Performing first-run Webpack build..." />
-    <MakeDir Directories="ClientApp\dist\" />
-    <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
+    <MakeDir Directories="ClientApp\public\" />
+    <WriteLinesToFile File="ClientApp\public\react-loadable.json" Lines="{}" Overwrite="True" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="node node_modules/webpack/bin/webpack.js" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.js" />
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Message Importance="high" Text="Performing npm install..." />
-    <Exec Command="npm install" />
-    <Message Importance="high" Text="Creating ClientApp/dist directory..." />
-    <MakeDir Directories="ClientApp\dist\" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Message Importance="high" Text="Creating ClientApp/public directory..." />
+    <MakeDir Directories="ClientApp\public\" />
     <Message Importance="high" Text="Creating react-loadable.json file..." />
-    <WriteLinesToFile File="ClientApp\dist\react-loadable.json" Lines="{}" Overwrite="True" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --env.prod" />
-    <Exec Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.prod.js --env.prod" />
+    <WriteLinesToFile File="ClientApp\public\react-loadable.json" Lines="{}" Overwrite="True" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --env.prod" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="node node_modules/webpack/bin/webpack.js --config webpack.config.server.prod.js --env.prod" />
+    <!--<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />-->
+
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
-      <DistFiles Include="wwwroot\dist\**; ClientApp\dist\**" />
+      <DistFiles Include="wwwroot\dist\**; $(SpaRoot)public\**" />
       <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-  
 </Project>
